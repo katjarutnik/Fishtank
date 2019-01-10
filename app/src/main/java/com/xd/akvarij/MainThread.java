@@ -1,17 +1,23 @@
 package com.xd.akvarij;
 
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.SurfaceHolder;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainThread extends Thread {
     private SurfaceHolder surfaceHolder;
-    private GameSurfaceView gameView;
+    private GameView gameView;
     private boolean running;
     public static Canvas canvas;
     public static final int MAX_FPS = 30;
     private double averageFPS;
 
-    public MainThread(SurfaceHolder surfaceHolder, GameSurfaceView gameView) {
+    private boolean daytime;
+    private long timer;
+
+    public MainThread(SurfaceHolder surfaceHolder, GameView gameView) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.gameView = gameView;
@@ -23,12 +29,15 @@ public class MainThread extends Thread {
 
     @Override
     public void run() {
+        gameView.daytime = gameView.tank.daytime;
+        this.daytime = gameView.tank.daytime;
         int frameCount = 0;
         long startTime;
         long timeMillis;
         long waitTime;
         long totalTime = 0;
         long targetTime = 1000/MAX_FPS;
+        this.timer = System.nanoTime();
 
         while (running) {
             startTime = System.nanoTime();
@@ -36,7 +45,7 @@ public class MainThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
-                    this.gameView.update();
+                    this.gameView.update(this.daytime);
                     this.gameView.draw(canvas);
                 }
             } catch (Exception e) {
@@ -67,6 +76,17 @@ public class MainThread extends Thread {
                 totalTime = 0;
                 System.out.println("FPS:" + averageFPS);
             }
+            checkIfDayPassed();
+        }
+    }
+
+    public void checkIfDayPassed() {
+        long endTime = System.nanoTime() - timer;
+        if (TimeUnit.SECONDS.convert(endTime, TimeUnit.NANOSECONDS) >
+                Constants.DAY_LENGTH_IN_SECONDS) {
+            timer = System.nanoTime();
+            this.daytime = !this.daytime;
+            Log.d("MainThread", "day passed");
         }
     }
 }

@@ -25,9 +25,9 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
 
     int population;
     boolean fresh;
-    GameSurfaceView gameView; //extends SurfaceView
-    FrameLayout game; // Sort of "holder" for everything we are placing
-    RelativeLayout GameButtons; //Holder for the buttons
+    GameView gameView;
+    FrameLayout game;
+    RelativeLayout GameButtons;
     public Button butOne;
     public Button btnSaveAndExit;
 
@@ -61,7 +61,7 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
         gravity = new float[3];
         linear_acceleration = new float[3];
 
-        gameView = new GameSurfaceView(this, population);
+        gameView = new GameView(this);
         game = new FrameLayout(this);
         GameButtons = new RelativeLayout(this);
 
@@ -154,7 +154,6 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
     }
 
     public void saveData() {
-
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(gameView.tank);
@@ -175,6 +174,8 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
             if (gameView.tank == null) {
                 Intent intent = new Intent(GenerateNewActivity.this, MainActivity.class);
                 startActivity(intent);
+            } else {
+                gameView.daytime = gameView.tank.daytime;
             }
         }
     }

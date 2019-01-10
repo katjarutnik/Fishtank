@@ -3,13 +3,13 @@ package com.xd.akvarij;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Tank {
-
-    public boolean daytime;
 
     public ArrayList<Fish> fish;
     public ArrayList<Food> food;
@@ -20,6 +20,11 @@ public class Tank {
 
     private Random random;
 
+    private Rect background;
+
+    private Paint paint;
+    public boolean daytime;
+
     public Tank(int popSize, Bitmap fishImage) {
         this.popSize = popSize;
         this.fishImage = fishImage;
@@ -27,9 +32,18 @@ public class Tank {
         this.food = new ArrayList<>();
         this.random = new Random();
         this.daytime = true;
+        this.paint = new Paint();
+        this.background = new Rect(0,0,Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
     }
 
     public void draw(Canvas canvas) {
+        if (this.daytime) {
+            paint.setARGB(255, 204, 228, 255);
+            canvas.drawRect(background, paint);
+        } else {
+            paint.setARGB(255, 65, 150, 190);
+            canvas.drawRect(background, paint);
+        }
         for (int i = 0; i < fish.size(); i++) {
             fish.get(i).draw(canvas);
         }
@@ -38,7 +52,11 @@ public class Tank {
         }
     }
 
-    public void update() {
+    public void update(boolean daytime) {
+        if (this.daytime != daytime) {
+            this.daytime = daytime;
+            Log.d("Tank", "daytime " + this.daytime);
+        }
         for (int i = 0; i < fish.size(); i++) {
             fish.get(i).update(food);
         }
@@ -91,13 +109,5 @@ public class Tank {
         for(int i = 0; i < food.size(); i++) {
             food.get(i).shaking = false;
         }
-    }
-
-    public ArrayList<Food> getFood() {
-        return food;
-    }
-
-    public ArrayList<Fish> getFish() {
-        return fish;
     }
 }

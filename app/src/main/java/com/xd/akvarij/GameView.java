@@ -2,14 +2,13 @@ package com.xd.akvarij;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 
-public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public MainThread thread;
 
@@ -17,7 +16,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     Context context;
 
-    public GameSurfaceView(Context context, int popSize) {
+    public boolean daytime;
+
+    public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
@@ -31,6 +32,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
+        this.daytime = tank.daytime;
         Log.d("surfaceCreated", thread.getName());
     }
 
@@ -66,13 +68,18 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void draw(Canvas canvas) {
         if (canvas != null) {
             super.draw(canvas);
-            canvas.drawColor(Color.WHITE);
             tank.draw(canvas);
         }
     }
 
-    public void update() {
-        tank.update();
+    public void update(boolean daytime) {
+        tank.update(daytime);
+        if (this.daytime != daytime) {
+            this.daytime = daytime;
+            invalidate();
+            tank.update(daytime);
+            Log.d("GameView", "daytime " + this.daytime);
+        }
     }
 
 }
