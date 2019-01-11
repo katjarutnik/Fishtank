@@ -41,7 +41,6 @@ public class Fish {
     public boolean hasFoundNearestFood;
     // other
     Random random;
-    private int dayCounter;
 
     // constructor for new tank fish, no parents
     public Fish(int id, Bitmap image, int x, int y, boolean goingRight, boolean goingDown,
@@ -79,7 +78,6 @@ public class Fish {
         }
         hasFoundNearestFood = false;
         random = new Random();
-        dayCounter = 0;
         alive = true;
     }
 
@@ -88,16 +86,12 @@ public class Fish {
     }
 
     public void update(ArrayList<Food> food, ArrayList<Fish> fish, ArrayList<Fish> graveyard,
-                       int dayCounter) {
-        if (dayCounter == 2) {
-            dayCounter = 0;
-            increaseHunger();
-            growUp(graveyard);
-        }
-        if (this.dayCounter != dayCounter) {
-            dayCounter++;
-        }
+                       int dayNightCycle) {
         if (alive) {
+            if (dayNightCycle == 2) {
+                increaseHunger();
+                growUp(graveyard);
+            }
             SwimFreelyAndLookForFood(food);
         } else {
             floatToTop(fish);

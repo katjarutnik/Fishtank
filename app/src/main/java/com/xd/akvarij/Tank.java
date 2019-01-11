@@ -11,6 +11,8 @@ import java.util.Random;
 
 public class Tank {
 
+    MyCallback myCallback = null;
+
     public ArrayList<Fish> graveyard;
     public ArrayList<Fish> fish;
     public ArrayList<Food> food;
@@ -27,9 +29,12 @@ public class Tank {
 
     public boolean dayTime;
     public int dayNightCycle;
+    public int dayNightCycleTemp;
     public int dayCounter;
 
-    public Tank(int popSize, Bitmap fishImage) {
+    String text;
+
+    public Tank(int popSize, Bitmap fishImage, MyCallback callback) {
         this.popSize = popSize;
         this.fishImage = fishImage;
         this.graveyard = new ArrayList<>();
@@ -41,6 +46,7 @@ public class Tank {
         this.dayCounter = 0;
         this.paint = new Paint();
         this.background = new Rect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        this.myCallback = callback;
     }
 
     public void draw(Canvas canvas) {
@@ -62,19 +68,23 @@ public class Tank {
     public void update(boolean daytime) {
         if (this.dayTime != daytime) {
             dayNightCycle++;
+            dayNightCycleTemp++;
             this.dayTime = daytime;
         }
         if (dayNightCycle == 2) {
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
             dayNightCycle = 0;
+            text = "It's day " + dayCounter + "!";
+            myCallback.updateMyText(text);
         }
         for (int i = 0; i < fish.size(); i++) {
-            fish.get(i).update(food, fish, graveyard, dayCounter);
+            fish.get(i).update(food, fish, graveyard, dayNightCycleTemp);
         }
         for (int i = 0; i < food.size(); i++) {
             food.get(i).update();
         }
+        if (dayNightCycleTemp == 2) dayNightCycleTemp = 0;
     }
 
     public void generateFirstGeneration() {

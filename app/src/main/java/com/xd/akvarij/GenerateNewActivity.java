@@ -26,12 +26,12 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
 
     int population;
     boolean fresh;
+
     GameView gameView;
     FrameLayout gameBase;
     ConstraintLayout gameOverlay;
     public Button btnFeed;
     public Button btnSaveAndExit;
-
     public TextView txtDays;
 
     private SensorManager sensorMan;
@@ -43,6 +43,7 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
     public static final String MyPREFERENCES = "myprefs";
 
     Context context;
+    MyCallback myCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +77,27 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
         btnFeed = gameOverlay.findViewById(R.id.btnFeed);
         btnSaveAndExit = new Button(this);
         btnSaveAndExit = gameOverlay.findViewById(R.id.btnSaveExit);
+        txtDays = new TextView(this);
+        txtDays = gameOverlay.findViewById(R.id.txtDays);
 
         gameBase.removeView(gameOverlay);
 
         gameBase.addView(gameView);
         gameBase.addView(gameOverlay);
+
         setContentView(gameBase);
 
-        loadData(population, fresh);
+        myCallback = new MyCallback() {
+            @Override
+            public void updateMyText(final String myString) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtDays.setText(myString);
+                    }
+                });
+            }
+        };
 
         btnFeed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +120,8 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
                 }
             }
         });
+
+        loadData(population, fresh);
     }
 
     @Override
@@ -156,7 +172,7 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
 
     private void loadData(int popSize, Boolean fresh) {
         if (fresh) {
-            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(), R.drawable.fish));
+            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(), R.drawable.fish), myCallback);
             gameView.tank.generateFirstGeneration();
         } else {
             Gson gson = new Gson();
@@ -169,7 +185,10 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
                 startActivity(intent);
             } else {
                 gameView.daytime = gameView.tank.dayTime;
+                int day = gameView.tank.dayCounter;
+                txtDays.setText("It's day" + day + "!");
             }
         }
     }
+
 }
