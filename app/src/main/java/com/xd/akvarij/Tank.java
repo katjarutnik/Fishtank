@@ -11,6 +11,7 @@ import java.util.Random;
 
 public class Tank {
 
+    public ArrayList<Fish> graveyard;
     public ArrayList<Fish> fish;
     public ArrayList<Food> food;
 
@@ -23,21 +24,27 @@ public class Tank {
     private Rect background;
 
     private Paint paint;
-    public boolean daytime;
+
+    public boolean dayTime;
+    public int dayNightCycle;
+    public int dayCounter;
 
     public Tank(int popSize, Bitmap fishImage) {
         this.popSize = popSize;
         this.fishImage = fishImage;
+        this.graveyard = new ArrayList<>();
         this.fish = new ArrayList<>();
         this.food = new ArrayList<>();
         this.random = new Random();
-        this.daytime = true;
+        this.dayTime = true;
+        this.dayNightCycle = 0;
+        this.dayCounter = 0;
         this.paint = new Paint();
-        this.background = new Rect(0,0,Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        this.background = new Rect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
     }
 
     public void draw(Canvas canvas) {
-        if (this.daytime) {
+        if (this.dayTime) {
             paint.setARGB(255, 204, 228, 255);
             canvas.drawRect(background, paint);
         } else {
@@ -53,12 +60,17 @@ public class Tank {
     }
 
     public void update(boolean daytime) {
-        if (this.daytime != daytime) {
-            this.daytime = daytime;
-            Log.d("Tank", "daytime " + this.daytime);
+        if (this.dayTime != daytime) {
+            dayNightCycle++;
+            this.dayTime = daytime;
+        }
+        if (dayNightCycle == 2) {
+            dayCounter++;
+            Log.d("Tank", "IT'S A NEW DAY");
+            dayNightCycle = 0;
         }
         for (int i = 0; i < fish.size(); i++) {
-            fish.get(i).update(food);
+            fish.get(i).update(food, fish, graveyard, dayCounter);
         }
         for (int i = 0; i < food.size(); i++) {
             food.get(i).update();
@@ -68,7 +80,9 @@ public class Tank {
     public void generateFirstGeneration() {
         for (int i = 0; i < this.popSize; i++) {
             Paint paint = new Paint();
-            paint.setARGB(255, random.nextInt(256), random.nextInt(256),
+            paint.setARGB(255,
+                    random.nextInt(256),
+                    random.nextInt(256),
                     random.nextInt(256));
             fish.add(new Fish(
                     i,
@@ -84,16 +98,16 @@ public class Tank {
                     random.nextInt(Constants.MAX_VISION) + Constants.MIN_VISION,
                     random.nextInt(Constants.MAX_HUNGER),
                     random.nextInt(Constants.AGE_MAX),
-                    random.nextBoolean(),
+                    (random.nextInt(100) >= 35) ? Gender.FEMALE : Gender.MALE,
                     paint));
         }
     }
 
     public void feedFish() {
         int i = 0;
-        while(i < 10) {
+        while (i < 10) {
             food.add(new Food(random.nextInt(Constants.SCREEN_WIDTH),
-                    random.nextInt(10) * (-1)));
+                    random.nextInt(25) * (-1)));
             i++;
         }
     }
@@ -110,4 +124,5 @@ public class Tank {
             food.get(i).shaking = false;
         }
     }
+
 }

@@ -12,45 +12,41 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Fish {
-    //identification, location
+    // id
     private int id;
-    private Tank tank;
-
-    //display
+    private boolean alive;
+    // display
     private Bitmap image;
     private int width;
     private int height;
     private Paint paint;
-
-    //position, movement
+    // position, movement
     private int x;
     private int y;
     private boolean goingRight;
     private boolean goingDown;
     private int speedHorizontal;
     private int speedVertical;
-
-    //info, family
-    private int age; // 0 - 20
-    private boolean gender; // 0 - f, 1 - m
-    private LifeStage stage; // i - t - a - d
+    // info, family
+    private int age;
+    private Gender gender;
+    private LifeStage stage;
     private int mother;
     private int father;
     private ArrayList<Integer> children;
-
     // feeding
     private int vision;
     private int hunger;
     public Food nearestFood;
-    public boolean hasFoundNearestFood = false;
-
+    public boolean hasFoundNearestFood;
     // other
-    Random random = new Random();
+    Random random;
+    private int dayCounter;
 
     // constructor for new tank fish, no parents
     public Fish(int id, Bitmap image, int x, int y, boolean goingRight, boolean goingDown,
                 int speedHorizontal, int speedVertical, int vision, int hunger, int age,
-                boolean gender, Paint paint) {
+                Gender gender, Paint paint) {
         this.id = id;
         this.image = image;
         this.width = image.getWidth();
@@ -81,19 +77,36 @@ public class Fish {
         if (!goingRight) {
             this.image = flipHorizontally(image);
         }
+        hasFoundNearestFood = false;
+        random = new Random();
+        dayCounter = 0;
+        alive = true;
     }
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, x, y, paint);
     }
 
-    public void update(ArrayList<Food> food) {
-        SwimFreelyAndLookForFood(food);
+    public void update(ArrayList<Food> food, ArrayList<Fish> fish, ArrayList<Fish> graveyard,
+                       int dayCounter) {
+        if (dayCounter == 2) {
+            dayCounter = 0;
+            increaseHunger();
+            growUp(graveyard);
+        }
+        if (this.dayCounter != dayCounter) {
+            dayCounter++;
+        }
+        if (alive) {
+            SwimFreelyAndLookForFood(food);
+        } else {
+            floatToTop(fish);
+        }
     }
 
-
     public void SwimFreelyAndLookForFood(ArrayList<Food> food) {
-        if (hunger < Constants.MAX_HUNGER && !hasFoundNearestFood && lookAroundForFood(food)) {
+        //hunger < Constants.MAX_HUNGER
+        if (!hasFoundNearestFood && lookAroundForFood(food)) {
             if (nearestFood != null) {
                 goAfterFood(food, nearestFood);
             }
@@ -215,33 +228,41 @@ public class Fish {
 
     // call when fish eats food
     public void decreaseHunger() {
-        if (hunger < Constants.MAX_HUNGER) { // ce se ni pojedla prevec hrane
-            hunger++;
-        } else { // ce je prevec pojedla
+        hunger++;
+        if (hunger > Constants.MAX_HUNGER) {
             if (speedHorizontal > 1 && speedVertical > 1) { // ce se se vedno premika pol jo upocasni
                 speedHorizontal -= 1;
                 speedVertical -= 1;
-            } else { // speed je 0 zato umre
-                stage = LifeStage.DEAD;
             }
         }
     }
 
     // call this on each new day cycle
     public void increaseHunger() {
-        if (hunger > 0) {
-            hunger -= 1;
-        } else {
-            hunger = 0;
+        hunger--;
+        if (hunger <= 0)
             stage = LifeStage.DEAD;
-        }
     }
 
     // call this on each new day cyle
-    public void growUp() {
+    public void growUp(ArrayList<Fish> graveyard) {
+        age++;
         if (age == Constants.AGE_MAX_INFANT || age == Constants.AGE_MAX_TEEN ||
                 age == Constants.AGE_MAX_ADULT) {
             stage = stage.getNext();
+        }
+        if (stage == stage.DEAD && alive) {
+            alive = false;
+            image = flipVertically(image);
+            graveyard.add(this);
+        }
+    }
+
+    public void floatToTop(ArrayList<Fish> fish) {
+        if (y > 0) {
+            y--;
+        } else {
+            fish.remove(this);
         }
     }
 

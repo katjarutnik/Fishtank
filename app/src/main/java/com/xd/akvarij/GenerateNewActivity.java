@@ -10,11 +10,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,10 +27,12 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
     int population;
     boolean fresh;
     GameView gameView;
-    FrameLayout game;
-    RelativeLayout GameButtons;
-    public Button butOne;
+    FrameLayout gameBase;
+    ConstraintLayout gameOverlay;
+    public Button btnFeed;
     public Button btnSaveAndExit;
+
+    public TextView txtDays;
 
     private SensorManager sensorMan;
     private Sensor accelerometer;
@@ -61,38 +64,28 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
         gravity = new float[3];
         linear_acceleration = new float[3];
 
+        View rootView = getLayoutInflater().inflate(R.layout.game, null, true);
         gameView = new GameView(this);
-        game = new FrameLayout(this);
-        GameButtons = new RelativeLayout(this);
+        gameBase = new FrameLayout(this);
+        gameOverlay = new ConstraintLayout(this);
 
-        butOne = new Button(this);
-        butOne.setText("FEED");
-        butOne.setId(12345);
+        gameBase = rootView.findViewById(R.id.gameFrame);
+        gameOverlay = rootView.findViewById(R.id.gameButtons);
 
+        btnFeed = new Button(this);
+        btnFeed = gameOverlay.findViewById(R.id.btnFeed);
         btnSaveAndExit = new Button(this);
-        btnSaveAndExit.setText("Save & exit");
-        btnSaveAndExit.setId(67890);
+        btnSaveAndExit = gameOverlay.findViewById(R.id.btnSaveExit);
 
-        RelativeLayout.LayoutParams b1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-        RelativeLayout.LayoutParams b2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.FILL_PARENT);
+        gameBase.removeView(gameOverlay);
 
-        GameButtons.setLayoutParams(params);
-        GameButtons.addView(butOne);
-        GameButtons.addView(btnSaveAndExit);
-        b1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        b1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        b2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        b2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        butOne.setLayoutParams(b1);
-        btnSaveAndExit.setLayoutParams(b2);
-        game.addView(gameView);
-        game.addView(GameButtons);
-        setContentView(game);
+        gameBase.addView(gameView);
+        gameBase.addView(gameOverlay);
+        setContentView(gameBase);
 
         loadData(population, fresh);
 
-        butOne.setOnClickListener(new View.OnClickListener() {
+        btnFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gameView.tank.feedFish();
@@ -175,7 +168,7 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
                 Intent intent = new Intent(GenerateNewActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {
-                gameView.daytime = gameView.tank.daytime;
+                gameView.daytime = gameView.tank.dayTime;
             }
         }
     }

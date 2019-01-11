@@ -29,8 +29,8 @@ public class MainThread extends Thread {
 
     @Override
     public void run() {
-        gameView.daytime = gameView.tank.daytime;
-        this.daytime = gameView.tank.daytime;
+        gameView.daytime = gameView.tank.dayTime;
+        this.daytime = gameView.tank.dayTime;
         int frameCount = 0;
         long startTime;
         long timeMillis;
@@ -86,7 +86,7 @@ public class MainThread extends Thread {
                 Constants.DAY_LENGTH_IN_SECONDS) {
             timer = System.nanoTime();
             this.daytime = !this.daytime;
-            Log.d("MainThread", "day passed");
+            Log.d("MainThread", "HALF A DAY HAS PASSED AWAY");
         }
     }
 }

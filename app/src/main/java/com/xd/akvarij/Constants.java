@@ -19,11 +19,10 @@ public class Constants {
     public static int MIN_HUNGER = 0;
     public static int LIMIT_FEELING_HUNGRY = 5;
 
-    public static int AGE_MIN = 0;
     public static int AGE_MAX_INFANT = 3;
     public static int AGE_MAX_TEEN = 7;
     public static int AGE_MAX_ADULT = 15;
     public static int AGE_MAX = 20;
 
-    public static int DAY_LENGTH_IN_SECONDS = 10;
+    public static int DAY_LENGTH_IN_SECONDS = 3;
 }

@@ -2,7 +2,6 @@ package com.xd.akvarij;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,7 +23,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         this.context = context;
         setFocusable(true);
-        Log.d("GameSurfaceView", thread.getName());
     }
 
     @Override
@@ -32,13 +30,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
-        this.daytime = tank.daytime;
-        Log.d("surfaceCreated", thread.getName());
+        this.daytime = tank.dayTime;
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d("surfaceChanged", "hmm");
+
     }
 
     @Override
@@ -78,8 +75,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             this.daytime = daytime;
             invalidate();
             tank.update(daytime);
-            Log.d("GameView", "daytime " + this.daytime);
         }
     }
-
 }
