@@ -43,11 +43,6 @@
                             </entry>
                           </map>
                         </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
-                          </map>
-                        </option>
                       </PersistentState>
                     </value>
                   </entry>

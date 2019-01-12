@@ -43,7 +43,7 @@ public class Tank {
         this.random = new Random();
         this.dayTime = true;
         this.dayNightCycle = 0;
-        this.dayCounter = 0;
+        this.dayCounter = 1;
         this.paint = new Paint();
         this.background = new Rect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         this.myCallback = callback;
@@ -51,10 +51,10 @@ public class Tank {
 
     public void draw(Canvas canvas) {
         if (this.dayTime) {
-            paint.setARGB(255, 204, 228, 255);
+            paint.setARGB(255, 255, 255, 255);
             canvas.drawRect(background, paint);
         } else {
-            paint.setARGB(255, 65, 150, 190);
+            paint.setARGB(255, 61, 61, 61);
             canvas.drawRect(background, paint);
         }
         for (int i = 0; i < fish.size(); i++) {
@@ -75,7 +75,7 @@ public class Tank {
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
             dayNightCycle = 0;
-            text = "It's day " + dayCounter + "!";
+            text = "DAY " + dayCounter + "";
             myCallback.updateMyText(text);
         }
         for (int i = 0; i < fish.size(); i++) {

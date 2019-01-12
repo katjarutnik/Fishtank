@@ -24,5 +24,5 @@ public class Constants {
     public static int AGE_MAX_ADULT = 15;
     public static int AGE_MAX = 20;
 
-    public static int DAY_LENGTH_IN_SECONDS = 3;
+    public static int DAY_LENGTH_IN_SECONDS = 2;
 }

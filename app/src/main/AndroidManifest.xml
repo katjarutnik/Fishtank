@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GenerateNewActivity"
+            android:name=".GameActivity"
             android:screenOrientation="portrait">
 
         </activity>

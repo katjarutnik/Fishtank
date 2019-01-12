@@ -11,6 +11,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,18 +19,17 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-
-public class GenerateNewActivity extends Activity implements SensorEventListener {
+public class GameActivity extends Activity implements SensorEventListener {
 
     int population;
     boolean fresh;
 
     GameView gameView;
-    FrameLayout gameBase;
+
+    FrameLayout gameFrame;
     ConstraintLayout gameOverlay;
+
     public Button btnFeed;
     public Button btnSaveAndExit;
     public TextView txtDays;
@@ -40,10 +40,11 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
     private float[] linear_acceleration;
 
     SharedPreferences sharedPreferences;
-    public static final String MyPREFERENCES = "myprefs";
+    public static final String myPrefs = "myTankPrefs";
+    public static final String myPrefsKey = "tank";
 
-    Context context;
     MyCallback myCallback;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,21 +58,23 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
             population = 10;
             fresh = true;
         }
+
         context = this;
-        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravity = new float[3];
         linear_acceleration = new float[3];
 
-        View rootView = getLayoutInflater().inflate(R.layout.game, null, true);
+        View rootView = getLayoutInflater().inflate(R.layout.activity_game, null, true);
+
         gameView = new GameView(this);
-        gameBase = new FrameLayout(this);
+
+        gameFrame = new FrameLayout(this);
         gameOverlay = new ConstraintLayout(this);
 
-        gameBase = rootView.findViewById(R.id.gameFrame);
-        gameOverlay = rootView.findViewById(R.id.gameButtons);
+        gameFrame = rootView.findViewById(R.id.gameFrame);
+        gameOverlay = rootView.findViewById(R.id.gameOverlay);
 
         btnFeed = new Button(this);
         btnFeed = gameOverlay.findViewById(R.id.btnFeed);
@@ -80,12 +83,9 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
         txtDays = new TextView(this);
         txtDays = gameOverlay.findViewById(R.id.txtDays);
 
-        gameBase.removeView(gameOverlay);
-
-        gameBase.addView(gameView);
-        gameBase.addView(gameOverlay);
-
-        setContentView(gameBase);
+        gameFrame.removeView(gameOverlay);
+        gameFrame.addView(gameView);
+        gameFrame.addView(gameOverlay);
 
         myCallback = new MyCallback() {
             @Override
@@ -112,8 +112,8 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
                 try {
                     gameView.thread.setRunning(false);
                     gameView.thread.join();
-                    saveData();
-                    Intent intent = new Intent(GenerateNewActivity.this, MainActivity.class);
+                    saveData(context, myPrefs, myPrefsKey, gameView.tank);
+                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
                     startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -121,7 +121,8 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
             }
         });
 
-        loadData(population, fresh);
+        loadData(population, fresh, this);
+        setContentView(gameFrame);
     }
 
     @Override
@@ -162,31 +163,32 @@ public class GenerateNewActivity extends Activity implements SensorEventListener
 
     }
 
-    public void saveData() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(gameView.tank);
-        editor.putString("tank", json);
-        editor.apply();
+    public void saveData(Context context, String preferenceFileName, String serializedObjectKey,
+                         Object object) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(preferenceFileName, 0);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        final Gson gson = new Gson();
+        String serializedObject = gson.toJson(object);
+        sharedPreferencesEditor.putString(serializedObjectKey, serializedObject);
+        sharedPreferencesEditor.apply();
     }
 
-    private void loadData(int popSize, Boolean fresh) {
+    private void loadData(int popSize, Boolean fresh, Context context) {
         if (fresh) {
-            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(), R.drawable.fish), myCallback);
+            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(),
+                    R.drawable.fish), myCallback);
             gameView.tank.generateFirstGeneration();
         } else {
-            Gson gson = new Gson();
-            String json = sharedPreferences.getString("tank", null);
-            Type type = new TypeToken<Tank>() {}.getType();
-            gameView.tank = gson.fromJson(json, type);
-
-            if (gameView.tank == null) {
-                Intent intent = new Intent(GenerateNewActivity.this, MainActivity.class);
-                startActivity(intent);
-            } else {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);
+            if (sharedPreferences.contains(myPrefsKey)) {
+                final Gson gson = new Gson();
+                gameView.tank = gson.fromJson(sharedPreferences.getString(myPrefsKey, ""),
+                        Tank.class);
                 gameView.daytime = gameView.tank.dayTime;
-                int day = gameView.tank.dayCounter;
-                txtDays.setText("It's day" + day + "!");
+                gameView.tank.myCallback = myCallback;
+                txtDays.setText("DAY " + gameView.tank.dayCounter);
+            } else {
+                // DISPLAY ERROR
             }
         }
     }

@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 fresh = false;
-                Intent intent = new Intent(MainActivity.this, GenerateNewActivity.class);
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 intent.putExtra("FRESH", fresh);
                 startActivity(intent);
             }
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
                 btnGenerate.setSelected(true);
                 popupWindow.dismiss();
                 population = Integer.valueOf(txtPopSize.getText().toString());
-                Intent intent = new Intent(MainActivity.this, GenerateNewActivity.class);
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 intent.putExtra("POPULATION", population);
                 intent.putExtra("FRESH", fresh);
                 startActivity(intent);

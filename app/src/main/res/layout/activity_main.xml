@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bikini_bottom_day"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -13,8 +14,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +25,7 @@
             android:id="@+id/btnGenerate"
             android:layout_width="129dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:text="New"
             app:layout_constraintBottom_toTopOf="@+id/btnSettings"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +36,7 @@
             android:id="@+id/btnLoad"
             android:layout_width="129dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:text="Load" />
 
         <Button
