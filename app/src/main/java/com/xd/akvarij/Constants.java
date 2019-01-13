@@ -1,12 +1,14 @@
 package com.xd.akvarij;
 
 public class Constants {
+    public static final int MAX_FPS = 60;
+
     public static int GRAPHIC_QUALITY = 0; // 2 HIGH, 1 MEDIUM, 0 LOW
 
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
 
-    public static int MAX_HORIZONTAL_SPEED = 5;
+    public static int MAX_HORIZONTAL_SPEED = 2;
     public static int MIN_HORIZONTAL_SPEED = 1;
 
     public static int MAX_VERTICAL_SPEED = 3;

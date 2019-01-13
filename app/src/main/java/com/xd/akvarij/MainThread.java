@@ -11,7 +11,6 @@ public class MainThread extends Thread {
     private GameView gameView;
     private boolean running;
     public static Canvas canvas;
-    public static final int MAX_FPS = 30;
     private double averageFPS;
 
     private boolean daytime;
@@ -36,7 +35,7 @@ public class MainThread extends Thread {
         long timeMillis;
         long waitTime;
         long totalTime = 0;
-        long targetTime = 1000/MAX_FPS;
+        long targetTime = 1000/Constants.MAX_FPS;
         this.timer = System.nanoTime();
 
         while (running) {
@@ -70,7 +69,7 @@ public class MainThread extends Thread {
             }
             totalTime += System.nanoTime() - startTime;
             frameCount++;
-            if (frameCount == MAX_FPS) {
+            if (frameCount == Constants.MAX_FPS) {
                 averageFPS = 1000 / ((totalTime / frameCount) / 1000000);
                 frameCount = 0;
                 totalTime = 0;
