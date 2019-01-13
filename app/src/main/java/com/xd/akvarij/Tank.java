@@ -15,16 +15,15 @@ public class Tank {
 
     public ArrayList<Fish> graveyard;
     public ArrayList<Fish> fish;
+
     public ArrayList<Food> food;
 
+    public ArrayList<Poop> poop;
+
     private int popSize;
-
     private Bitmap fishImage;
-
     private Random random;
-
     private Rect background;
-
     private Paint paint;
 
     public boolean dayTime;
@@ -32,14 +31,13 @@ public class Tank {
     public int dayNightCycleTemp;
     public int dayCounter;
 
-    String text;
-
     public Tank(int popSize, Bitmap fishImage, MyCallback callback) {
         this.popSize = popSize;
         this.fishImage = fishImage;
         this.graveyard = new ArrayList<>();
         this.fish = new ArrayList<>();
         this.food = new ArrayList<>();
+        this.poop = new ArrayList<>();
         this.random = new Random();
         this.dayTime = true;
         this.dayNightCycle = 0;
@@ -63,6 +61,9 @@ public class Tank {
         for (int i = 0; i < food.size(); i++) {
             food.get(i).draw(canvas);
         }
+        for (int i = 0; i < poop.size(); i++) {
+            poop.get(i).draw(canvas);
+        }
     }
 
     public void update(boolean daytime) {
@@ -75,14 +76,16 @@ public class Tank {
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
             dayNightCycle = 0;
-            text = "DAY " + dayCounter + "";
-            myCallback.updateMyText(text);
+            myCallback.updateMyText("DAY " + dayCounter);
         }
         for (int i = 0; i < fish.size(); i++) {
-            fish.get(i).update(food, fish, graveyard, dayNightCycleTemp);
+            fish.get(i).update(food, fish, graveyard, poop, dayNightCycleTemp);
         }
         for (int i = 0; i < food.size(); i++) {
             food.get(i).update();
+        }
+        for (int i = 0; i < poop.size(); i++) {
+            poop.get(i).update();
         }
         if (dayNightCycleTemp == 2) dayNightCycleTemp = 0;
     }
@@ -123,15 +126,22 @@ public class Tank {
     }
 
     public void shakingStart(float x, float y) {
-        for(int i = 0; i < food.size(); i++) {
+        for (int i = 0; i < food.size(); i++) {
             food.get(i).shaking = true;
-            food.get(i).moveShaking(x, y);
+            food.get(i).moveShaking(x, y, random);
+        }
+        for (int i = 0; i < poop.size(); i++) {
+            poop.get(i).shaking = true;
+            poop.get(i).moveShaking(x, y, random);
         }
     }
 
     public void shakingStop() {
         for(int i = 0; i < food.size(); i++) {
             food.get(i).shaking = false;
+        }
+        for (int i = 0; i < poop.size(); i++) {
+            poop.get(i).shaking = true;
         }
     }
 

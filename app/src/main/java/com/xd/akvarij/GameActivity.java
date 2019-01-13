@@ -39,7 +39,6 @@ public class GameActivity extends Activity implements SensorEventListener {
     private float[] gravity;
     private float[] linear_acceleration;
 
-    SharedPreferences sharedPreferences;
     public static final String myPrefs = "myTankPrefs";
     public static final String myPrefsKey = "tank";
 

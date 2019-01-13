@@ -86,23 +86,22 @@ public class Fish {
     }
 
     public void update(ArrayList<Food> food, ArrayList<Fish> fish, ArrayList<Fish> graveyard,
-                       int dayNightCycle) {
+                       ArrayList<Poop> poop, int dayNightCycle) {
         if (alive) {
             if (dayNightCycle == 2) {
                 increaseHunger();
                 growUp(graveyard);
             }
-            SwimFreelyAndLookForFood(food);
+            defaultMove(food, poop);
         } else {
             floatToTop(fish);
         }
     }
 
-    public void SwimFreelyAndLookForFood(ArrayList<Food> food) {
-        //hunger < Constants.MAX_HUNGER
-        if (!hasFoundNearestFood && lookAroundForFood(food)) {
+    public void defaultMove(ArrayList<Food> food, ArrayList<Poop> poop) {
+        if (!hasFoundNearestFood && searchFood(food)) {
             if (nearestFood != null) {
-                goAfterFood(food, nearestFood);
+                huntFood(food, nearestFood, poop);
             }
         }
         else {
@@ -110,7 +109,7 @@ public class Fish {
         }
     }
 
-    public boolean lookAroundForFood(ArrayList<Food> food) {
+    public boolean searchFood(ArrayList<Food> food) {
         Food nearest = null;
         int oldDistanceVisionX = 0;
         int oldDistanceVisionY = 0;
@@ -160,11 +159,11 @@ public class Fish {
         }
     }
 
-    public void goAfterFood(ArrayList<Food> food, Food nearest) {
+    public void huntFood(ArrayList<Food> food, Food nearest, ArrayList<Poop> poop) {
         // ce se je zaletela v hrano
         if (nearest.getX() >= x && nearest.getX() <= x+width &&
                 nearest.getY() >= y && nearest.getY() <= y+height) {
-            decreaseHunger();
+            decreaseHunger(poop);
             food.remove(nearest);
             nearestFood = null;
             hasFoundNearestFood = false;
@@ -221,13 +220,11 @@ public class Fish {
     }
 
     // call when fish eats food
-    public void decreaseHunger() {
+    public void decreaseHunger(ArrayList<Poop> poop) {
         hunger++;
-        if (hunger > Constants.MAX_HUNGER) {
-            if (speedHorizontal > 1 && speedVertical > 1) { // ce se se vedno premika pol jo upocasni
-                speedHorizontal -= 1;
-                speedVertical -= 1;
-            }
+        if (hunger >= Constants.MAX_HUNGER) {
+            poop.add(new Poop(this.x, this.y));
+            hunger = Constants.HUNGER_AFTER_POOP;
         }
     }
 

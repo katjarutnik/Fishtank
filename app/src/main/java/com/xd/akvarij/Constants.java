@@ -16,6 +16,7 @@ public class Constants {
     public static int MIN_VISION = 300;
 
     public static int MAX_HUNGER = 10;
+    public static int HUNGER_AFTER_POOP = 5;
 
     public static int AGE_MAX_INFANT = 3;
     public static int AGE_MAX_TEEN = 7;
@@ -23,4 +24,10 @@ public class Constants {
     public static int AGE_MAX = 20;
 
     public static int DAY_LENGTH_IN_SECONDS = 15;
+
+    public static int FOOD_SIZE = 10;
+    public static int FOOD_COLOR = 0;
+
+    public static int POOP_SIZE = 10;
+    public static int POOP_COLOR = 0;
 }

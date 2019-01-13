@@ -6,7 +6,8 @@ import android.graphics.Rect;
 
 import java.util.Random;
 
-public class Food {
+// IF FISH MAX_HUNGER == TRUE THEN POOP && FISH_HUNGER-=5
+public class Poop {
     private int x;
     private int y;
     private int size;
@@ -15,16 +16,16 @@ public class Food {
 
     public boolean shaking = false;
 
-    public Food(int x, int y) {
+    public Poop(int x, int y) {
         this.x = x;
         this.y = y;
-        this.size = Constants.FOOD_SIZE;
-        this.paint = new Paint(Constants.FOOD_COLOR);
-        this.shape = new Rect(x, y, x+size, y+size);
+        this.size = Constants.POOP_SIZE;
+        this.paint = new Paint(Constants.POOP_COLOR);
+        this.shape = new Rect(x, y, x + size, y + size);
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawRect(shape, paint);
+        canvas.drawRect(this.shape, this.paint);
     }
 
     public void update() {
@@ -35,32 +36,14 @@ public class Food {
         }
     }
 
-    public int getSize() {
-        return this.size;
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
-
-    public void changePosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.shape.offsetTo(x, y);
-    }
-
     public void moveDefault() {
         this.shape.offsetTo(x, y++);
     }
 
-    public void moveShaking(float gX, float gY, Random random) {
-        x += gX;
-        if (gY < 5) {
-            y += gY;
+    public void moveShaking(float gravityX, float gravityY, Random random) {
+        this.x += gravityX;
+        if (gravityY < 5) {
+            y += gravityY;
         } else
             y += random.nextInt(5);
 
@@ -83,4 +66,9 @@ public class Food {
         changePosition(x, y);
     }
 
+    public void changePosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.shape.offsetTo(x, y);
+    }
 }
