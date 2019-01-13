@@ -12,17 +12,15 @@ public class Constants {
     public static int MAX_VERTICAL_SPEED = 3;
     public static int MIN_VERTICAL_SPEED = 1;
 
-    public static int MAX_VISION = 300;
-    public static int MIN_VISION = 60;
+    public static int MAX_VISION = 720;
+    public static int MIN_VISION = 300;
 
     public static int MAX_HUNGER = 10;
-    public static int MIN_HUNGER = 0;
-    public static int LIMIT_FEELING_HUNGRY = 5;
 
     public static int AGE_MAX_INFANT = 3;
     public static int AGE_MAX_TEEN = 7;
     public static int AGE_MAX_ADULT = 15;
     public static int AGE_MAX = 20;
 
-    public static int DAY_LENGTH_IN_SECONDS = 2;
+    public static int DAY_LENGTH_IN_SECONDS = 15;
 }
