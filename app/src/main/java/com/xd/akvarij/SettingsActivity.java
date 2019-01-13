@@ -73,7 +73,7 @@ public class SettingsActivity extends Activity {
         btnHighGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //byte[] binaryFile = readBinaryFile(R.raw.binary_img_high);
+                //byte[] binaryFile = readBinaryFile(R.raw.bubble_town_high.bin);
                 //img = decompress(binaryFile);
                 //imgBackgroundView.setImageBitmap(img);
                 Constants.GRAPHIC_QUALITY = 2;

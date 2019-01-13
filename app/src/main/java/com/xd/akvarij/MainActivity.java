@@ -100,7 +100,8 @@ public class MainActivity extends Activity {
                 fresh = true;
                 btnGenerate.setSelected(true);
                 popupWindow.dismiss();
-                population = Integer.valueOf(txtPopSize.getText().toString());
+                population = !txtPopSize.getText().toString().equals("") ?
+                        Integer.valueOf(txtPopSize.getText().toString()) : 10;
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 intent.putExtra("POPULATION", population);
                 intent.putExtra("FRESH", fresh);

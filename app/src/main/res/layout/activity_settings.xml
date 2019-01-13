@@ -19,6 +19,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,11 +28,16 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:fontFamily="casual"
             android:text="Graphic quality"
             android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="146dp" />
 
@@ -39,23 +45,39 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Current:"
-            android:textAlignment="center" />
+            android:fontFamily="casual"
+            android:text="Current"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtCurrentQuality"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
+            android:fontFamily="casual"
             android:text="HIGH"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="36sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnLowGraphicQuality"
             android:layout_width="129dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/colorAccent"
+            android:fontFamily="casual"
             android:text="Low"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="128dp"
             tools:layout_editor_absoluteY="259dp" />
 
@@ -64,7 +86,13 @@
             android:layout_width="129dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/colorAccent"
+            android:fontFamily="casual"
             android:text="Medium"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="128dp"
             tools:layout_editor_absoluteY="316dp" />
 
@@ -72,7 +100,13 @@
             android:id="@+id/btnHighGraphicQuality"
             android:layout_width="129dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"
+            android:fontFamily="casual"
             android:text="High"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="128dp"
             tools:layout_editor_absoluteY="371dp" />
     </LinearLayout>

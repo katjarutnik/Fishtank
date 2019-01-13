@@ -20,20 +20,36 @@
             android:layout_marginTop="16dp"
             android:layout_marginRight="60dp"
             android:layout_marginBottom="8dp"
-            android:text="Population size:"
-            android:textAlignment="center" />
+            android:fontFamily="casual"
+            android:text="POPULATION SIZE"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/txtPopSize"
-            android:layout_width="60dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginLeft="60dp"
             android:layout_marginRight="60dp"
             android:layout_marginBottom="8dp"
+            android:background="@color/colorPrimary"
+            android:elegantTextHeight="false"
             android:ems="10"
+            android:fontFamily="casual"
+            android:freezesText="false"
+            android:hint="10"
             android:inputType="number"
-            android:text="10"
-            android:textAlignment="center" />
+            android:numeric="integer"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimaryDark"
+            android:textIsSelectable="false"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnGenerate"
@@ -42,6 +58,12 @@
             android:layout_marginLeft="60dp"
             android:layout_marginRight="60dp"
             android:layout_marginBottom="16dp"
-            android:text="Generate" />
+            android:backgroundTint="@color/colorAccent"
+            android:fontFamily="casual"
+            android:text="Generate"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>
