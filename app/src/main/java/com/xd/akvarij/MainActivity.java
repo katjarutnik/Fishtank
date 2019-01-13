@@ -2,6 +2,7 @@ package com.xd.akvarij;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -40,6 +41,10 @@ public class MainActivity extends Activity {
         btnGenerateNew = findViewById(R.id.btnGenerate);
         btnLoad = findViewById(R.id.btnLoad);
         btnSettings = findViewById(R.id.btnSettings);
+
+        MediaPlayer player = MediaPlayer.create(this, R.raw.sound);
+        player.setLooping(true);
+        player.start();
 
         btnGenerateNew.setOnClickListener(new View.OnClickListener() {
             @Override

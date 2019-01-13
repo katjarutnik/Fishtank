@@ -16,7 +16,6 @@ import android.widget.Toast;
 public class SettingsActivity extends Activity {
 
     Bitmap img;
-    ImageDecompression dcmpr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +23,6 @@ public class SettingsActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_settings);
-
-        dcmpr = new ImageDecompression();
 
         final ImageView imgBackgroundView = findViewById(R.id.imgBackground);
         img = BitmapFactory.decodeResource(this.getResources(), R.drawable.bikini_bottom_day);
@@ -43,9 +40,10 @@ public class SettingsActivity extends Activity {
         btnLowGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //byte[] binaryFile = dcmpr.readBinaryFile(R.raw.binary_img_low);
-                //img = dcmpr.decompress(binaryFile);
-                //imgBackgroundView.setImageBitmap(img);
+                byte[] binaryFile = DecompressImage.readBinaryFile(context,
+                        R.raw.bubbletown_low);
+                img = DecompressImage.decompress(binaryFile);
+                imgBackgroundView.setImageBitmap(img);
                 Constants.GRAPHIC_QUALITY = 0;
                 txtQuality.setText("LOW");
                 CharSequence text = "Graphics set to low";
@@ -58,9 +56,10 @@ public class SettingsActivity extends Activity {
         btnMediumGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //byte[] binaryFile = readBinaryFile(R.raw.binary_img_medium);
-                //img = decompress(binaryFile);
-                //imgBackgroundView.setImageBitmap(img);
+                byte[] binaryFile = DecompressImage.readBinaryFile(context,
+                        R.raw.bubbletown_medium);
+                img = DecompressImage.decompress(binaryFile);
+                imgBackgroundView.setImageBitmap(img);
                 Constants.GRAPHIC_QUALITY = 1;
                 txtQuality.setText("MEDIUM");
                 CharSequence text = "Graphics set to medium";
@@ -73,9 +72,10 @@ public class SettingsActivity extends Activity {
         btnHighGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //byte[] binaryFile = readBinaryFile(R.raw.bubble_town_high.bin);
-                //img = decompress(binaryFile);
-                //imgBackgroundView.setImageBitmap(img);
+                byte[] binaryFile = DecompressImage.readBinaryFile(context,
+                        R.raw.bubbletown_high);
+                img = DecompressImage.decompress(binaryFile);
+                imgBackgroundView.setImageBitmap(img);
                 Constants.GRAPHIC_QUALITY = 2;
                 txtQuality.setText("HIGH");
                 CharSequence text = "Graphics set to high";
