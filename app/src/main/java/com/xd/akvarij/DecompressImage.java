@@ -27,31 +27,39 @@ public class DecompressImage {
         // width and height of image
         short width = (short) (((input[1] & 0xFF) << 8) | (input[0] & 0xFF));
         short height = (short) (((input[3] & 0xFF) << 8) | (input[2] & 0xFF));
+        // blocks
+        int blocksN = (width / 8) * (height / 8);
+        int[][] R = new int[blocksN][64];
+        int[][] G = new int[blocksN][64];
+        int[][] B = new int[blocksN][64];
+        // encoded R B G
+        short temp;
+        byte currentBit = 0; // 0 - 7
+        int currentBlock = 0; // 0 - blocksN
+        int i = 4; // 4 - input.length
+        while (i < input.length) { // idi skoz vse tri RBG
+            while (currentBlock < blocksN) { // idi skoz posameznega
+                // if currentbit pos
+                // temp = (short) (((input[i] & 0xFF) << 8) | (input[i + 1] & 0xFF));
+
+                // predznak DC 1 BIT
+
+                // DC 12 BITS
+
+                // a type || b type || c type
+                // a) MAX 1 + 6 + 4 + 1 + 13
+                // b) MAX 1 + 6
+                // c) MAX 1 + 4 + 1 + 13
+            }
+        }
+
         // image
         Bitmap pic = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        // blocks
-        StringBuilder bits = new StringBuilder();
-        for (int i = 4; i < input.length; i++) {
-            bits.append(String.format("%8s", Integer.toBinaryString(input[i] & 0xFF))
-                    .replace(' ', '0'));
-        }
-        int[] block;
-        int[] blockCikCak;
-        double[] blockIDCT = new double[64];
-        byte[] output = new byte[64];
-
-        while (bits.length() > 0) {
-            block = RLD(bits);
-            blockCikCak = cikCak(block);
-            blockIDCT = IDCT(blockCikCak);
-            // ...
-        }
-        // ...
         return pic;
     }
 
     // TODO
-    private static int[] RLD(StringBuilder bits) {
+    private static int[] RLD() {
         return new int[64];
     }
 

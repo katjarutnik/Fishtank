@@ -1,7 +1,5 @@
 package com.xd.akvarij;
 
-import android.graphics.Color;
-
 public class Constants {
     public static final int MAX_FPS = 60;
 
@@ -10,7 +8,7 @@ public class Constants {
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
 
-    public static int MAX_HORIZONTAL_SPEED = 2;
+    public static int MAX_HORIZONTAL_SPEED = 4;
     public static int MIN_HORIZONTAL_SPEED = 1;
 
     public static int MAX_VERTICAL_SPEED = 3;
@@ -32,4 +30,17 @@ public class Constants {
     public static int FOOD_SIZE = 10;
 
     public static int POOP_SIZE = 12;
+
+    public static int MAX_GAIN_X_UPPER = 7;
+    public static int MIN_GAIN_X_UPPER = -7;
+
+    public static int MAX_GAIN_X_LOWER = 5;
+    public static int MIN_GAIN_X_LOWER = -5;
+
+    public static int MAX_GAIN_Y_UPPER = 7;
+    public static int MIN_GAIN_Y_UPPER = -7;
+
+    public static int MAX_GAIN_Y_LOWER = 5;
+    public static int MIN_GAIN_Y_LOWER = -5;
+
 }

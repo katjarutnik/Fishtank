@@ -13,6 +13,8 @@ public class Poop {
     private Paint paint;
     private RectF shape;
 
+    Random random;
+
     public boolean shaking = false;
 
     public Poop(int x, int y) {
@@ -40,7 +42,9 @@ public class Poop {
         this.shape.offsetTo(x, y++);
     }
 
-    public void moveShaking(float gravityX, float gravityY, Random random) {
+    public void moveShaking(float gravityX, float gravityY) {
+        random = new Random();
+
         this.x += gravityX;
         if (gravityY < 10) {
             y += gravityY;

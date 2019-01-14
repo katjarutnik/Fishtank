@@ -9,13 +9,16 @@ import java.util.Random;
 public class Food {
     private int x;
     private int y;
-    private float xVztrajnost;
-    private float yVztrajnost;
+    private float xGain;
+    private float yGain;
     private int size;
     private Paint paint;
     private RectF shape;
 
+    private Random random;
+
     public boolean shaking = false;
+
 
     public Food(int x, int y) {
         this.x = x;
@@ -24,8 +27,9 @@ public class Food {
         this.paint = new Paint();
         paint.setARGB(255, 0, 0, 0);
         this.shape = new RectF(x, y, x+size, y+size);
-        this.xVztrajnost = 0;
-        this.yVztrajnost = 0;
+        this.xGain = 0;
+        this.yGain = 0;
+        this.random = new Random();
     }
 
     public void draw(Canvas canvas) {
@@ -62,57 +66,54 @@ public class Food {
         this.shape.offsetTo(x, y++);
     }
 
+    public void moveShaking(float gX, float gY) {
+        float rnd = (random.nextFloat() * 0.3f) + 0.9f;
 
-    public void moveShaking(float gX, float gY, Random random) {
-        float rnd = (random.nextFloat() * 0.4f) + 0.9f;
-
-        xVztrajnost += (gX * rnd);
-        if (xVztrajnost > 7) {
-            xVztrajnost = 7;
+        xGain += (gX * rnd);
+        if (xGain > Constants.MAX_GAIN_X_UPPER) {
+            xGain = Constants.MAX_GAIN_X_UPPER;
         }
-        if (xVztrajnost < -7) {
-            xVztrajnost = -7;
-        }
-
-        yVztrajnost += (gY * rnd);
-        if (yVztrajnost > 7) {
-            yVztrajnost = 7;
-        }
-        if (yVztrajnost < -7) {
-            yVztrajnost = -7;
+        if (xGain < Constants.MIN_GAIN_X_UPPER) {
+            xGain = Constants.MIN_GAIN_X_UPPER;
         }
 
-        if (xVztrajnost > 5) {
-            x += 5;
-        } else if (xVztrajnost < -5) {
-            x -= 5;
+        yGain += (gY * rnd);
+        if (yGain > Constants.MAX_GAIN_Y_UPPER) {
+            yGain = Constants.MAX_GAIN_Y_UPPER;
+        }
+        if (yGain < Constants.MIN_GAIN_Y_UPPER) {
+            yGain = Constants.MIN_GAIN_Y_UPPER;
+        }
+
+        if (xGain > Constants.MAX_GAIN_X_LOWER) {
+            x += Constants.MAX_GAIN_X_LOWER;
+        } else if (xGain < Constants.MIN_GAIN_X_LOWER) {
+            x += Constants.MIN_GAIN_X_LOWER;
         } else {
-            x += (int) xVztrajnost;
+            x += (int) xGain;
         }
 
-        if (yVztrajnost > 5) {
-            y += 5;
-        } else if (yVztrajnost < -5) {
-            y -= 5;
+        if (yGain > Constants.MAX_GAIN_Y_LOWER) {
+            y += Constants.MAX_GAIN_Y_LOWER;
+        } else if (yGain < Constants.MIN_GAIN_Y_LOWER) {
+            y += Constants.MIN_GAIN_Y_LOWER;
         } else {
-            y += (int) yVztrajnost;
+            y += (int) yGain;
         }
 
-        if (x > Constants.SCREEN_WIDTH - size) {
-            x = Constants.SCREEN_WIDTH - size - random.nextInt(15);
-            y += random.nextInt(15);
+        if (x >= Constants.SCREEN_WIDTH - size) {
+            x -= (random.nextInt(5) + size);
+            y += random.nextInt(3);
         }
-        if (y > Constants.SCREEN_HEIGHT - size) {
-            y = Constants.SCREEN_HEIGHT - size - random.nextInt(2);
-            x += random.nextInt(5);
+        if (y >= Constants.SCREEN_HEIGHT - size) {
+            y -= (random.nextInt(3) + size);
+            x -= random.nextInt(3);
         }
-        if (x < 0) {
-            x += size + random.nextInt(15);
-            y += random.nextInt(15);
+        if (x <= 0) {
+            x = random.nextInt(5);
         }
-        if (y < 0) {
-            y += size + random.nextInt(15);
-            x += random.nextInt(15);
+        if (y <= 0) {
+            y = random.nextInt(5);
         }
 
         changePosition(x, y);

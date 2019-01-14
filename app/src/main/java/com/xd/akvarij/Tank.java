@@ -119,8 +119,8 @@ public class Tank {
     public void feedFish() {
         int i = 0;
         while (i < 10) {
-            food.add(new Food(random.nextInt(Constants.SCREEN_WIDTH),
-                    random.nextInt(25) * (-1)));
+            food.add(new Food(random.nextInt(Constants.SCREEN_WIDTH) - Constants.FOOD_SIZE,
+                    random.nextInt(30)));
             i++;
         }
     }
@@ -128,11 +128,11 @@ public class Tank {
     public void shakingStart(float x, float y) {
         for (int i = 0; i < food.size(); i++) {
             food.get(i).shaking = true;
-            food.get(i).moveShaking(x, y, random);
+            food.get(i).moveShaking(x, y);
         }
         for (int i = 0; i < poop.size(); i++) {
             poop.get(i).shaking = true;
-            poop.get(i).moveShaking(x, y, random);
+            poop.get(i).moveShaking(x, y);
         }
     }
 
@@ -141,7 +141,7 @@ public class Tank {
             food.get(i).shaking = false;
         }
         for (int i = 0; i < poop.size(); i++) {
-            poop.get(i).shaking = true;
+            poop.get(i).shaking = false;
         }
     }
 
