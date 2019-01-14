@@ -1,5 +1,7 @@
 package com.xd.akvarij;
 
+import android.graphics.Color;
+
 public class Constants {
     public static final int MAX_FPS = 60;
 
@@ -28,8 +30,6 @@ public class Constants {
     public static int DAY_LENGTH_IN_SECONDS = 15;
 
     public static int FOOD_SIZE = 10;
-    public static int FOOD_COLOR = 0;
 
-    public static int POOP_SIZE = 10;
-    public static int POOP_COLOR = 0;
+    public static int POOP_SIZE = 12;
 }

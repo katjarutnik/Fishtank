@@ -2,7 +2,7 @@ package com.xd.akvarij;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.RectF;
 
 import java.util.Random;
 
@@ -11,7 +11,7 @@ public class Food {
     private int y;
     private int size;
     private Paint paint;
-    private Rect shape;
+    private RectF shape;
 
     public boolean shaking = false;
 
@@ -19,12 +19,13 @@ public class Food {
         this.x = x;
         this.y = y;
         this.size = Constants.FOOD_SIZE;
-        this.paint = new Paint(Constants.FOOD_COLOR);
-        this.shape = new Rect(x, y, x+size, y+size);
+        this.paint = new Paint();
+        paint.setARGB(255, 0, 0, 0);
+        this.shape = new RectF(x, y, x+size, y+size);
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawRect(shape, paint);
+        canvas.drawOval(shape, paint);
     }
 
     public void update() {

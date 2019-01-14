@@ -2,17 +2,16 @@ package com.xd.akvarij;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.RectF;
 
 import java.util.Random;
 
-// IF FISH MAX_HUNGER == TRUE THEN POOP && FISH_HUNGER-=5
 public class Poop {
     private int x;
     private int y;
     private int size;
     private Paint paint;
-    private Rect shape;
+    private RectF shape;
 
     public boolean shaking = false;
 
@@ -20,12 +19,13 @@ public class Poop {
         this.x = x;
         this.y = y;
         this.size = Constants.POOP_SIZE;
-        this.paint = new Paint(Constants.POOP_COLOR);
-        this.shape = new Rect(x, y, x + size, y + size);
+        this.paint = new Paint();
+        paint.setARGB(255, 210, 155, 34);
+        this.shape = new RectF(x, y, x + size, y + size);
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawRect(this.shape, this.paint);
+        canvas.drawOval(this.shape, this.paint);
     }
 
     public void update() {
