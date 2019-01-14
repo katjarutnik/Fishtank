@@ -9,6 +9,8 @@ import java.util.Random;
 public class Food {
     private int x;
     private int y;
+    private float xVztrajnost;
+    private float yVztrajnost;
     private int size;
     private Paint paint;
     private RectF shape;
@@ -22,6 +24,8 @@ public class Food {
         this.paint = new Paint();
         paint.setARGB(255, 0, 0, 0);
         this.shape = new RectF(x, y, x+size, y+size);
+        this.xVztrajnost = 0;
+        this.yVztrajnost = 0;
     }
 
     public void draw(Canvas canvas) {
@@ -58,29 +62,59 @@ public class Food {
         this.shape.offsetTo(x, y++);
     }
 
+
     public void moveShaking(float gX, float gY, Random random) {
-        x += gX;
-        if (gY < 5) {
-            y += gY;
-        } else
-            y += random.nextInt(5);
+        float rnd = (random.nextFloat() * 0.4f) + 0.9f;
+
+        xVztrajnost += (gX * rnd);
+        if (xVztrajnost > 7) {
+            xVztrajnost = 7;
+        }
+        if (xVztrajnost < -7) {
+            xVztrajnost = -7;
+        }
+
+        yVztrajnost += (gY * rnd);
+        if (yVztrajnost > 7) {
+            yVztrajnost = 7;
+        }
+        if (yVztrajnost < -7) {
+            yVztrajnost = -7;
+        }
+
+        if (xVztrajnost > 5) {
+            x += 5;
+        } else if (xVztrajnost < -5) {
+            x -= 5;
+        } else {
+            x += (int) xVztrajnost;
+        }
+
+        if (yVztrajnost > 5) {
+            y += 5;
+        } else if (yVztrajnost < -5) {
+            y -= 5;
+        } else {
+            y += (int) yVztrajnost;
+        }
 
         if (x > Constants.SCREEN_WIDTH - size) {
-            x = Constants.SCREEN_WIDTH - random.nextInt(15);
-            y += random.nextInt(5);
+            x = Constants.SCREEN_WIDTH - size - random.nextInt(15);
+            y += random.nextInt(15);
         }
         if (y > Constants.SCREEN_HEIGHT - size) {
-            y = Constants.SCREEN_HEIGHT - random.nextInt(15);
+            y = Constants.SCREEN_HEIGHT - size - random.nextInt(2);
             x += random.nextInt(5);
         }
-        if (x < size) {
+        if (x < 0) {
             x += size + random.nextInt(15);
-            y += random.nextInt(5);
+            y += random.nextInt(15);
         }
-        if (y < size) {
+        if (y < 0) {
             y += size + random.nextInt(15);
-            x += random.nextInt(5);
+            x += random.nextInt(15);
         }
+
         changePosition(x, y);
     }
 
