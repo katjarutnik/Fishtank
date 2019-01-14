@@ -42,17 +42,17 @@ public class Poop {
 
     public void moveShaking(float gravityX, float gravityY, Random random) {
         this.x += gravityX;
-        if (gravityY < 5) {
+        if (gravityY < 10) {
             y += gravityY;
         } else
             y += random.nextInt(5);
 
         if (x > Constants.SCREEN_WIDTH - size) {
-            x = Constants.SCREEN_WIDTH - random.nextInt(15);
+            x = Constants.SCREEN_WIDTH - size - random.nextInt(15);
             y += random.nextInt(5);
         }
         if (y > Constants.SCREEN_HEIGHT - size) {
-            y = Constants.SCREEN_HEIGHT - random.nextInt(15);
+            y = Constants.SCREEN_HEIGHT - size - random.nextInt(3);
             x += random.nextInt(5);
         }
         if (x < size) {
