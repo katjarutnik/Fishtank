@@ -81,6 +81,38 @@ public class Fish {
         alive = true;
     }
 
+    public int getAlive() {
+        return alive ? 1 : 0;
+    }
+
+    public int getLifeStage() {
+        if (this.stage == LifeStage.INFANT) {
+            return 0;
+        } else if (this.stage == LifeStage.TEEN) {
+            return 1;
+        } else if (this.stage == LifeStage.ADULT) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getGender() {
+        return gender == Gender.MALE ? 0 : 1;
+    }
+
+    public int getHunger() {
+        return hunger;
+    }
+
+    public int getVision() {
+        return vision;
+    }
+
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, x, y, paint);
     }
@@ -235,7 +267,7 @@ public class Fish {
             stage = LifeStage.DEAD;
     }
 
-    // call this on each new day cyle
+    // call this on each new day cycle
     public void growUp(ArrayList<Fish> graveyard) {
         age++;
         if (age == Constants.AGE_MAX_INFANT || age == Constants.AGE_MAX_TEEN ||

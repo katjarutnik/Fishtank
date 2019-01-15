@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         btnLoad = findViewById(R.id.btnLoad);
         btnSettings = findViewById(R.id.btnSettings);
 
-        MediaPlayer player = MediaPlayer.create(this, R.raw.sound);
+        MediaPlayer player = MediaPlayer.create(this, R.raw.opening);
         player.setLooping(true);
         player.start();
 

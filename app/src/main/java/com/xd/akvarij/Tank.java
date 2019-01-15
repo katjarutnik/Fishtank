@@ -1,5 +1,6 @@
 package com.xd.akvarij;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,6 +15,7 @@ public class Tank {
     MyCallback myCallback = null;
 
     public ArrayList<Fish> graveyard;
+
     public ArrayList<Fish> fish;
 
     public ArrayList<Food> food;
@@ -31,7 +33,12 @@ public class Tank {
     public int dayNightCycleTemp;
     public int dayCounter;
 
-    public Tank(int popSize, Bitmap fishImage, MyCallback callback) {
+    public StringBuilder sb = new StringBuilder();
+    public ArrayList<Data> gatherer = new ArrayList<>();
+    public DataReadWrite drw = new DataReadWrite();
+    public Context context;
+
+    public Tank(int popSize, Bitmap fishImage, MyCallback callback, Context context) {
         this.popSize = popSize;
         this.fishImage = fishImage;
         this.graveyard = new ArrayList<>();
@@ -45,6 +52,7 @@ public class Tank {
         this.paint = new Paint();
         this.background = new Rect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         this.myCallback = callback;
+        this.context = context;
     }
 
     public void draw(Canvas canvas) {
@@ -67,12 +75,22 @@ public class Tank {
     }
 
     public void update(boolean daytime) {
+        if (dayNightCycle == 0 && dayCounter > 1) {
+            // DISPLAY PROCESSED DATA FROM YESTERDAY
+            sb = drw.readFromFile(context);
+        }
         if (this.dayTime != daytime) {
             dayNightCycle++;
             dayNightCycleTemp++;
             this.dayTime = daytime;
         }
         if (dayNightCycle == 2) {
+            // COLLECT DATA
+            for (int i = 0; i < fish.size(); i++) {
+                gatherer.add(new Data(fish.get(i)));
+            }
+            drw.writeToFile(gatherer, context);
+            gatherer.clear();
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
             dayNightCycle = 0;
@@ -108,7 +126,7 @@ public class Tank {
                             Constants.MIN_HORIZONTAL_SPEED,
                     random.nextInt(Constants.MAX_VERTICAL_SPEED) +
                             Constants.MIN_VERTICAL_SPEED,
-                    random.nextInt(Constants.MAX_VISION) + Constants.MIN_VISION,
+                    random.nextInt(Constants.MED_VISION) + Constants.MIN_VISION,
                     random.nextInt(Constants.MAX_HUNGER),
                     random.nextInt(Constants.AGE_MAX),
                     (random.nextInt(100) >= 35) ? Gender.FEMALE : Gender.MALE,

@@ -86,6 +86,7 @@ public class MainThread extends Thread {
             timer = System.nanoTime();
             this.daytime = !this.daytime;
             Log.d("MainThread", "HALF A DAY HAS PASSED AWAY");
+
         }
     }
 }

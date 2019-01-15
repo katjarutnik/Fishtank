@@ -37,6 +37,7 @@ public class DecompressImage {
         byte currentBit = 0; // 0 - 7
         int currentBlock = 0; // 0 - blocksN
         int i = 4; // 4 - input.length
+        /*
         while (i < input.length) { // idi skoz vse tri RBG
             while (currentBlock < blocksN) { // idi skoz posameznega
                 // if currentbit pos
@@ -52,6 +53,7 @@ public class DecompressImage {
                 // c) MAX 1 + 4 + 1 + 13
             }
         }
+        */
 
         // image
         Bitmap pic = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

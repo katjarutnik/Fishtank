@@ -176,7 +176,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     private void loadData(int popSize, Boolean fresh, Context context) {
         if (fresh) {
             gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(),
-                    R.drawable.fish), myCallback);
+                    R.drawable.fish), myCallback, context);
             gameView.tank.generateFirstGeneration();
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);

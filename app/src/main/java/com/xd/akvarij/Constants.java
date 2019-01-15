@@ -14,8 +14,9 @@ public class Constants {
     public static int MAX_VERTICAL_SPEED = 3;
     public static int MIN_VERTICAL_SPEED = 1;
 
-    public static int MAX_VISION = 720;
+    public static int MED_VISION = 700;
     public static int MIN_VISION = 300;
+    public static int MAX_VISION = MED_VISION + MIN_VISION;
 
     public static int MAX_HUNGER = 10;
     public static int HUNGER_AFTER_POOP = 5;
@@ -25,7 +26,7 @@ public class Constants {
     public static int AGE_MAX_ADULT = 15;
     public static int AGE_MAX = 20;
 
-    public static int DAY_LENGTH_IN_SECONDS = 15;
+    public static int DAY_LENGTH_IN_SECONDS = 5;
 
     public static int FOOD_SIZE = 10;
 
