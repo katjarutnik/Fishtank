@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -67,19 +68,19 @@ public class Fish {
         this.paint.setColorFilter(filter);
         if (age < Constants.AGE_MAX_INFANT) {
             this.stage = LifeStage.INFANT;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
         } else if (age < Constants.AGE_MAX_TEEN) {
             this.stage = LifeStage.TEEN;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
         } else if (age < Constants.AGE_MAX_ADULT) {
             this.stage = LifeStage.ADULT;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
         } else {
             this.stage = LifeStage.OLD;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
         }
         if (!goingRight) {
@@ -87,6 +88,14 @@ public class Fish {
         }
         this.width = image.getWidth();
         this.height = image.getHeight();
+        image.setHasAlpha(true);
+        for(int i = 0; i < image.getWidth(); i++) {
+            for(int j = 0; j < image.getHeight(); j++) {
+                if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
+                    image.setPixel(i, j, Color.TRANSPARENT);
+                }
+            }
+        }
         hasFoundNearestFood = false;
         random = new Random();
         alive = true;
@@ -283,22 +292,46 @@ public class Fish {
         age++;
         if (age == Constants.AGE_MAX_INFANT) {
             stage = stage.getNext();
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+            image.setHasAlpha(true);
+            for(int i = 0; i < image.getWidth(); i++) {
+                for(int j = 0; j < image.getHeight(); j++) {
+                    if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
+                        image.setPixel(i, j, Color.TRANSPARENT);
+                    }
+                }
+            }
             if (!goingRight) {
                 this.image = flipHorizontally(this.image);
             }
         } else if (age == Constants.AGE_MAX_TEEN) {
             stage = stage.getNext();
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+            image.setHasAlpha(true);
+            for(int i = 0; i < image.getWidth(); i++) {
+                for(int j = 0; j < image.getHeight(); j++) {
+                    if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
+                        image.setPixel(i, j, Color.TRANSPARENT);
+                    }
+                }
+            }
             if (!goingRight) {
                 this.image = flipHorizontally(this.image);
             }
         } else if (age == Constants.AGE_MAX_ADULT) {
             stage = stage.getNext();
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
             this.image = getResizedBitmap(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+            image.setHasAlpha(true);
+            for(int i = 0; i < image.getWidth(); i++) {
+                for(int j = 0; j < image.getHeight(); j++) {
+                    if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
+                        image.setPixel(i, j, Color.TRANSPARENT);
+                    }
+                }
+            }
             if (!goingRight) {
                 this.image = flipHorizontally(this.image);
             }
