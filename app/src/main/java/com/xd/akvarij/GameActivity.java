@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -175,8 +177,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 
     private void loadData(int popSize, Boolean fresh, Context context) {
         if (fresh) {
-            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(),
-                    R.drawable.fish), myCallback, context);
+            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(), R.drawable.fishy), myCallback, context);
             gameView.tank.generateFirstGeneration();
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);
@@ -192,5 +193,4 @@ public class GameActivity extends Activity implements SensorEventListener {
             }
         }
     }
-
 }

@@ -5,6 +5,11 @@ public class Constants {
 
     public static int GRAPHIC_QUALITY = 0; // 2 HIGH, 1 MEDIUM, 0 LOW
 
+    public static int FISH_SIZE_INFANT = 16;
+    public static int FISH_SIZE_TEEN = 32;
+    public static int FISH_SIZE_ADULT = 40;
+    public static int FISH_SIZE_OLD = 48;
+
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
 

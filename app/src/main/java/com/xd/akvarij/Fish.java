@@ -1,6 +1,8 @@
 package com.xd.akvarij;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Matrix;
@@ -41,15 +43,14 @@ public class Fish {
     public boolean hasFoundNearestFood;
     // other
     Random random;
+    Context context;
 
     // constructor for new tank fish, no parents
-    public Fish(int id, Bitmap image, int x, int y, boolean goingRight, boolean goingDown,
+    public Fish(int id, int x, int y, boolean goingRight, boolean goingDown,
                 int speedHorizontal, int speedVertical, int vision, int hunger, int age,
-                Gender gender, Paint paint) {
+                Gender gender, Paint paint, Context context) {
+        this.context = context;
         this.id = id;
-        this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
         this.x = x;
         this.y = y;
         this.goingRight = goingRight;
@@ -66,16 +67,26 @@ public class Fish {
         this.paint.setColorFilter(filter);
         if (age < Constants.AGE_MAX_INFANT) {
             this.stage = LifeStage.INFANT;
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
         } else if (age < Constants.AGE_MAX_TEEN) {
             this.stage = LifeStage.TEEN;
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
         } else if (age < Constants.AGE_MAX_ADULT) {
             this.stage = LifeStage.ADULT;
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
         } else {
             this.stage = LifeStage.OLD;
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
         }
         if (!goingRight) {
-            this.image = flipHorizontally(image);
+            this.image = flipHorizontally(this.image);
         }
+        this.width = image.getWidth();
+        this.height = image.getHeight();
         hasFoundNearestFood = false;
         random = new Random();
         alive = true;
@@ -270,9 +281,27 @@ public class Fish {
     // call this on each new day cycle
     public void growUp(ArrayList<Fish> graveyard) {
         age++;
-        if (age == Constants.AGE_MAX_INFANT || age == Constants.AGE_MAX_TEEN ||
-                age == Constants.AGE_MAX_ADULT) {
+        if (age == Constants.AGE_MAX_INFANT) {
             stage = stage.getNext();
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+            if (!goingRight) {
+                this.image = flipHorizontally(this.image);
+            }
+        } else if (age == Constants.AGE_MAX_TEEN) {
+            stage = stage.getNext();
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+            if (!goingRight) {
+                this.image = flipHorizontally(this.image);
+            }
+        } else if (age == Constants.AGE_MAX_ADULT) {
+            stage = stage.getNext();
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy);
+            this.image = getResizedBitmap(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+            if (!goingRight) {
+                this.image = flipHorizontally(this.image);
+            }
         }
         if (stage == stage.DEAD && alive) {
             alive = false;
@@ -301,7 +330,8 @@ public class Fish {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    /*public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+    // https://stackoverflow.com/a/10703256
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         int width = bm.getWidth();
         int height = bm.getHeight();
         float scaleWidth = ((float) newWidth) / width;
@@ -319,6 +349,6 @@ public class Fish {
             bm = null;
         }
         return resizedBitmap;
-    }*/
+    }
 
 }

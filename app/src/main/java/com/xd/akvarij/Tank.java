@@ -75,10 +75,9 @@ public class Tank {
     }
 
     public void update(boolean daytime) {
-        if (dayNightCycle == 0 && dayCounter > 1) {
-            // DISPLAY PROCESSED DATA FROM YESTERDAY
+        /*if (dayNightCycle == 0 && dayCounter > 1) {
             sb = drw.readFromFile(context);
-        }
+        }*/
         if (this.dayTime != daytime) {
             dayNightCycle++;
             dayNightCycleTemp++;
@@ -86,11 +85,11 @@ public class Tank {
         }
         if (dayNightCycle == 2) {
             // COLLECT DATA
-            for (int i = 0; i < fish.size(); i++) {
+            /*for (int i = 0; i < fish.size(); i++) {
                 gatherer.add(new Data(fish.get(i)));
             }
             drw.writeToFile(gatherer, context);
-            gatherer.clear();
+            gatherer.clear();*/
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
             dayNightCycle = 0;
@@ -117,7 +116,6 @@ public class Tank {
                     random.nextInt(256));
             fish.add(new Fish(
                     i,
-                    fishImage,
                     random.nextInt(Constants.SCREEN_WIDTH - fishImage.getWidth()),
                     random.nextInt(Constants.SCREEN_HEIGHT - fishImage.getHeight()),
                     random.nextBoolean(),
@@ -130,7 +128,8 @@ public class Tank {
                     random.nextInt(Constants.MAX_HUNGER),
                     random.nextInt(Constants.AGE_MAX),
                     (random.nextInt(100) >= 35) ? Gender.FEMALE : Gender.MALE,
-                    paint));
+                    paint,
+                    context));
         }
     }
 
