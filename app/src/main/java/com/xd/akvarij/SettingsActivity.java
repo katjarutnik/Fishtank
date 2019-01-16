@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 public class SettingsActivity extends Activity {
 
-    Bitmap img;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,9 +22,14 @@ public class SettingsActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_settings);
 
-        final ImageView imgBackgroundView = findViewById(R.id.imgBackground);
-        img = BitmapFactory.decodeResource(this.getResources(), R.drawable.bikini_bottom_day);
-        imgBackgroundView.setImageBitmap(img);
+
+
+        final ImageView imgFishy = findViewById(R.id.imgFishy);
+        Bitmap img = BitmapFactory.decodeResource(this.getResources(), R.drawable.fishy_bmp);
+        img = ImageManipulator.resize(img, 128, 128);
+        img = ImageManipulator.setTransparentBackground(img);
+
+        imgFishy.setImageBitmap(img);
 
         final TextView txtQuality = findViewById(R.id.txtCurrentQuality);
 
@@ -41,9 +44,8 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 byte[] binaryFile = DecompressImage.readBinaryFile(context,
-                        R.raw.bubbletown_low);
-                img = DecompressImage.decompress(binaryFile);
-                imgBackgroundView.setImageBitmap(img);
+                        R.raw.fishy);
+                //img = DecompressImage.decompress(binaryFile);
                 Constants.GRAPHIC_QUALITY = 0;
                 txtQuality.setText("LOW");
                 CharSequence text = "Graphics set to low";
@@ -57,9 +59,8 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 byte[] binaryFile = DecompressImage.readBinaryFile(context,
-                        R.raw.bubbletown_medium);
-                img = DecompressImage.decompress(binaryFile);
-                imgBackgroundView.setImageBitmap(img);
+                        R.raw.fishy);
+                //img = DecompressImage.decompress(binaryFile);
                 Constants.GRAPHIC_QUALITY = 1;
                 txtQuality.setText("MEDIUM");
                 CharSequence text = "Graphics set to medium";
@@ -73,9 +74,8 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 byte[] binaryFile = DecompressImage.readBinaryFile(context,
-                        R.raw.bubbletown_high);
-                img = DecompressImage.decompress(binaryFile);
-                imgBackgroundView.setImageBitmap(img);
+                        R.raw.fishy);
+                //img = DecompressImage.decompress(binaryFile);
                 Constants.GRAPHIC_QUALITY = 2;
                 txtQuality.setText("HIGH");
                 CharSequence text = "Graphics set to high";

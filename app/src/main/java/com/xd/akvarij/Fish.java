@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -69,33 +67,26 @@ public class Fish {
         if (age < Constants.AGE_MAX_INFANT) {
             this.stage = LifeStage.INFANT;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
         } else if (age < Constants.AGE_MAX_TEEN) {
             this.stage = LifeStage.TEEN;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
         } else if (age < Constants.AGE_MAX_ADULT) {
             this.stage = LifeStage.ADULT;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
         } else {
             this.stage = LifeStage.OLD;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
         }
         if (!goingRight) {
-            this.image = flipHorizontally(this.image);
+            this.image = ImageManipulator.flipHorizontally(this.image);
         }
         this.width = image.getWidth();
         this.height = image.getHeight();
-        image.setHasAlpha(true);
-        for(int i = 0; i < image.getWidth(); i++) {
-            for(int j = 0; j < image.getHeight(); j++) {
-                if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
-                    image.setPixel(i, j, Color.TRANSPARENT);
-                }
-            }
-        }
+        this.image = ImageManipulator.setTransparentBackground(this.image);
         hasFoundNearestFood = false;
         random = new Random();
         alive = true;
@@ -151,17 +142,17 @@ public class Fish {
     }
 
     public void defaultMove(ArrayList<Food> food, ArrayList<Poop> poop) {
-        if (!hasFoundNearestFood && searchFood(food)) {
+        if (!hasFoundNearestFood && findFood(food)) {
             if (nearestFood != null) {
                 huntFood(food, nearestFood, poop);
             }
         }
         else {
-            RandomHorizontalMove();
+            randomHorizontalMove();
         }
     }
 
-    public boolean searchFood(ArrayList<Food> food) {
+    public boolean findFood(ArrayList<Food> food) {
         Food nearest = null;
         int oldDistanceVisionX = 0;
         int oldDistanceVisionY = 0;
@@ -223,13 +214,13 @@ public class Fish {
             if (x < nearest.getX()) {
                 if (!goingRight) {
                     goingRight = true;
-                    image = flipHorizontally(image);
+                    image = ImageManipulator.flipHorizontally(image);
                 }
                 x += speedHorizontal;
             } else {
                 if (goingRight) {
                     goingRight = false;
-                    image = flipHorizontally(image);
+                    image = ImageManipulator.flipHorizontally(image);
                 }
                 x -= speedHorizontal;
             }
@@ -241,25 +232,25 @@ public class Fish {
         }
     }
 
-    public void RandomHorizontalMove() {
+    public void randomHorizontalMove() {
         if (x < Constants.SCREEN_WIDTH - width && goingRight) {
             x += speedHorizontal;
             if (x >= Constants.SCREEN_WIDTH - width) {
                 goingRight = false;
-                image = flipHorizontally(image);
+                image = ImageManipulator.flipHorizontally(image);
             }
         } else {
             x -= speedHorizontal;
             if (x <= 0) {
                 goingRight = true;
-                image = flipHorizontally(image);
+                image = ImageManipulator.flipHorizontally(image);
             }
         }
         if (random.nextInt(100) > 35)
-            RandomVerticalMove();
+            randomVerticalMove();
     }
 
-    public void RandomVerticalMove() {
+    public void randomVerticalMove() {
         if (y < Constants.SCREEN_HEIGHT - height && goingDown) {
             y += speedVertical;
             if (y >= Constants.SCREEN_HEIGHT - height)
@@ -293,52 +284,31 @@ public class Fish {
         if (age == Constants.AGE_MAX_INFANT) {
             stage = stage.getNext();
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
-            image.setHasAlpha(true);
-            for(int i = 0; i < image.getWidth(); i++) {
-                for(int j = 0; j < image.getHeight(); j++) {
-                    if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
-                        image.setPixel(i, j, Color.TRANSPARENT);
-                    }
-                }
-            }
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+            this.image = ImageManipulator.setTransparentBackground(this.image);
             if (!goingRight) {
-                this.image = flipHorizontally(this.image);
+                this.image = ImageManipulator.flipHorizontally(this.image);
             }
         } else if (age == Constants.AGE_MAX_TEEN) {
             stage = stage.getNext();
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
-            image.setHasAlpha(true);
-            for(int i = 0; i < image.getWidth(); i++) {
-                for(int j = 0; j < image.getHeight(); j++) {
-                    if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
-                        image.setPixel(i, j, Color.TRANSPARENT);
-                    }
-                }
-            }
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+            this.image = ImageManipulator.setTransparentBackground(this.image);
             if (!goingRight) {
-                this.image = flipHorizontally(this.image);
+                this.image = ImageManipulator.flipHorizontally(this.image);
             }
         } else if (age == Constants.AGE_MAX_ADULT) {
             stage = stage.getNext();
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = getResizedBitmap(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
-            image.setHasAlpha(true);
-            for(int i = 0; i < image.getWidth(); i++) {
-                for(int j = 0; j < image.getHeight(); j++) {
-                    if (image.getPixel(i, j) == Color.rgb(255, 255, 255)) {
-                        image.setPixel(i, j, Color.TRANSPARENT);
-                    }
-                }
-            }
+            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+            this.image = ImageManipulator.setTransparentBackground(this.image);
             if (!goingRight) {
-                this.image = flipHorizontally(this.image);
+                this.image = ImageManipulator.flipHorizontally(this.image);
             }
         }
         if (stage == stage.DEAD && alive) {
             alive = false;
-            image = flipVertically(image);
+            image = ImageManipulator.flipVertically(image);
             graveyard.add(this);
         }
     }
@@ -350,38 +320,4 @@ public class Fish {
             fish.remove(this);
         }
     }
-
-    public Bitmap flipHorizontally(Bitmap source) {
-        Matrix matrix = new Matrix();
-        matrix.postScale(-1, 1, source.getWidth()/2f, source.getHeight());
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    }
-    
-    public Bitmap flipVertically(Bitmap source) {
-        Matrix matrix = new Matrix();
-        matrix.postScale(1, -1, source.getWidth(), source.getHeight()/2f);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    }
-
-    // https://stackoverflow.com/a/10703256
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        if (bm != null && !bm.isRecycled()) {
-            bm.recycle();
-            bm = null;
-        }
-        return resizedBitmap;
-    }
-
 }

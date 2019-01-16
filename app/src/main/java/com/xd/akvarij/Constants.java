@@ -7,8 +7,8 @@ public class Constants {
 
     public static int FISH_SIZE_INFANT = 16;
     public static int FISH_SIZE_TEEN = 32;
-    public static int FISH_SIZE_ADULT = 40;
-    public static int FISH_SIZE_OLD = 48;
+    public static int FISH_SIZE_ADULT = 48;
+    public static int FISH_SIZE_OLD = 64;
 
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
