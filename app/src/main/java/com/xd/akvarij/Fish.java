@@ -67,26 +67,26 @@ public class Fish {
         if (age < Constants.AGE_MAX_INFANT) {
             this.stage = LifeStage.INFANT;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
         } else if (age < Constants.AGE_MAX_TEEN) {
             this.stage = LifeStage.TEEN;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
         } else if (age < Constants.AGE_MAX_ADULT) {
             this.stage = LifeStage.ADULT;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
         } else {
             this.stage = LifeStage.OLD;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
         }
         if (!goingRight) {
-            this.image = ImageManipulator.flipHorizontally(this.image);
+            this.image = ImageManager.flipHorizontally(this.image);
         }
         this.width = image.getWidth();
         this.height = image.getHeight();
-        this.image = ImageManipulator.setTransparentBackground(this.image);
+        this.image = ImageManager.setWhitePixelsToTransparent(this.image);
         hasFoundNearestFood = false;
         random = new Random();
         alive = true;
@@ -214,13 +214,13 @@ public class Fish {
             if (x < nearest.getX()) {
                 if (!goingRight) {
                     goingRight = true;
-                    image = ImageManipulator.flipHorizontally(image);
+                    image = ImageManager.flipHorizontally(image);
                 }
                 x += speedHorizontal;
             } else {
                 if (goingRight) {
                     goingRight = false;
-                    image = ImageManipulator.flipHorizontally(image);
+                    image = ImageManager.flipHorizontally(image);
                 }
                 x -= speedHorizontal;
             }
@@ -237,13 +237,13 @@ public class Fish {
             x += speedHorizontal;
             if (x >= Constants.SCREEN_WIDTH - width) {
                 goingRight = false;
-                image = ImageManipulator.flipHorizontally(image);
+                image = ImageManager.flipHorizontally(image);
             }
         } else {
             x -= speedHorizontal;
             if (x <= 0) {
                 goingRight = true;
-                image = ImageManipulator.flipHorizontally(image);
+                image = ImageManager.flipHorizontally(image);
             }
         }
         if (random.nextInt(100) > 35)
@@ -282,33 +282,35 @@ public class Fish {
     public void growUp(ArrayList<Fish> graveyard) {
         age++;
         if (age == Constants.AGE_MAX_INFANT) {
-            stage = stage.getNext();
+            stage = LifeStage.TEEN;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
-            this.image = ImageManipulator.setTransparentBackground(this.image);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+            this.image = ImageManager.setWhitePixelsToTransparent(this.image);
             if (!goingRight) {
-                this.image = ImageManipulator.flipHorizontally(this.image);
+                this.image = ImageManager.flipHorizontally(this.image);
             }
         } else if (age == Constants.AGE_MAX_TEEN) {
-            stage = stage.getNext();
+            stage = LifeStage.ADULT;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
-            this.image = ImageManipulator.setTransparentBackground(this.image);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+            this.image = ImageManager.setWhitePixelsToTransparent(this.image);
             if (!goingRight) {
-                this.image = ImageManipulator.flipHorizontally(this.image);
+                this.image = ImageManager.flipHorizontally(this.image);
             }
         } else if (age == Constants.AGE_MAX_ADULT) {
-            stage = stage.getNext();
+            stage = LifeStage.OLD;
             Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManipulator.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
-            this.image = ImageManipulator.setTransparentBackground(this.image);
+            this.image = ImageManager.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+            this.image = ImageManager.setWhitePixelsToTransparent(this.image);
             if (!goingRight) {
-                this.image = ImageManipulator.flipHorizontally(this.image);
+                this.image = ImageManager.flipHorizontally(this.image);
             }
+        } else if (age == Constants.AGE_MAX) {
+            stage = LifeStage.DEAD;
         }
-        if (stage == stage.DEAD && alive) {
+        if (stage == LifeStage.DEAD && alive) {
             alive = false;
-            image = ImageManipulator.flipVertically(image);
+            image = ImageManager.flipVertically(image);
             graveyard.add(this);
         }
     }
