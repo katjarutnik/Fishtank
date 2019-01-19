@@ -44,7 +44,7 @@ public class SettingsActivity extends Activity {
         btnLowGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //bm = ImageManager.decompress(context, R.raw.fishy);
+                bm = ImageManager.decompress(context, R.raw.test_color1_out);
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 0;
                 txtQuality.setText("LOW");
@@ -58,7 +58,7 @@ public class SettingsActivity extends Activity {
         btnMediumGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //bm = ImageManager.decompress(context, R.raw.fishy);
+                bm = ImageManager.decompress(context, R.raw.test16_out);
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 1;
                 txtQuality.setText("MEDIUM");
@@ -72,7 +72,7 @@ public class SettingsActivity extends Activity {
         btnHighGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //bm = ImageManager.decompress(context, R.raw.fishy);
+                bm = ImageManager.decompress(context, R.raw.fishy_out);
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 2;
                 txtQuality.setText("HIGH");

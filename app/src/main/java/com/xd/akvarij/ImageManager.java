@@ -50,34 +50,68 @@ public class ImageManager {
         return source;
     }
 
-    // TODO
+    private static int currentByte; // 0 <= binFile.length
+    private static int currentBit; // 0 <= 7
+
     public static Bitmap decompress(Context context, int fileId) {
         byte[] binFile = readBinFile(context, fileId);
         if (binFile.length != 0) {
-            // width and height of image
+            currentByte = 4;
+            currentBit = 0;
             short width = (short) (((binFile[1] & 0xFF) << 8) | (binFile[0] & 0xFF));
             short height = (short) (((binFile[3] & 0xFF) << 8) | (binFile[2] & 0xFF));
-            // blocks
             int blocksN = (width / 8) * (height / 8);
             int[][] R = new int[blocksN][64];
             int[][] G = new int[blocksN][64];
             int[][] B = new int[blocksN][64];
-            // decode R B G
-            int binFileIterator = 4;
+            int[][][] Rxy = new int[blocksN][8][8];
+            int[][][] Gxy = new int[blocksN][8][8];
+            int[][][] Bxy = new int[blocksN][8][8];
+            double[][][] iRxy = new double[blocksN][8][8];
+            double[][][] iGxy = new double[blocksN][8][8];
+            double[][][] iBxy = new double[blocksN][8][8];
             int currentBlock = 0; // 0 < blocksN
-            int currentBit = 0; // 0 < 7
             while (currentBlock < blocksN) {
-                R[currentBlock] = RLD(binFile, binFileIterator, currentBit);
-                G[currentBlock] = RLD(binFile, binFileIterator, currentBit);
-                B[currentBlock] = RLD(binFile, binFileIterator, currentBit);
+                R[currentBlock] = RLD(binFile);
+                Rxy[currentBlock] = cikCak(R, currentBlock);
+                iRxy[currentBlock] = IDCT(Rxy, currentBlock);
+                G[currentBlock] = RLD(binFile);
+                Gxy[currentBlock] = cikCak(G, currentBlock);
+                iGxy[currentBlock] = IDCT(Gxy, currentBlock);
+                B[currentBlock] = RLD(binFile);
+                Bxy[currentBlock] = cikCak(B, currentBlock);
+                iBxy[currentBlock] = IDCT(Bxy, currentBlock);
                 currentBlock++;
             }
-            // ...
-            Bitmap pic = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            return pic;
+            return createColored(width, height, iRxy, iGxy, iBxy);
         } else {
             return Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888);
         }
+    }
+
+    private static Bitmap createColored(int w, int h, double[][][] R, double[][][] G, double[][][] B) {
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        int globalX;
+        int globalY;
+        int block = 0;
+        for (int i = 0; i < (bm.getWidth() / 8); i++) {
+            for (int j = 0; j < (bm.getHeight() / 8); j++) {
+                globalX = i * 8;
+                globalY = j * 8;
+                for (int localX = 0; localX < 8; localX++) {
+                    for (int localY = 0; localY < 8; localY++) {
+                        bm.setPixel(globalX+localX, globalY+localY,
+                                Color.rgb(
+                                        (byte)R[block][localY][localX],
+                                        (byte)G[block][localY][localX],
+                                        (byte)B[block][localY][localX]
+                                ));
+                    }
+                }
+                block++;
+            }
+        }
+        return bm;
     }
 
     private static byte[] readBinFile(Context context, int fileId) {
@@ -95,6 +129,7 @@ public class ImageManager {
     }
 
     // example: bytes = 1, start = 2, range = 3: 00000000 -> 00111000
+    // example: bytes = 2, start = 2, range = 3: 00000000 -> 0011100000000000
     private static int toggleBitsInRange(int start, int range, int bytes) {
         int n = 0;
         int mirror;
@@ -133,37 +168,131 @@ public class ImageManager {
     }
 
     private static int advanceCurrentByte(int currentByte, int currentBit, int range) {
-        if (currentBit+range < 16) {
-            return currentByte++;
-        } else if (currentBit+range < 24) {
-            return currentByte += 2;
-        } else if (currentBit+range < 32) {
-            return currentByte += 3;
+        if ((currentBit+range) < 8) {
+            return currentByte;
+        } else if ((currentBit+range) < 16) {
+            currentByte += 1;
+            return currentByte;
+        } else if ((currentBit+range) < 24) {
+            currentByte += 2;
+            return currentByte;
         } else {
+            currentByte += 3;
             return currentByte;
         }
     }
 
-    // TODO
-    private static int[] RLD(byte[] input, int inputIterator, int currentBit) {
+    // binfile[current] -> 64
+    private static int[] RLD(byte[] input) {
         int[] output = new int[64];
+        int amountOfFollowingZeros;
+        int blockIterator = 0;
+        int AClength;
+        int AC;
+        boolean ACnegative;
         // if prefix == 1 then -DC else DC
-        if ((input[inputIterator] & toggleBitsInRange(currentBit, 1, 1)) == 1) {
+        if (((input[currentByte] & toggleBitsInRange(currentBit, 1, 1))
+                >> (8-1-currentBit)) == 1) {
+            currentByte = advanceCurrentByte(currentByte, currentBit, 1);
             currentBit = advanceCurrentBit(currentBit, 1);
-            output[0] = -(grabFourBytes(input, inputIterator) & toggleBitsInRange(currentBit, 12, 4));
-            currentBit = advanceCurrentBit(currentBit, 12);
-            inputIterator = advanceCurrentByte(inputIterator, currentBit, 12);
+            output[blockIterator++] = -((grabFourBytes(input, currentByte)
+                    & toggleBitsInRange(currentBit, 12, 4)) >> (32-12-currentBit));
         } else {
+            currentByte = advanceCurrentByte(currentByte, currentBit, 1);
             currentBit = advanceCurrentBit(currentBit, 1);
-            output[0] = grabFourBytes(input, inputIterator) & toggleBitsInRange(currentBit, 12, 4);
-            currentBit = advanceCurrentBit(currentBit, 12);
-            inputIterator = advanceCurrentByte(inputIterator, currentBit, 12);
+            output[blockIterator++] = ((grabFourBytes(input, currentByte)
+                    & toggleBitsInRange(currentBit, 12, 4)) >> (32-12-currentBit));
         }
-        // if prefix == 0 then 0s else AC
-        if ((input[inputIterator] & toggleBitsInRange(currentBit, 1, 1)) == 1) {
+        currentByte = advanceCurrentByte(currentByte, currentBit, 12);
+        currentBit = advanceCurrentBit(currentBit, 12);
+        // if prefix == 0 then 0s+AC else AC
+        while (blockIterator < 64) {
+            if (((input[currentByte] & toggleBitsInRange(currentBit, 1, 1))
+                    >> (8-1-currentBit)) == 0) {
+                currentByte = advanceCurrentByte(currentByte, currentBit, 1);
+                currentBit = advanceCurrentBit(currentBit, 1);
+                amountOfFollowingZeros = ((grabTwoBytes(input, currentByte)
+                        & toggleBitsInRange(currentBit, 6, 2)) >> (16-6-currentBit));
+                blockIterator += amountOfFollowingZeros;
+                currentByte = advanceCurrentByte(currentByte, currentBit, 6);
+                currentBit = advanceCurrentBit(currentBit, 6);
+                if (blockIterator != 64) {
+                    if (currentBit < 5) { // lahko preberemo iz enega byta drgac mormo vzet 2
+                        AClength = ((input[currentByte] & toggleBitsInRange(currentBit, 4, 1))
+                                >> (8-4-currentBit));
+                    } else {
+                        AClength = ((grabTwoBytes(input, currentByte) & toggleBitsInRange(currentBit, 4, 2))
+                                >> (16-4-currentBit));
+                    }
+                    currentByte = advanceCurrentByte(currentByte, currentBit, 4);
+                    currentBit = advanceCurrentBit(currentBit, 4);
+                    //preberi ac predznak; if 1 then -ac else ac
+                    if ((((input[currentByte] & toggleBitsInRange(currentBit, 1, 1)) >> (8-1-currentBit)) == 1)) {
+                        ACnegative = true;
+                    } else {
+                        ACnegative = false;
+                    }
+                    currentByte = advanceCurrentByte(currentByte, currentBit, 1);
+                    currentBit = advanceCurrentBit(currentBit, 1);
+                    // preberi ac
+                    if (currentBit+AClength-1 < 8) { // lahk iz enga byta
+                        AC = ((input[currentByte] & toggleBitsInRange(currentBit, AClength, 1))
+                                >> (8-AClength-currentBit));
+                    } else if (currentBit+AClength-1 < 16) { // lahk iz dveh
+                        AC = ((grabTwoBytes(input, currentByte) &
+                                toggleBitsInRange(currentBit, AClength, 2)) >> (16-AClength-currentBit));
+                    } else { // je treba iz treh
+                        AC = ((grabFourBytes(input, currentByte) &
+                                toggleBitsInRange(currentBit, AClength, 4)) >> (32-AClength-currentBit));
+                    }
+                    currentByte = advanceCurrentByte(currentByte, currentBit, AClength);
+                    currentBit = advanceCurrentBit(currentBit, AClength);
+                    if (ACnegative) {
+                        output[blockIterator++] = -AC;
+                    } else{
+                        output[blockIterator++] = AC;
+                    }
+                }
+            } else {
+                currentByte = advanceCurrentByte(currentByte, currentBit, 1);
+                currentBit = advanceCurrentBit(currentBit, 1);
+                if (currentBit < 5) { // lahko preberemo iz enega byta drgac mormo vzet 2
+                    AClength = ((input[currentByte] & toggleBitsInRange(currentBit, 4, 1))
+                            >> (8-4-currentBit));
+                } else {
+                    AClength = ((grabTwoBytes(input, currentByte) & toggleBitsInRange(currentBit, 4, 2))
+                            >> (16-4-currentBit));
+                }
+                currentByte = advanceCurrentByte(currentByte, currentBit, 4);
+                currentBit = advanceCurrentBit(currentBit, 4);
+                //preberi ac predznak; if 1 then -ac else ac
+                if ((((input[currentByte] & toggleBitsInRange(currentBit, 1, 1)) >> (8-1-currentBit)) == 1)) {
+                    ACnegative = true;
+                } else {
+                    ACnegative = false;
+                }
+                currentByte = advanceCurrentByte(currentByte, currentBit, 1);
+                currentBit = advanceCurrentBit(currentBit, 1);
+                // preberi ac
+                if (currentBit+AClength-1 < 8) { // lahk iz enga byta
+                    AC = ((input[currentByte] & toggleBitsInRange(currentBit, AClength, 1))
+                            >> (8-AClength-currentBit));
 
-        } else {
-
+                } else if (currentBit+AClength-1 < 16) { // lahk iz dveh
+                    AC = ((grabTwoBytes(input, currentByte) &
+                            toggleBitsInRange(currentBit, AClength, 2)) >> (16-AClength-currentBit));
+                } else { // je treba iz treh
+                    AC = ((grabFourBytes(input, currentByte) &
+                            toggleBitsInRange(currentBit, AClength, 4)) >> (32-AClength-currentBit));
+                }
+                currentByte = advanceCurrentByte(currentByte, currentBit, AClength);
+                currentBit = advanceCurrentBit(currentBit, AClength);
+                if (ACnegative) {
+                    output[blockIterator++] = -AC;
+                } else{
+                    output[blockIterator++] = AC;
+                }
+            }
         }
         return output;
     }
@@ -239,7 +368,7 @@ public class ImageManager {
     }
 
     // 8x8 -> 8x8
-    private static double[][] IDCT(int[][] F) {
+    private static double[][] IDCT(int[][][] F, int current) {
         double[][] f = new double[8][8];
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
@@ -248,16 +377,16 @@ public class ImageManager {
                         if (u == 0 && v == 0) {
                             f[x][y] += (1.0/Math.sqrt(2.0))
                                     * (1.0/Math.sqrt(2.0))
-                                    * (double)F[u][v]
+                                    * (double)F[current][u][v]
                                     * Math.cos(((2.0*x+1.0)*u*Math.PI)/16.0)
                                     * Math.cos(((2.0*y+1.0)*v*Math.PI)/16.0);
                         } else if (u == 0 || v == 0) {
                             f[x][y] += (1.0/Math.sqrt(2.0))
-                                    * (double)F[u][v]
+                                    * (double)F[current][u][v]
                                     * Math.cos(((2.0*x+1.0)*u*Math.PI)/16.0)
                                     * Math.cos(((2.0*y+1.0)*v*Math.PI)/16.0);
                         } else {
-                            f[x][y] += (double)F[u][v]
+                            f[x][y] += (double)F[current][u][v]
                                     * Math.cos(((2.0*x+1.0)*u*Math.PI)/16.0)
                                     * Math.cos(((2.0*y+1.0)*v*Math.PI)/16.0);
                         }
