@@ -140,14 +140,30 @@ public class Fish {
             floatToTop(fish);
         }
     }
-
+    
     public void defaultMove(ArrayList<Food> food, ArrayList<Poop> poop) {
-        if (!hasFoundNearestFood && findFood(food)) {
-            if (nearestFood != null) {
+        // 50% chance that it will want to eat if it's not starving
+        if (hunger > Constants.HUNGER_AFTER_POOP && random.nextInt(100) > 50) {
+            // if it knows which food it's going after and other fish didn't eat it yet
+            if (nearestFood != null && hasFoundNearestFood) {
                 huntFood(food, nearestFood, poop);
+            // if it finds food
+            } else if (!hasFoundNearestFood && findFood(food)) {
+                if (nearestFood != null) {
+                    huntFood(food, nearestFood, poop);
+                }
+            } else {
+                randomHorizontalMove();
             }
-        }
-        else {
+        } else if (hunger <= Constants.HUNGER_AFTER_POOP) {
+            if (nearestFood != null && hasFoundNearestFood) {
+                huntFood(food, nearestFood, poop);
+            } else if (!hasFoundNearestFood && findFood(food)) {
+                huntFood(food, nearestFood, poop);
+            } else {
+                randomHorizontalMove();
+            }
+        } else {
             randomHorizontalMove();
         }
     }
@@ -271,40 +287,25 @@ public class Fish {
         }
     }
 
-    // call this on each new day cycle
+    // call on each new day cycle
     public void increaseHunger() {
         hunger--;
         if (hunger <= 0)
             stage = LifeStage.DEAD;
     }
 
-    // call this on each new day cycle
+    // call on each new day cycle
     public void growUp(ArrayList<Fish> graveyard) {
         age++;
         if (age == Constants.AGE_MAX_INFANT) {
             stage = LifeStage.TEEN;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManager.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
-            this.image = ImageManager.setWhitePixelsToTransparent(this.image);
-            if (!goingRight) {
-                this.image = ImageManager.flipHorizontally(this.image);
-            }
+            growInSize(Constants.FISH_SIZE_TEEN);
         } else if (age == Constants.AGE_MAX_TEEN) {
             stage = LifeStage.ADULT;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManager.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
-            this.image = ImageManager.setWhitePixelsToTransparent(this.image);
-            if (!goingRight) {
-                this.image = ImageManager.flipHorizontally(this.image);
-            }
+            growInSize(Constants.FISH_SIZE_ADULT);
         } else if (age == Constants.AGE_MAX_ADULT) {
             stage = LifeStage.OLD;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
-            this.image = ImageManager.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
-            this.image = ImageManager.setWhitePixelsToTransparent(this.image);
-            if (!goingRight) {
-                this.image = ImageManager.flipHorizontally(this.image);
-            }
+            growInSize(Constants.FISH_SIZE_OLD);
         } else if (age == Constants.AGE_MAX) {
             stage = LifeStage.DEAD;
         }
@@ -315,6 +316,17 @@ public class Fish {
         }
     }
 
+    // call after fish enters new life stage
+    public void growInSize(int newFishSize) {
+        Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
+        image = ImageManager.resize(img, newFishSize, newFishSize);
+        image = ImageManager.setWhitePixelsToTransparent(image);
+        if (!goingRight) {
+            image = ImageManager.flipHorizontally(image);
+        }
+    }
+
+    // call when fish dies
     public void floatToTop(ArrayList<Fish> fish) {
         if (y > 0) {
             y--;
