@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         videoView.start();
-        if (btnGenerateNew.getVisibility() == View.GONE) {
+        if (btnGenerateNew.getVisibility() == View.GONE && !popupWindow.isShowing()) {
             btnGenerateNew.setVisibility(View.VISIBLE);
             btnLoad.setVisibility(View.VISIBLE);
             btnSettings.setVisibility(View.VISIBLE);
