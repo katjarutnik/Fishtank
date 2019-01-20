@@ -143,20 +143,12 @@ public class GameActivity extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            final float alpha = 0.8f;
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
-            linear_acceleration[0] = event.values[0] - gravity[0];
-            linear_acceleration[1] = event.values[1] - gravity[1];
-            linear_acceleration[2] = event.values[2] - gravity[2];
-
-            if (linear_acceleration[0] > 0.01 || linear_acceleration[0] < -0.01) {
-                gameView.tank.shakingStart(-event.values[0], event.values[1]);
+            if (event.values[0] > Constants.MIN_GAIN_X_LOWER ||
+                    event.values[0] < Constants.MAX_GAIN_X_LOWER) {
+                gameView.tank.shakingStart(-event.values[1], -event.values[0]);
             } else {
                 gameView.tank.shakingStop();
             }
-
         }
     }
 
