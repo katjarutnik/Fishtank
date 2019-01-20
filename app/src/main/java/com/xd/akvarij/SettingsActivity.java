@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.VideoView;
 
 public class SettingsActivity extends Activity {
 
@@ -22,6 +23,7 @@ public class SettingsActivity extends Activity {
     Button btnLowGraphicQuality;
     Button btnMediumGraphicQuality;
     Button btnHighGraphicQuality;
+    VideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +37,24 @@ public class SettingsActivity extends Activity {
         btnLowGraphicQuality = findViewById(R.id.btnLowGraphicQuality);
         btnMediumGraphicQuality = findViewById(R.id.btnMediumGraphicQuality);
         btnHighGraphicQuality = findViewById(R.id.btnHighGraphicQuality);
+        videoView = findViewById(R.id.myvideoview);
+        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
+        videoView.setVideoURI(video);
+        videoView.start();
+
         imgFish = findViewById(R.id.imgFishy);
         bm = BitmapFactory.decodeResource(this.getResources(), R.drawable.fishy_bmp);
         bm = ImageManager.resize(bm, 128, 128);
         bm = ImageManager.setWhitePixelsToTransparent(bm);
         imgFish.setImageBitmap(bm);
+
+        videoView.setOnCompletionListener(
+                new MediaPlayer.OnCompletionListener() {
+                    public void onCompletion(MediaPlayer mp) {
+                        videoView.start();
+                    }
+                });
+
 
         btnLowGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,10 +63,6 @@ public class SettingsActivity extends Activity {
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 0;
                 txtQuality.setText("LOW");
-                CharSequence text = "Graphics set to low";
-                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, 100);
-                toast.show();
             }
         });
 
@@ -62,10 +73,6 @@ public class SettingsActivity extends Activity {
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 1;
                 txtQuality.setText("MEDIUM");
-                CharSequence text = "Graphics set to medium";
-                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, 100);
-                toast.show();
             }
         });
 
@@ -76,11 +83,13 @@ public class SettingsActivity extends Activity {
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 2;
                 txtQuality.setText("HIGH");
-                CharSequence text = "Graphics set to high";
-                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, 100);
-                toast.show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videoView.start();
     }
 }

@@ -3,6 +3,7 @@ package com.xd.akvarij;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -15,16 +16,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.VideoView;
 
 public class MainActivity extends Activity {
 
     public int population;
     public boolean fresh;
 
+    VideoView videoView;
     Button btnGenerateNew;
     Button btnLoad;
     Button btnSettings;
-
     PopupWindow popupWindow;
 
     @Override
@@ -41,10 +43,10 @@ public class MainActivity extends Activity {
         btnGenerateNew = findViewById(R.id.btnGenerate);
         btnLoad = findViewById(R.id.btnLoad);
         btnSettings = findViewById(R.id.btnSettings);
-
-        MediaPlayer player = MediaPlayer.create(this, R.raw.opening);
-        player.setLooping(true);
-        player.start();
+        videoView = findViewById(R.id.myvideoview);
+        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
+        videoView.setVideoURI(video);
+        videoView.start();
 
         btnGenerateNew.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,11 +72,19 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        videoView.setOnCompletionListener(
+                new MediaPlayer.OnCompletionListener() {
+                    public void onCompletion(MediaPlayer mp) {
+                        videoView.start();
+                    }
+                });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        videoView.start();
         if (btnGenerateNew.getVisibility() == View.GONE) {
             btnGenerateNew.setVisibility(View.VISIBLE);
             btnLoad.setVisibility(View.VISIBLE);
