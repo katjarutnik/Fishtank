@@ -2,6 +2,7 @@ package com.xd.akvarij;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.media.MediaPlayer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,11 +17,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public boolean daytime;
 
+    final MediaPlayer mp;
+
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
         this.context = context;
+        mp = MediaPlayer.create(context, R.raw.tap);
         setFocusable(true);
     }
 
@@ -55,6 +59,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                mp.start();
+
 
         }
         return true;
@@ -69,6 +75,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update(boolean daytime) {
+        if (tank.gameOver) {
+            thread.setRunning(false);
+        }
         tank.update(daytime);
         if (this.daytime != daytime) {
             this.daytime = daytime;

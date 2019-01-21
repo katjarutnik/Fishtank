@@ -31,6 +31,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     ConstraintLayout gameOverlay;
 
     public Button btnFeed;
+    public Button btnClean;
     public Button btnSaveAndExit;
     public TextView txtDays;
 
@@ -91,6 +92,8 @@ public class GameActivity extends Activity implements SensorEventListener {
 
         btnFeed = new Button(this);
         btnFeed = gameOverlay.findViewById(R.id.btnFeed);
+        btnClean = new Button(this);
+        btnClean = gameOverlay.findViewById(R.id.btnClean);
         btnSaveAndExit = new Button(this);
         btnSaveAndExit = gameOverlay.findViewById(R.id.btnSaveExit);
         txtDays = new TextView(this);
@@ -116,6 +119,13 @@ public class GameActivity extends Activity implements SensorEventListener {
             @Override
             public void onClick(View v) {
                 gameView.tank.feedFish();
+            }
+        });
+
+        btnClean.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameView.tank.cleanPoop();
             }
         });
 

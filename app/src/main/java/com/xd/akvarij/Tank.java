@@ -33,10 +33,12 @@ public class Tank {
     public int dayNightCycleTemp;
     public int dayCounter;
 
-    public StringBuilder sb = new StringBuilder();
-    public ArrayList<Data> gatherer = new ArrayList<>();
-    public DataReadWrite drw = new DataReadWrite();
+    //public StringBuilder sb = new StringBuilder();
+    //public ArrayList<Data> gatherer = new ArrayList<>();
+    //public DataReadWrite drw = new DataReadWrite();
     public Context context;
+
+    public boolean gameOver = false;
 
     public Tank(int popSize, Bitmap fishImage, MyCallback callback, Context context) {
         this.popSize = popSize;
@@ -78,6 +80,11 @@ public class Tank {
         /*if (dayNightCycle == 0 && dayCounter > 1) {
             sb = drw.readFromFile(context);
         }*/
+        if (allFishAreDead()) {
+            myCallback.updateMyText("YOU LEFT ALL YOUR FISH TO DIE. SAD.");
+            gameOver = true;
+        }
+
         if (this.dayTime != daytime) {
             dayNightCycle++;
             dayNightCycleTemp++;
@@ -127,10 +134,19 @@ public class Tank {
                     random.nextInt(Constants.MED_VISION) + Constants.MIN_VISION,
                     random.nextInt(Constants.MAX_HUNGER),
                     random.nextInt(Constants.AGE_MAX),
-                    (random.nextInt(100) >= 35) ? Gender.FEMALE : Gender.MALE,
+                    (random.nextInt(100) >= 50) ? Gender.FEMALE : Gender.MALE,
                     paint,
                     context));
         }
+    }
+
+    private boolean allFishAreDead() {
+        for (int i=0; i < fish.size(); i++) {
+            if (fish.get(i).getAlive() == 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void feedFish() {
@@ -140,6 +156,10 @@ public class Tank {
                     random.nextInt(30)));
             i++;
         }
+    }
+
+    public void cleanPoop() {
+        poop.clear();
     }
 
     public void shakingStart(float x, float y) {
