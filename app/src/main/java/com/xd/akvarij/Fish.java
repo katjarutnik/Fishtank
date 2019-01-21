@@ -98,17 +98,17 @@ public class Fish {
     }
 
     // constructor for newborn fish
-    public Fish(Fish mom, Fish dad) {
+    public Fish(Fish mom, Fish dad, Context context) {
         this.random = new Random();
-        this.context = mom.context;
+        this.context = context;
         this.id = 0; // placeholder, id has no use for now
-        this.x = mom.x;
-        this.y = mom.y;
+        this.x = new Integer(mom.x);
+        this.y = new Integer(mom.y);
         this.goingRight = random.nextBoolean();
         this.goingDown = random.nextBoolean();
-        this.speedHorizontal = (mom.speedHorizontal + dad.speedHorizontal) / 2;
-        this.speedVertical = (mom.speedVertical + dad.speedVertical) / 2;
-        this.vision = (mom.vision + dad.vision) / 2;
+        this.speedHorizontal = new Integer((mom.speedHorizontal + dad.speedHorizontal) / 2);
+        this.speedVertical = new Integer((mom.speedVertical + dad.speedVertical) / 2);
+        this.vision = new Integer((mom.vision + dad.vision) / 2);
         this.hunger = Constants.HUNGER_AFTER_POOP;
         this.age = 0;
         this.gender = random.nextBoolean() ? Gender.FEMALE : Gender.MALE;
@@ -117,9 +117,10 @@ public class Fish {
         if (random.nextInt(100) < Constants.MUTATION_CHANCE) {
             this.paint.setARGB(255,0,0,0);
         } else {
-            this.paint = mom.paint;
+            this.paint = new Paint(mom.paint);
         }
-        LightingColorFilter filter = new LightingColorFilter(this.paint.getColor(), dad.paint.getColor());
+        LightingColorFilter filter = new LightingColorFilter(new Paint(this.paint).getColor(),
+                new Paint(dad.paint).getColor());
         this.paint.setColorFilter(filter);
         this.stage = LifeStage.INFANT;
         Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
@@ -400,9 +401,9 @@ public class Fish {
                 fish.get(i).stage == LifeStage.OLD)
             && random.nextInt(100) < Constants.PREGNANCY_CHANCE) {
                 this.pregnant = true;
-                this.womb.add(new Fish(this, fish.get(i)));
+                this.womb.add(new Fish(this, fish.get(i), context));
                 if (random.nextInt(100) < Constants.PREGNANCY_TWINS_CHANCE) {
-                    this.womb.add(new Fish(this, fish.get(i)));
+                    this.womb.add(new Fish(this, fish.get(i), context));
                 }
                 break;
             }
