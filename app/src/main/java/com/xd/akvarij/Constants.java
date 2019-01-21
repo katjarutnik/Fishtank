@@ -48,4 +48,8 @@ public class Constants {
     public static int MAX_GAIN_Y_LOWER = 5;
     public static int MIN_GAIN_Y_LOWER = -5;
 
+    public static int MUTATION_CHANCE = 5;
+    public static int PREGNANCY_CHANCE = 50;
+    public static int PREGNANCY_TWINS_CHANCE = 5;
+
 }

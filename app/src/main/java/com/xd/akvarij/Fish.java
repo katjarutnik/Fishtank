@@ -4,10 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -32,6 +31,8 @@ public class Fish {
     private int age;
     private Gender gender;
     private LifeStage stage;
+    private boolean pregnant;
+    private ArrayList<Fish> womb;
     private int mother;
     private int father;
     private ArrayList<Integer> children;
@@ -43,6 +44,8 @@ public class Fish {
     // other
     Random random;
     Context context;
+
+    public Fish() {}
 
     // constructor for new tank fish, no parents
     public Fish(int id, int x, int y, boolean goingRight, boolean goingDown,
@@ -62,23 +65,24 @@ public class Fish {
         this.gender = gender;
         this.children = new ArrayList<>();
         this.paint = paint;
-        ColorFilter filter = new PorterDuffColorFilter(this.paint.getColor(), PorterDuff.Mode.SRC_IN);
+        //ColorFilter filter = new PorterDuffColorFilter(this.paint.getColor(), PorterDuff.Mode.SRC_IN);
+        LightingColorFilter filter = new LightingColorFilter(this.paint.getColor(), Color.BLACK);
         this.paint.setColorFilter(filter);
         if (age < Constants.AGE_MAX_INFANT) {
             this.stage = LifeStage.INFANT;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
             this.image = ImageManager.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
         } else if (age < Constants.AGE_MAX_TEEN) {
             this.stage = LifeStage.TEEN;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
             this.image = ImageManager.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
         } else if (age < Constants.AGE_MAX_ADULT) {
             this.stage = LifeStage.ADULT;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
             this.image = ImageManager.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
         } else {
             this.stage = LifeStage.OLD;
-            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
+            Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
             this.image = ImageManager.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
         }
         if (!goingRight) {
@@ -86,10 +90,49 @@ public class Fish {
         }
         this.width = image.getWidth();
         this.height = image.getHeight();
-        this.image = ImageManager.setWhitePixelsToTransparent(this.image);
-        hasFoundNearestFood = false;
-        random = new Random();
-        alive = true;
+        this.hasFoundNearestFood = false;
+        this.random = new Random();
+        this.alive = true;
+        this.pregnant = false;
+        this.womb = new ArrayList<>();
+    }
+
+    // constructor for newborn fish
+    public Fish(Fish mom, Fish dad) {
+        this.random = new Random();
+        this.context = mom.context;
+        this.id = 0; // placeholder, id has no use for now
+        this.x = mom.x;
+        this.y = mom.y;
+        this.goingRight = random.nextBoolean();
+        this.goingDown = random.nextBoolean();
+        this.speedHorizontal = (mom.speedHorizontal + dad.speedHorizontal) / 2;
+        this.speedVertical = (mom.speedVertical + dad.speedVertical) / 2;
+        this.vision = (mom.vision + dad.vision) / 2;
+        this.hunger = Constants.HUNGER_AFTER_POOP;
+        this.age = 0;
+        this.gender = random.nextBoolean() ? Gender.FEMALE : Gender.MALE;
+        this.children = new ArrayList<>();
+        this.paint = new Paint();
+        if (random.nextInt(100) < Constants.MUTATION_CHANCE) {
+            this.paint.setARGB(255,0,0,0);
+        } else {
+            this.paint = mom.paint;
+        }
+        LightingColorFilter filter = new LightingColorFilter(this.paint.getColor(), dad.paint.getColor());
+        this.paint.setColorFilter(filter);
+        this.stage = LifeStage.INFANT;
+        Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
+        this.image = ImageManager.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
+        if (!this.goingRight) {
+            this.image = ImageManager.flipHorizontally(this.image);
+        }
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        this.hasFoundNearestFood = false;
+        this.alive = true;
+        this.pregnant = false;
+        this.womb = new ArrayList<>();
     }
 
     public int getAlive() {
@@ -134,13 +177,23 @@ public class Fish {
             if (dayNightCycle == 2) {
                 increaseHunger();
                 growUp(graveyard);
+                if (pregnant) {
+                    pregnant = false;
+                    while (!this.womb.isEmpty()) {
+                        fish.add(this.womb.get(this.womb.size()-1));
+                        this.womb.remove(this.womb.size()-1);
+                    }
+                }
+                if (gender == Gender.FEMALE) {
+                    getPregnant(fish);
+                }
             }
             defaultMove(food, poop);
         } else {
             floatToTop(fish);
         }
     }
-    
+
     public void defaultMove(ArrayList<Food> food, ArrayList<Poop> poop) {
         // 50% chance that it will want to eat if it's not starving
         if (hunger > Constants.HUNGER_AFTER_POOP && random.nextInt(100) > 50) {
@@ -318,7 +371,7 @@ public class Fish {
 
     // call after fish enters new life stage
     public void growInSize(int newFishSize) {
-        Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.fishy_bmp);
+        Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.final_fish);
         image = ImageManager.resize(img, newFishSize, newFishSize);
         image = ImageManager.setWhitePixelsToTransparent(image);
         if (!goingRight) {
@@ -332,6 +385,27 @@ public class Fish {
             y--;
         } else {
             fish.remove(this);
+        }
+    }
+
+    // if fish is female teenager/adult then find a male DNA provider and get pregnant
+    public void getPregnant(ArrayList<Fish> fish) {
+        for (int i = 0; i < fish.size(); i++) {
+            if (fish.get(i) != this
+            && (this.stage == LifeStage.TEEN ||
+                this.stage == LifeStage.ADULT)
+            && fish.get(i).gender == Gender.MALE
+            && (fish.get(i).stage == LifeStage.TEEN ||
+                fish.get(i).stage == LifeStage.ADULT ||
+                fish.get(i).stage == LifeStage.OLD)
+            && random.nextInt(100) < Constants.PREGNANCY_CHANCE) {
+                this.pregnant = true;
+                this.womb.add(new Fish(this, fish.get(i)));
+                if (random.nextInt(100) < Constants.PREGNANCY_TWINS_CHANCE) {
+                    this.womb.add(new Fish(this, fish.get(i)));
+                }
+                break;
+            }
         }
     }
 }

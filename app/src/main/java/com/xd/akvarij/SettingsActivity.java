@@ -43,9 +43,8 @@ public class SettingsActivity extends Activity {
         videoView.start();
 
         imgFish = findViewById(R.id.imgFishy);
-        bm = BitmapFactory.decodeResource(this.getResources(), R.drawable.fishy_bmp);
+        bm = BitmapFactory.decodeResource(this.getResources(), R.drawable.fish_128);
         bm = ImageManager.resize(bm, 128, 128);
-        bm = ImageManager.setWhitePixelsToTransparent(bm);
         imgFish.setImageBitmap(bm);
 
         videoView.setOnCompletionListener(
@@ -59,7 +58,8 @@ public class SettingsActivity extends Activity {
         btnLowGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bm = ImageManager.decompress(context, R.raw.test_color1_out);
+                bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.fish_8);
+                bm = ImageManager.resize(bm, 128, 128);
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 0;
                 txtQuality.setText("LOW");
@@ -69,7 +69,8 @@ public class SettingsActivity extends Activity {
         btnMediumGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bm = ImageManager.decompress(context, R.raw.test16_out);
+                bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.fish_16);
+                bm = ImageManager.resize(bm, 128, 128);
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 1;
                 txtQuality.setText("MEDIUM");
@@ -79,7 +80,8 @@ public class SettingsActivity extends Activity {
         btnHighGraphicQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bm = ImageManager.decompress(context, R.raw.fishy_out);
+                bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.fish_128);
+                bm = ImageManager.resize(bm, 128, 128);
                 imgFish.setImageBitmap(bm);
                 Constants.GRAPHIC_QUALITY = 2;
                 txtQuality.setText("HIGH");

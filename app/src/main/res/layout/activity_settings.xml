@@ -35,8 +35,8 @@
 
             <ImageView
                 android:id="@+id/imgFishy"
-                android:layout_width="128dp"
-                android:layout_height="128dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_marginRight="42dp"
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/fish"
