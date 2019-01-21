@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.util.Log;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -39,14 +36,14 @@ public class GameActivity extends Activity implements SensorEventListener {
 
     private SensorManager sensorMan;
     private Sensor accelerometer;
-    private float[] gravity;
-    private float[] linear_acceleration;
 
     public static final String myPrefs = "myTankPrefs";
     public static final String myPrefsKey = "tank";
 
     MyCallback myCallback;
     Context context;
+
+    int orientacija;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +62,22 @@ public class GameActivity extends Activity implements SensorEventListener {
 
         sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        gravity = new float[3];
-        linear_acceleration = new float[3];
+
+        final OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                if (orientation == 90) {
+                    orientacija = orientation;
+                }
+                if (orientation == 270) {
+                    orientacija = orientation;
+                }
+            }
+        };
+
+        if (orientationEventListener.canDetectOrientation()) {
+            orientationEventListener.enable();
+        }
 
         View rootView = getLayoutInflater().inflate(R.layout.activity_game, null, true);
 
@@ -145,7 +156,11 @@ public class GameActivity extends Activity implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             if (event.values[0] > Constants.MIN_GAIN_X_LOWER ||
                     event.values[0] < Constants.MAX_GAIN_X_LOWER) {
-                gameView.tank.shakingStart(-event.values[1], -event.values[0]);
+                if (orientacija == 90)
+                    gameView.tank.shakingStart(-event.values[1], -event.values[0]);
+                else
+                    gameView.tank.shakingStart(event.values[1], event.values[0]);
+
             } else {
                 gameView.tank.shakingStop();
             }

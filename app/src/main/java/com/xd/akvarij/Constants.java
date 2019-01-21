@@ -4,7 +4,7 @@ public class Constants {
     public static final int MAX_FPS = 60;
     public static int GRAPHIC_QUALITY = 0; // 2 HIGH, 1 MEDIUM, 0 LOW
 
-    public static int DAY_LENGTH_IN_SECONDS = 5;
+    public static int DAY_LENGTH_IN_SECONDS = 10;
 
     public static int FISH_SIZE_INFANT = 16;
     public static int FISH_SIZE_TEEN = 32;
