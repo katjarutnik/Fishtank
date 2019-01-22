@@ -1,5 +1,6 @@
 package com.xd.akvarij;
 
 public interface MyCallback {
-    void updateMyText(String myString);
+    void updateTxtDays(String myString);
+    void updateTxtInfo(String myString);
 }

@@ -102,20 +102,23 @@ public class Fish {
         this.random = new Random();
         this.context = context;
         this.id = 0; // placeholder, id has no use for now
-        this.x = new Integer(mom.x);
-        this.y = new Integer(mom.y);
+        this.x = Integer.valueOf(mom.x);
+        this.y = Integer.valueOf(mom.y);
         this.goingRight = random.nextBoolean();
         this.goingDown = random.nextBoolean();
-        this.speedHorizontal = new Integer((mom.speedHorizontal + dad.speedHorizontal) / 2);
-        this.speedVertical = new Integer((mom.speedVertical + dad.speedVertical) / 2);
-        this.vision = new Integer((mom.vision + dad.vision) / 2);
+        this.speedHorizontal = Integer.valueOf((mom.speedHorizontal + dad.speedHorizontal) / 2);
+        this.speedVertical = Integer.valueOf((mom.speedVertical + dad.speedVertical) / 2);
+        this.vision = Integer.valueOf((mom.vision + dad.vision) / 2);
         this.hunger = Constants.HUNGER_AFTER_POOP;
         this.age = 0;
         this.gender = random.nextBoolean() ? Gender.FEMALE : Gender.MALE;
         this.children = new ArrayList<>();
         this.paint = new Paint();
         if (random.nextInt(100) < Constants.MUTATION_CHANCE) {
-            this.paint.setARGB(255,0,0,0);
+            this.paint.setARGB(255,
+                    random.nextInt(256),
+                    random.nextInt(256),
+                    random.nextInt(256));
         } else {
             this.paint = new Paint(mom.paint);
         }
@@ -166,6 +169,14 @@ public class Fish {
 
     public int getVision() {
         return vision;
+    }
+
+    public int getX () {
+        return x;
+    }
+
+    public int getY () {
+        return y;
     }
 
     public void draw(Canvas canvas) {
@@ -409,4 +420,32 @@ public class Fish {
             }
         }
     }
+
+    // if you tapped on the glass
+    public void gotScared() {
+        if (hasFoundNearestFood)
+            hasFoundNearestFood = false;
+        changeHorizontalSwimmingDirection();
+        changeVerticalSwimmingDirection();
+    }
+
+    public void changeHorizontalSwimmingDirection() {
+        if (goingRight) {
+            goingRight = false;
+            image = ImageManager.flipHorizontally(image);
+        } else {
+            goingRight = true;
+            image = ImageManager.flipHorizontally(image);
+        }
+    }
+
+    public void changeVerticalSwimmingDirection() {
+        if (goingDown) {
+            goingDown = false;
+        } else {
+            goingDown = true;
+        }
+    }
+
+
 }

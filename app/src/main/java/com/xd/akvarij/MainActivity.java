@@ -18,16 +18,21 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
+import com.rtugeek.android.colorseekbar.ColorSeekBar;
+
 public class MainActivity extends Activity {
 
     public int population;
     public boolean fresh;
 
     VideoView videoView;
+
     Button btnGenerateNew;
     Button btnLoad;
     Button btnSettings;
+
     PopupWindow popupWindow;
+    int pickedColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +112,15 @@ public class MainActivity extends Activity {
 
         RelativeLayout relativeLayout = popupView.findViewById(R.id.relativeLayout);
         final EditText txtPopSize = popupView.findViewById(R.id.txtPopSize);
+        final ColorSeekBar colorSeekBar = popupView.findViewById(R.id.colorSlider);
         final Button btnGenerate = popupView.findViewById(R.id.btnGenerate);
+
+        colorSeekBar.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
+            @Override
+            public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
+                pickedColor = color;
+            }
+        });
 
         btnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +133,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 intent.putExtra("POPULATION", population);
                 intent.putExtra("FRESH", fresh);
+                intent.putExtra("COLOR", pickedColor);
                 startActivity(intent);
             }
         });

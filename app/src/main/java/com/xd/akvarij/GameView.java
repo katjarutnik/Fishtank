@@ -19,6 +19,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     final MediaPlayer mp;
 
+    MyCallback myCallback = null;
+
+    int tap = 0;
+
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -34,6 +38,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         thread.setRunning(true);
         thread.start();
         this.daytime = tank.dayTime;
+        this.myCallback = tank.myCallback;
     }
 
     @Override
@@ -58,10 +63,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_DOWN: {
+                if (tap == 0) {
+                    myCallback.updateTxtInfo("HEY. STOP DOING THAT! >:(");
+                    tap = 1;
+                } else if (tap == 1) {
+                    myCallback.updateTxtInfo("YOU'RE SCARING THEM. STOP.");
+                    tap = 2;
+                } else if (tap == 2) {
+                    myCallback.updateTxtInfo("DO. NOT. TAP. THE. GLASS.");
+                    tap = 0;
+                }
                 mp.start();
-
-
+                tank.scare(event.getX(), event.getY());
+            }
         }
         return true;
     }

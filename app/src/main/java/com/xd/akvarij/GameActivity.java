@@ -24,6 +24,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 
     int population;
     boolean fresh;
+    int pickedColor = 0;
 
     GameView gameView;
 
@@ -34,6 +35,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     public Button btnClean;
     public Button btnSaveAndExit;
     public TextView txtDays;
+    public TextView txtInfo;
 
     private SensorManager sensorMan;
     private Sensor accelerometer;
@@ -56,6 +58,7 @@ public class GameActivity extends Activity implements SensorEventListener {
         if (extras != null) {
             population = extras.getInt("POPULATION");
             fresh = extras.getBoolean("FRESH");
+            pickedColor = extras.getInt("COLOR");
         } else {
             population = 10;
             fresh = true;
@@ -102,6 +105,8 @@ public class GameActivity extends Activity implements SensorEventListener {
         btnSaveAndExit = gameOverlay.findViewById(R.id.btnSaveExit);
         txtDays = new TextView(this);
         txtDays = gameOverlay.findViewById(R.id.txtDays);
+        txtInfo = new TextView(this);
+        txtInfo = gameOverlay.findViewById(R.id.txtInfo);
 
         gameFrame.removeView(gameOverlay);
         gameFrame.addView(gameView);
@@ -109,11 +114,20 @@ public class GameActivity extends Activity implements SensorEventListener {
 
         myCallback = new MyCallback() {
             @Override
-            public void updateMyText(final String myString) {
+            public void updateTxtDays(final String myString) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         txtDays.setText(myString);
+                    }
+                });
+            }
+            @Override
+            public void updateTxtInfo(final String myString) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtInfo.setText(myString);
                     }
                 });
             }
@@ -205,7 +219,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     private void loadData(int popSize, Boolean fresh, Context context) {
         if (fresh) {
             gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(), R.drawable.final_fish), myCallback, context);
-            gameView.tank.generateFirstGeneration();
+            gameView.tank.generateFirstGeneration(pickedColor);
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);
             if (sharedPreferences.contains(myPrefsKey)) {

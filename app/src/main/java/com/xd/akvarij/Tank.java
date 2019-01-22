@@ -40,6 +40,11 @@ public class Tank {
 
     public boolean gameOver = false;
 
+    public int countFish;
+    public int countFishNewborn;
+    public int countFishDied;
+
+
     public Tank(int popSize, Bitmap fishImage, MyCallback callback, Context context) {
         this.popSize = popSize;
         this.fishImage = fishImage;
@@ -81,16 +86,18 @@ public class Tank {
             sb = drw.readFromFile(context);
         }*/
         if (allFishAreDead()) {
-            myCallback.updateMyText("YOU LEFT ALL YOUR FISH TO DIE. SAD.");
+            myCallback.updateTxtDays("YOU LEFT ALL YOUR FISH TO DIE. SAD.");
             gameOver = true;
         }
 
         if (this.dayTime != daytime) {
+            myCallback.updateTxtInfo("It's night time.");
             dayNightCycle++;
             dayNightCycleTemp++;
             this.dayTime = daytime;
         }
         if (dayNightCycle == 2) {
+            myCallback.updateTxtInfo("It's day time.");
             // COLLECT DATA
             /*for (int i = 0; i < fish.size(); i++) {
                 gatherer.add(new Data(fish.get(i)));
@@ -100,7 +107,7 @@ public class Tank {
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
             dayNightCycle = 0;
-            myCallback.updateMyText("DAY " + dayCounter);
+            myCallback.updateTxtDays("DAY " + dayCounter);
         }
         for (int i = 0; i < fish.size(); i++) {
             fish.get(i).update(food, fish, graveyard, poop, dayNightCycleTemp);
@@ -114,13 +121,17 @@ public class Tank {
         if (dayNightCycleTemp == 2) dayNightCycleTemp = 0;
     }
 
-    public void generateFirstGeneration() {
+    public void generateFirstGeneration(int pickedColor) {
         for (int i = 0; i < this.popSize; i++) {
             Paint paint = new Paint();
+            /*paint.setARGB(255,
+                    random.nextInt(256),
+                    random.nextInt(256),
+                    random.nextInt(256));*/
             paint.setARGB(255,
-                    random.nextInt(256),
-                    random.nextInt(256),
-                    random.nextInt(256));
+                    (pickedColor >> 16) & 0xFF,
+                    (pickedColor >> 8) & 0xFF,
+                    (pickedColor) & 0xFF);
             fish.add(new Fish(
                     i,
                     random.nextInt(Constants.SCREEN_WIDTH - fishImage.getWidth()),
@@ -179,6 +190,18 @@ public class Tank {
         }
         for (int i = 0; i < poop.size(); i++) {
             poop.get(i).shaking = false;
+        }
+    }
+
+    // if you tap on the glass and fish are nearby, they will quicky swim away
+    public void scare(float x, float y) {
+        for (int i = 0; i < fish.size(); i++) {
+            if (fish.get(i).getAlive() == 1) {
+                if (Math.abs((int)x - fish.get(i).getX()) < 100 &&
+                        (Math.abs((int)y - fish.get(i).getY())) < 100) {
+                    fish.get(i).gotScared();
+                }
+            }
         }
     }
 
