@@ -48,4 +48,6 @@ public class Constants {
     public static int PREGNANCY_CHANCE = 35;
     public static int PREGNANCY_TWINS_CHANCE = 5;
 
+    public static int FISH_IMAGE = R.drawable.test_fish;
+
 }

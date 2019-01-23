@@ -7,74 +7,123 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="214dp"
-        android:layout_marginTop="106dp"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="vertical">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="150dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="casual"
-            android:text="POPULATION SIZE"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/txtPopSize"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|center_horizontal|center_vertical"
-            android:layout_marginBottom="8dp"
-            android:background="@color/colorTransparent"
-            android:fontFamily="casual"
-            android:hint="10"
-            android:inputType="number"
-            android:singleLine="true"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            <ScrollView
+                android:id="@+id/scrollView3"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:scrollbarStyle="outsideInset"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="casual"
-            android:text="FISH COLOR"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
 
-        <com.rtugeek.android.colorseekbar.ColorSeekBar
-            android:id="@+id/colorSlider"
-            android:layout_width="match_parent"
-            app:colorSeeds="@array/material_colors"
-            android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="casual"
+                        android:text="POPULATION SIZE"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnGenerate"
-            android:layout_width="129dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
-            android:fontFamily="casual"
-            android:text="Generate"
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+                    <EditText
+                        android:id="@+id/txtPopSize"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|center_horizontal|center_vertical"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/colorTransparent"
+                        android:fontFamily="casual"
+                        android:hint="10"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="casual"
+                        android:text="FISH COLOR (PRIMARY)"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.rtugeek.android.colorseekbar.ColorSeekBar
+                        android:id="@+id/colorSliderPrimary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:colorSeeds="@array/material_colors" />
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="casual"
+                        android:text="FISH COLOR (SECONDARY)"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.rtugeek.android.colorseekbar.ColorSeekBar
+                        android:id="@+id/colorSliderSecondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:colorSeeds="@array/material_colors" />
+
+                </LinearLayout>
+            </ScrollView>
+
+            <Button
+                android:id="@+id/btnGenerate"
+                android:layout_width="129dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/colorAccent"
+                android:fontFamily="casual"
+                android:text="Generate"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView3" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 
 import java.io.DataInputStream;
 import java.io.InputStream;
@@ -38,11 +39,13 @@ public class ImageManager {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    public static Bitmap setWhitePixelsToTransparent(Bitmap source) {
+    public static Bitmap setColorToTransparent(Bitmap source, int color) {
         source.setHasAlpha(true);
+        Paint p = new Paint();
+        p.setARGB(255, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF);
         for (int i = 0; i < source.getWidth(); i++) {
             for (int j = 0; j < source.getHeight(); j++) {
-                if (source.getPixel(i, j) == Color.rgb(255, 255, 255)) {
+                if (source.getPixel(i, j) == p.getColor()) {
                     source.setPixel(i, j, Color.TRANSPARENT);
                 }
             }
@@ -50,6 +53,20 @@ public class ImageManager {
         return source;
     }
 
+    public static Bitmap setPrimaryAndSecondaryColor(Bitmap source, int primary, int secondary) {
+        source.setHasAlpha(true);
+        for (int i = 0; i < source.getWidth(); i++) {
+            for (int j = 0; j < source.getHeight(); j++) {
+                if (source.getPixel(i, j) == Color.rgb(255, 255, 255))
+                    source.setPixel(i, j, primary);
+                else if (source.getPixel(i, j) == Color.rgb(0, 0, 0))
+                    source.setPixel(i, j , secondary);
+            }
+        }
+        return source;
+    }
+
+    // decompression -------------------------------------------------------------------------------
     private static int currentByte; // 0 <= binFile.length
     private static int currentBit; // 0 <= 7
 

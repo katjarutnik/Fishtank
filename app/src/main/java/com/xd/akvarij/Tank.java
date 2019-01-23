@@ -91,13 +91,13 @@ public class Tank {
         }
 
         if (this.dayTime != daytime) {
-            myCallback.updateTxtInfo("It's night time.");
+            myCallback.updateTxtInfoTop("It's night time.");
             dayNightCycle++;
             dayNightCycleTemp++;
             this.dayTime = daytime;
         }
         if (dayNightCycle == 2) {
-            myCallback.updateTxtInfo("It's day time.");
+            myCallback.updateTxtInfoTop("It's day time.");
             // COLLECT DATA
             /*for (int i = 0; i < fish.size(); i++) {
                 gatherer.add(new Data(fish.get(i)));
@@ -121,17 +121,8 @@ public class Tank {
         if (dayNightCycleTemp == 2) dayNightCycleTemp = 0;
     }
 
-    public void generateFirstGeneration(int pickedColor) {
+    public void generateFirstGeneration(int primaryColor, int secondaryColor) {
         for (int i = 0; i < this.popSize; i++) {
-            Paint paint = new Paint();
-            /*paint.setARGB(255,
-                    random.nextInt(256),
-                    random.nextInt(256),
-                    random.nextInt(256));*/
-            paint.setARGB(255,
-                    (pickedColor >> 16) & 0xFF,
-                    (pickedColor >> 8) & 0xFF,
-                    (pickedColor) & 0xFF);
             fish.add(new Fish(
                     i,
                     random.nextInt(Constants.SCREEN_WIDTH - fishImage.getWidth()),
@@ -146,7 +137,8 @@ public class Tank {
                     random.nextInt(Constants.MAX_HUNGER),
                     random.nextInt(Constants.AGE_MAX),
                     (random.nextInt(100) >= 50) ? Gender.FEMALE : Gender.MALE,
-                    paint,
+                    primaryColor,
+                    secondaryColor,
                     context));
         }
     }

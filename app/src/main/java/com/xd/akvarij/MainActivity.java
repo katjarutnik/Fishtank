@@ -32,7 +32,8 @@ public class MainActivity extends Activity {
     Button btnSettings;
 
     PopupWindow popupWindow;
-    int pickedColor;
+    int pickedPrimaryColor = 0;
+    int pickedSecondaryColor = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        btnLoad.setEnabled(false);
         btnLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +72,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        btnSettings.setEnabled(false);
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,20 +108,28 @@ public class MainActivity extends Activity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         final View popupView = inflater.inflate(R.layout.dialog_new, null);
 
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
         popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.setOutsideTouchable(true);
 
         RelativeLayout relativeLayout = popupView.findViewById(R.id.relativeLayout);
         final EditText txtPopSize = popupView.findViewById(R.id.txtPopSize);
-        final ColorSeekBar colorSeekBar = popupView.findViewById(R.id.colorSlider);
+        final ColorSeekBar colorSeekBar1 = popupView.findViewById(R.id.colorSliderPrimary);
+        final ColorSeekBar colorSeekBar2 = popupView.findViewById(R.id.colorSliderSecondary);
         final Button btnGenerate = popupView.findViewById(R.id.btnGenerate);
 
-        colorSeekBar.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
+        colorSeekBar1.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
-                pickedColor = color;
+                pickedPrimaryColor = color;
+            }
+        });
+
+        colorSeekBar2.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
+            @Override
+            public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
+                pickedSecondaryColor = color;
             }
         });
 
@@ -133,7 +144,8 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 intent.putExtra("POPULATION", population);
                 intent.putExtra("FRESH", fresh);
-                intent.putExtra("COLOR", pickedColor);
+                intent.putExtra("COLOR_PRIMARY", pickedPrimaryColor);
+                intent.putExtra("COLOR_SECONDARY", pickedSecondaryColor);
                 startActivity(intent);
             }
         });

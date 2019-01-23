@@ -65,13 +65,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN: {
                 if (tap == 0) {
-                    myCallback.updateTxtInfo("HEY. STOP DOING THAT! >:(");
+                    myCallback.updateTxtInfoBottom("STOP DOING THAT! >:(");
                     tap = 1;
                 } else if (tap == 1) {
-                    myCallback.updateTxtInfo("YOU'RE SCARING THEM. STOP.");
+                    myCallback.updateTxtInfoBottom("YOU'RE SCARING THEM. STOP.");
                     tap = 2;
                 } else if (tap == 2) {
-                    myCallback.updateTxtInfo("DO. NOT. TAP. THE. GLASS.");
+                    myCallback.updateTxtInfoBottom("DO. NOT. TAP. ON. THE. GLASS.");
+                    tap = 3;
+                } else if (tap == 3) {
+                    myCallback.updateTxtInfoBottom("Fish can die from too much stress.");
+                    tap = 4;
+                } else if (tap == 4) {
+                    myCallback.updateTxtInfoBottom("You're literally murdering your fish.");
+                    tap = 5;
+                } else if (tap == 5) {
+                    myCallback.updateTxtInfoBottom("How would you feel if someone kept knocking on your window?");
+                    tap = 6;
+                } else if (tap == 6) {
+                    myCallback.updateTxtInfoBottom("You didn't think about that, did you.");
+                    tap = 7;
+                } else if (tap == 7) {
+                    myCallback.updateTxtInfoBottom("That's because you only think about yourself.");
                     tap = 0;
                 }
                 mp.start();
