@@ -32,6 +32,7 @@ public class Fish {
     private Gender gender;
     private LifeStage stage;
     private boolean pregnant;
+    private int pregnantDays;
     private int eggs;
     private Fish coParent;
     // feeding
@@ -42,7 +43,6 @@ public class Fish {
     // other
     private Random random;
     private Context context;
-
     Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public Fish() {}
@@ -67,11 +67,13 @@ public class Fish {
         this.secondaryColor = secondaryColor;
 
         Bitmap img = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
-        //this.paint = new Paint();
-        //paint.setARGB(255,(primaryColor >> 16) & 0xFF,(primaryColor >> 8) & 0xFF,(primaryColor) & 0xFF);
+        //img = ImageManager.setPrimaryAndSecondaryColor(img, primaryColor, secondaryColor);
+        //img = ImageManager.setPrimaryAndSecondaryColor(img, primaryColor, secondaryColor);
+        /*this.paint = new Paint();
+        paint.setARGB(255,(primaryColor >> 16) & 0xFF,(primaryColor >> 8) & 0xFF,(primaryColor) & 0xFF);
         //ColorFilter filter = new PorterDuffColorFilter(this.paint.getColor(), PorterDuff.Mode.SRC_IN);
-        //LightingColorFilter filter = new LightingColorFilter(primaryColor, secondaryColor);
-        //this.paint.setColorFilter(filter);
+        LightingColorFilter filter = new LightingColorFilter(primaryColor, secondaryColor);
+        this.paint.setColorFilter(filter);*/
         if (age < Constants.AGE_MAX_INFANT) {
             this.stage = LifeStage.INFANT;
             //Bitmap img = BitmapFactory.decodeResource(context.getResources(), resourceId);
@@ -98,6 +100,7 @@ public class Fish {
         this.random = new Random();
         this.alive = true;
         this.pregnant = false;
+        this.pregnantDays = 0;
         this.eggs = 0;
     }
 
@@ -130,15 +133,28 @@ public class Fish {
                 new Paint(dad.paint).getColor());
         this.paint.setColorFilter(filter);*/
         if (random.nextInt(100) < Constants.MUTATION_CHANCE)
-            this.primaryColor = random.nextInt(16777216);
+            this.primaryColor = 0xFF000000
+                    | (random.nextInt(256) << 16)
+                    | (random.nextInt(256) << 8)
+                    | (random.nextInt(256));
         else
-            this.primaryColor = random.nextBoolean() ? mom.primaryColor : dad.secondaryColor;
+            this.primaryColor = random.nextBoolean() ? Integer.valueOf(mom.primaryColor) :
+                    Integer.valueOf(dad.secondaryColor);
 
         if (random.nextInt(100) < Constants.MUTATION_CHANCE)
-            this.secondaryColor = random.nextInt(16777216);
+            this.secondaryColor = 0xFF000000
+                    | (random.nextInt(256) << 16)
+                    | (random.nextInt(256) << 8)
+                    | (random.nextInt(256));
         else
-            this.secondaryColor = random.nextBoolean() ? dad.secondaryColor : mom.primaryColor;
+            this.secondaryColor = random.nextBoolean() ? Integer.valueOf(dad.secondaryColor) :
+                    Integer.valueOf(mom.primaryColor);
 
+        //this.paint = new Paint();
+        //this.paint.setARGB(255,(primaryColor >> 16) & 0xFF,(primaryColor >> 8) & 0xFF,(primaryColor) & 0xFF);
+        //ColorFilter filter = new PorterDuffColorFilter(this.paint.getColor(), PorterDuff.Mode.SRC_IN);
+        //LightingColorFilter filter = new LightingColorFilter(primaryColor, secondaryColor);
+        //this.paint.setColorFilter(filter);
         Bitmap bm = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
         bm = ImageManager.resize(bm, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
         if (!this.goingRight)
@@ -149,6 +165,7 @@ public class Fish {
         this.hasFoundNearestFood = false;
         this.alive = true;
         this.pregnant = false;
+        this.pregnantDays = 0;
         this.eggs = 0;
     }
 
@@ -202,13 +219,15 @@ public class Fish {
             if (dayNightCycle == 2) {
                 increaseHunger();
                 growUp(graveyard);
-                if (pregnant) {
+                if (pregnant && pregnantDays == Constants.PREGNANCY_DAYS) {
                     pregnant = false;
                     while (this.eggs > 0) {
                         fish.add(new Fish(this, this.coParent, context));
                         this.eggs--;
                     }
                     this.coParent = null;
+                } else {
+                    pregnantDays++;
                 }
                 if (gender == Gender.FEMALE) {
                     getPregnant(fish);

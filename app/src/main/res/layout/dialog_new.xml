@@ -83,7 +83,9 @@
                         android:id="@+id/colorSliderPrimary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:colorSeeds="@array/material_colors" />
+                        android:soundEffectsEnabled="false"
+                        app:colorSeeds="@array/material_colors"
+                        app:showAlphaBar="false" />
 
                     <TextView
                         android:id="@+id/textView6"
@@ -102,7 +104,8 @@
                         android:id="@+id/colorSliderSecondary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:colorSeeds="@array/material_colors" />
+                        app:colorSeeds="@array/material_colors"
+                        app:showAlphaBar="false" />
 
                 </LinearLayout>
             </ScrollView>

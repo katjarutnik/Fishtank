@@ -20,9 +20,8 @@ public class ImageManager {
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(
                 source, 0, 0, width, height, matrix, false);
-        if (source != null && !source.isRecycled()) {
+        if (!source.isRecycled()) {
             source.recycle();
-            source = null;
         }
         return resizedBitmap;
     }
