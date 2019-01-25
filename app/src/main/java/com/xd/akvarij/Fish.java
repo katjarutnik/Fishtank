@@ -45,170 +45,6 @@ public class Fish {
     private Context context;
     Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public Fish() {}
-
-    // constructor for new tank fish, no parents
-    public Fish(int id, int x, int y, boolean goingRight, boolean goingDown,
-                int speedHorizontal, int speedVertical, int vision, int hunger, int age,
-                Gender gender, int primaryColor, int secondaryColor, Context context) {
-        this.context = context;
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.goingRight = goingRight;
-        this.goingDown = goingDown;
-        this.speedHorizontal = speedHorizontal;
-        this.speedVertical = speedVertical;
-        this.vision = vision;
-        this.hunger = hunger;
-        this.age = age;
-        this.gender = gender;
-        this.primaryColor = primaryColor;
-        this.secondaryColor = secondaryColor;
-
-        Bitmap img = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
-        //img = ImageManager.setPrimaryAndSecondaryColor(img, primaryColor, secondaryColor);
-        //img = ImageManager.setPrimaryAndSecondaryColor(img, primaryColor, secondaryColor);
-        /*this.paint = new Paint();
-        paint.setARGB(255,(primaryColor >> 16) & 0xFF,(primaryColor >> 8) & 0xFF,(primaryColor) & 0xFF);
-        //ColorFilter filter = new PorterDuffColorFilter(this.paint.getColor(), PorterDuff.Mode.SRC_IN);
-        LightingColorFilter filter = new LightingColorFilter(primaryColor, secondaryColor);
-        this.paint.setColorFilter(filter);*/
-        if (age < Constants.AGE_MAX_INFANT) {
-            this.stage = LifeStage.INFANT;
-            //Bitmap img = BitmapFactory.decodeResource(context.getResources(), resourceId);
-            img = ImageManager.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
-        } else if (age < Constants.AGE_MAX_TEEN) {
-            this.stage = LifeStage.TEEN;
-            //Bitmap img = BitmapFactory.decodeResource(context.getResources(), resourceId);
-            img = ImageManager.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
-        } else if (age < Constants.AGE_MAX_ADULT) {
-            this.stage = LifeStage.ADULT;
-            //Bitmap img = BitmapFactory.decodeResource(context.getResources(), resourceId);
-            img = ImageManager.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
-        } else {
-            this.stage = LifeStage.OLD;
-            //Bitmap img = BitmapFactory.decodeResource(context.getResources(), resourceId);
-            img = ImageManager.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
-        }
-        if (!goingRight)
-            img = ImageManager.flipHorizontally(img);
-        this.image = ImageManager.setPrimaryAndSecondaryColor(img, primaryColor, secondaryColor);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.hasFoundNearestFood = false;
-        this.random = new Random();
-        this.alive = true;
-        this.pregnant = false;
-        this.pregnantDays = 0;
-        this.eggs = 0;
-    }
-
-    // constructor for newborn fish
-    public Fish(Fish mom, Fish dad, Context context) {
-        this.random = new Random();
-        this.context = context;
-        this.id = 0; // placeholder, id has no use for now
-        this.x = Integer.valueOf(mom.x);
-        this.y = Integer.valueOf(mom.y);
-        this.goingRight = random.nextBoolean();
-        this.goingDown = random.nextBoolean();
-        this.speedHorizontal = Integer.valueOf((mom.speedHorizontal + dad.speedHorizontal) / 2);
-        this.speedVertical = Integer.valueOf((mom.speedVertical + dad.speedVertical) / 2);
-        this.vision = Integer.valueOf((mom.vision + dad.vision) / 2);
-        this.hunger = Constants.HUNGER_AFTER_POOP;
-        this.age = 0;
-        this.stage = LifeStage.INFANT;
-        this.gender = random.nextBoolean() ? Gender.FEMALE : Gender.MALE;
-        /*this.paint = new Paint();
-        if (random.nextInt(100) < Constants.MUTATION_CHANCE) {
-            this.paint.setARGB(255,
-                    random.nextInt(256),
-                    random.nextInt(256),
-                    random.nextInt(256));
-        } else {
-            this.paint = new Paint(mom.paint);
-        }
-        LightingColorFilter filter = new LightingColorFilter(new Paint(this.paint).getColor(),
-                new Paint(dad.paint).getColor());
-        this.paint.setColorFilter(filter);*/
-        if (random.nextInt(100) < Constants.MUTATION_CHANCE)
-            this.primaryColor = 0xFF000000
-                    | (random.nextInt(256) << 16)
-                    | (random.nextInt(256) << 8)
-                    | (random.nextInt(256));
-        else
-            this.primaryColor = random.nextBoolean() ? Integer.valueOf(mom.primaryColor) :
-                    Integer.valueOf(dad.secondaryColor);
-
-        if (random.nextInt(100) < Constants.MUTATION_CHANCE)
-            this.secondaryColor = 0xFF000000
-                    | (random.nextInt(256) << 16)
-                    | (random.nextInt(256) << 8)
-                    | (random.nextInt(256));
-        else
-            this.secondaryColor = random.nextBoolean() ? Integer.valueOf(dad.secondaryColor) :
-                    Integer.valueOf(mom.primaryColor);
-
-        //this.paint = new Paint();
-        //this.paint.setARGB(255,(primaryColor >> 16) & 0xFF,(primaryColor >> 8) & 0xFF,(primaryColor) & 0xFF);
-        //ColorFilter filter = new PorterDuffColorFilter(this.paint.getColor(), PorterDuff.Mode.SRC_IN);
-        //LightingColorFilter filter = new LightingColorFilter(primaryColor, secondaryColor);
-        //this.paint.setColorFilter(filter);
-        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
-        bm = ImageManager.resize(bm, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
-        if (!this.goingRight)
-             bm = ImageManager.flipHorizontally(bm);
-        this.image = ImageManager.setPrimaryAndSecondaryColor(bm, primaryColor, secondaryColor);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.hasFoundNearestFood = false;
-        this.alive = true;
-        this.pregnant = false;
-        this.pregnantDays = 0;
-        this.eggs = 0;
-    }
-
-    public int getAlive() {
-        return alive ? 1 : 0;
-    }
-
-    public int getLifeStage() {
-        if (this.stage == LifeStage.INFANT) {
-            return 0;
-        } else if (this.stage == LifeStage.TEEN) {
-            return 1;
-        } else if (this.stage == LifeStage.ADULT) {
-            return 2;
-        } else {
-            return 3;
-        }
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public int getGender() {
-        return gender == Gender.MALE ? 0 : 1;
-    }
-
-    public int getHunger() {
-        return hunger;
-    }
-
-    public int getVision() {
-        return vision;
-    }
-
-    public int getX () {
-        return x;
-    }
-
-    public int getY () {
-        return y;
-    }
-
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, x, y, p);
     }
@@ -226,7 +62,7 @@ public class Fish {
                         this.eggs--;
                     }
                     this.coParent = null;
-                } else {
+                } else if (pregnant && pregnantDays < Constants.PREGNANCY_DAYS) {
                     pregnantDays++;
                 }
                 if (gender == Gender.FEMALE) {
@@ -237,6 +73,136 @@ public class Fish {
         } else {
             floatToTop(fish);
         }
+    }
+
+    // first gen
+    public Fish(int id, int x, int y, boolean goingRight, boolean goingDown,
+                int speedHorizontal, int speedVertical, int vision, int hunger, int age,
+                Gender gender, int primaryColor, int secondaryColor, Context context) {
+        this.context = context;
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.goingRight = goingRight;
+        this.goingDown = goingDown;
+        this.speedHorizontal = speedHorizontal;
+        this.speedVertical = speedVertical;
+        this.vision = vision;
+        this.hunger = hunger;
+        this.age = age;
+        this.gender = gender;
+        this.primaryColor = primaryColor;
+        this.secondaryColor = secondaryColor;
+        Bitmap img = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
+        if (age < Constants.AGE_MAX_INFANT) {
+            this.stage = LifeStage.INFANT;
+            img = ImageManager.resize(img, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
+        } else if (age < Constants.AGE_MAX_TEEN) {
+            this.stage = LifeStage.TEEN;
+            img = ImageManager.resize(img, Constants.FISH_SIZE_TEEN, Constants.FISH_SIZE_TEEN);
+        } else if (age < Constants.AGE_MAX_ADULT) {
+            this.stage = LifeStage.ADULT;
+            img = ImageManager.resize(img, Constants.FISH_SIZE_ADULT, Constants.FISH_SIZE_ADULT);
+        } else {
+            this.stage = LifeStage.OLD;
+            img = ImageManager.resize(img, Constants.FISH_SIZE_OLD, Constants.FISH_SIZE_OLD);
+        }
+        this.image = ImageManager.setPrimaryAndSecondaryColor(img, primaryColor, secondaryColor);
+        if (!goingRight)
+            this.image = ImageManager.flipHorizontally(img);
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        this.hasFoundNearestFood = false;
+        this.random = new Random();
+        this.alive = true;
+        this.pregnant = false;
+        this.pregnantDays = 0;
+        this.eggs = 0;
+    }
+
+    // offspring
+    public Fish(Fish mom, Fish dad, Context context) {
+        this.random = new Random();
+        this.context = context;
+        this.id = 0; // placeholder, id has no use for now
+        this.x = Integer.valueOf(mom.x);
+        this.y = Integer.valueOf(mom.y);
+        this.goingRight = random.nextBoolean();
+        this.goingDown = random.nextBoolean();
+        this.speedHorizontal = Integer.valueOf((mom.speedHorizontal + dad.speedHorizontal) / 2);
+        this.speedVertical = Integer.valueOf((mom.speedVertical + dad.speedVertical) / 2);
+        this.vision = Integer.valueOf((mom.vision + dad.vision) / 2);
+        this.hunger = Constants.HUNGER_AFTER_POOP;
+        this.age = 0;
+        this.stage = LifeStage.INFANT;
+        this.gender = random.nextBoolean() ? Gender.FEMALE : Gender.MALE;
+        if (random.nextInt(100) < Constants.MUTATION_CHANCE)
+            this.primaryColor = 0xFF000000
+                    | (random.nextInt(256) << 16)
+                    | (random.nextInt(256) << 8)
+                    | (random.nextInt(256));
+        else
+            this.primaryColor = random.nextBoolean() ? Integer.valueOf(mom.primaryColor) :
+                    Integer.valueOf(dad.secondaryColor);
+        if (random.nextInt(100) < Constants.MUTATION_CHANCE)
+            this.secondaryColor = 0xFF000000
+                    | (random.nextInt(256) << 16)
+                    | (random.nextInt(256) << 8)
+                    | (random.nextInt(256));
+        else
+            this.secondaryColor = random.nextBoolean() ? Integer.valueOf(dad.secondaryColor) :
+                    Integer.valueOf(mom.primaryColor);
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
+        bm = ImageManager.resize(bm, Constants.FISH_SIZE_INFANT, Constants.FISH_SIZE_INFANT);
+        if (!this.goingRight)
+             bm = ImageManager.flipHorizontally(bm);
+        this.image = ImageManager.setPrimaryAndSecondaryColor(bm, primaryColor, secondaryColor);
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        this.hasFoundNearestFood = false;
+        this.alive = true;
+        this.pregnant = false;
+        this.pregnantDays = 0;
+        this.eggs = 0;
+    }
+
+    public boolean getAlive() {
+        return alive;
+    }
+
+    public int getLifeStage() {
+        if (this.stage == LifeStage.INFANT)
+            return 0;
+        else if (this.stage == LifeStage.TEEN)
+            return 1;
+        else if (this.stage == LifeStage.ADULT)
+            return 2;
+        else
+            return 3;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public boolean getGender() {
+        return gender == Gender.MALE;
+    }
+
+    public int getHunger() {
+        return hunger;
+    }
+
+    public int getVision() {
+        return vision;
+    }
+
+    public int getX () {
+        return x;
+    }
+
+    public int getY () {
+        return y;
     }
 
     public void defaultMove(ArrayList<Food> food, ArrayList<Poop> poop) {
@@ -419,7 +385,6 @@ public class Fish {
         Bitmap bm = BitmapFactory.decodeResource(context.getResources(), Constants.FISH_IMAGE);
         bm = ImageManager.resize(bm, newFishSize, newFishSize);
         bm = ImageManager.setPrimaryAndSecondaryColor(bm, primaryColor, secondaryColor);
-        //image = ImageManager.setColorToTransparent(image, Color.WHITE);
         if (!goingRight) {
             image = ImageManager.flipHorizontally(bm);
         }

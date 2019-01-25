@@ -2,13 +2,13 @@ package com.xd.akvarij;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.OrientationEventListener;
@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.google.gson.Gson;
 
@@ -27,17 +28,30 @@ public class GameActivity extends Activity implements SensorEventListener {
     int pickedPrimaryColor;
     int pickedSecondaryColor;
 
+    // game
     GameView gameView;
-
     FrameLayout gameFrame;
     ConstraintLayout gameOverlay;
-
     public Button btnFeed;
     public Button btnClean;
-    public Button btnSaveAndExit;
+    public Button btnOptions;
     public TextView txtDays;
     public TextView txtInfoTop;
     public TextView txtInfoBottom;
+
+    // game paused
+    ConstraintLayout gameLayoutPause;
+    public Button btnGodMode;
+    public Button btnSave;
+    public Button btnExit;
+    public Button btnBack;
+    public TextView txtPaused;
+
+    // god mode
+    ConstraintLayout gameLayoutGodMode;
+    public Button btnGodModeCancel;
+
+    VideoView videoView;
 
     private SensorManager sensorMan;
     private Sensor accelerometer;
@@ -66,56 +80,60 @@ public class GameActivity extends Activity implements SensorEventListener {
             population = 10;
             fresh = true;
         }
-
         context = this;
-
-        sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        gravity = new float[3];
-        linear_acceleration = new float[3];
-
-        final OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                if (orientation == 90) {
-                    orientacija = orientation;
-                }
-                if (orientation == 270) {
-                    orientacija = orientation;
-                }
-            }
-        };
-
-        if (orientationEventListener.canDetectOrientation()) {
-            orientationEventListener.enable();
-        }
 
         View rootView = getLayoutInflater().inflate(R.layout.activity_game, null, true);
 
         gameView = new GameView(this);
-
         gameFrame = new FrameLayout(this);
         gameOverlay = new ConstraintLayout(this);
 
         gameFrame = rootView.findViewById(R.id.gameFrame);
         gameOverlay = rootView.findViewById(R.id.gameOverlay);
+        gameOverlay.setVisibility(View.VISIBLE);
+        gameLayoutPause = rootView.findViewById(R.id.gameOverlayPaused);
+        gameLayoutPause.setVisibility(View.GONE);
+        gameLayoutGodMode = rootView.findViewById(R.id.gameOverlayGodMode);
+        gameLayoutGodMode.setVisibility(View.GONE);
 
+        videoView = rootView.findViewById(R.id.myvideoview2);
+        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
+        videoView.setVideoURI(video);
+        videoView.setVisibility(View.INVISIBLE);
+
+        // game
         btnFeed = new Button(this);
         btnFeed = gameOverlay.findViewById(R.id.btnFeed);
         btnClean = new Button(this);
         btnClean = gameOverlay.findViewById(R.id.btnClean);
-        btnSaveAndExit = new Button(this);
-        btnSaveAndExit = gameOverlay.findViewById(R.id.btnSaveExit);
+        btnOptions = new Button(this);
+        btnOptions = gameOverlay.findViewById(R.id.btnOptions);
         txtDays = new TextView(this);
         txtDays = gameOverlay.findViewById(R.id.txtDays);
         txtInfoTop = new TextView(this);
         txtInfoTop = gameOverlay.findViewById(R.id.txtInfo);
         txtInfoBottom = new TextView(this);
         txtInfoBottom = gameOverlay.findViewById(R.id.txtInfo2);
+        // in game menu
+        btnBack = new Button(this);
+        btnBack = gameLayoutPause.findViewById(R.id.btnBack);
+        btnGodMode = new Button(this);
+        btnGodMode = gameLayoutPause.findViewById(R.id.btnChangeSettings);
+        btnSave = new Button(this);
+        btnSave = gameLayoutPause.findViewById(R.id.btnSaveState);
+        btnExit = new Button(this);
+        btnExit = gameLayoutPause.findViewById(R.id.btnExit);
+        // god mode menu
+        btnGodModeCancel = new Button(this);
+        btnGodModeCancel = gameLayoutGodMode.findViewById(R.id.btnGodModeCancel);
 
         gameFrame.removeView(gameOverlay);
+        gameFrame.removeView(gameLayoutPause);
+        gameFrame.removeView(gameLayoutGodMode);
         gameFrame.addView(gameView);
         gameFrame.addView(gameOverlay);
+        gameFrame.addView(gameLayoutPause);
+        gameFrame.addView(gameLayoutGodMode);
 
         myCallback = new MyCallback() {
             @Override
@@ -161,20 +179,86 @@ public class GameActivity extends Activity implements SensorEventListener {
             }
         });
 
-        btnSaveAndExit.setOnClickListener(new View.OnClickListener() {
+        // in game menu
+        btnOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     gameView.thread.setRunning(false);
                     gameView.thread.join();
-                    saveData(context, myPrefs, myPrefsKey, gameView.tank);
-                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
-                    startActivity(intent);
+
+                    gameOverlay.setVisibility(View.GONE);
+                    gameLayoutGodMode.setVisibility(View.GONE);
+                    videoView.setVisibility(View.VISIBLE);
+                    videoView.start();
+                    gameLayoutPause.setVisibility(View.VISIBLE);
+                    //saveData(context, myPrefs, myPrefsKey, gameView.tank);
+                    //Intent intent = new Intent(GameActivity.this, MainActivity.class);
+                    //startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                videoView.setVisibility(View.GONE);
+                videoView.stopPlayback();
+                gameLayoutGodMode.setVisibility(View.GONE);
+                gameLayoutPause.setVisibility(View.GONE);
+                gameOverlay.setVisibility(View.VISIBLE);
+                gameView.thread = new MainThread(gameView.getHolder(), gameView);
+                gameView.thread.setRunning(true);
+                gameView.thread.start();
+            }
+        });
+
+        // simulation tweaks menu
+        btnGodMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameOverlay.setVisibility(View.GONE);
+                gameLayoutPause.setVisibility(View.GONE);
+                videoView.setVisibility(View.VISIBLE);
+                videoView.start();
+                gameLayoutGodMode.setVisibility(View.VISIBLE);
+            }
+        });
+        btnGodModeCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameOverlay.setVisibility(View.GONE);
+                gameLayoutGodMode.setVisibility(View.GONE);
+                gameLayoutPause.setVisibility(View.VISIBLE);
+            }
+        });
+
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (videoView.getVisibility() == View.VISIBLE)
+                    videoView.start();
+            }
+        });
+
+        sensorMan = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gravity = new float[3];
+        linear_acceleration = new float[3];
+
+        final OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                if (orientation == 90)
+                    orientacija = orientation;
+                if (orientation == 270)
+                    orientacija = orientation;
+            }
+        };
+
+        if (orientationEventListener.canDetectOrientation())
+            orientationEventListener.enable();
 
         loadData(population, fresh, this);
         setContentView(gameFrame);
@@ -232,7 +316,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 
     private void loadData(int popSize, Boolean fresh, Context context) {
         if (fresh) {
-            gameView.tank = new Tank(popSize, BitmapFactory.decodeResource(getResources(), Constants.FISH_IMAGE), myCallback, context);
+            gameView.tank = new Tank(popSize, myCallback, context);
             gameView.tank.generateFirstGeneration(pickedPrimaryColor, pickedSecondaryColor);
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);

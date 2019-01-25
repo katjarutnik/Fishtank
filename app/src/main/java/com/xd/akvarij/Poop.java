@@ -9,22 +9,14 @@ import java.util.Random;
 public class Poop {
     private int x;
     private int y;
+    private float persistenceX;
+    private float persistenceY;
     private int size;
     private Paint paint;
     private RectF shape;
-
-    Random random;
+    private Random random;
 
     public boolean shaking = false;
-
-    public Poop(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.size = Constants.POOP_SIZE;
-        this.paint = new Paint();
-        paint.setARGB(255, 210, 155, 34);
-        this.shape = new RectF(x, y, x + size, y + size);
-    }
 
     public void draw(Canvas canvas) {
         canvas.drawOval(this.shape, this.paint);
@@ -38,35 +30,64 @@ public class Poop {
         }
     }
 
+    public Poop(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.persistenceX = 0;
+        this.persistenceY = 0;
+        this.size = Constants.POOP_SIZE;
+        this.paint = new Paint();
+        this.paint.setARGB(255, 210, 155, 34);
+        this.shape = new RectF(x, y, x + size, y + size);
+        this.random = new Random();
+    }
+
     public void moveDefault() {
         this.shape.offsetTo(x, y++);
     }
 
-    public void moveShaking(float gravityX, float gravityY) {
-        random = new Random();
+    public void moveShaking(float gX, float gY) {
+        float rnd = (random.nextFloat() * 0.3f) + 0.9f;
 
-        this.x += gravityX;
-        if (gravityY < 10) {
-            y += gravityY;
-        } else
-            y += random.nextInt(5);
+        persistenceX += (gX * rnd);
+        if (persistenceX > Constants.MAX_PERSISTENCE_X_UPPER)
+            persistenceX = Constants.MAX_PERSISTENCE_X_UPPER;
+        if (persistenceX < Constants.MIN_PERSISTENCE_X_UPPER)
+            persistenceX = Constants.MIN_PERSISTENCE_X_UPPER;
 
-        if (x > Constants.SCREEN_WIDTH - size) {
-            x = Constants.SCREEN_WIDTH - size - random.nextInt(15);
-            y += random.nextInt(5);
+        persistenceY += (gY * rnd);
+        if (persistenceY > Constants.MAX_PERSISTENCE_Y_UPPER)
+            persistenceY = Constants.MAX_PERSISTENCE_Y_UPPER;
+        if (persistenceY < Constants.MIN_PERSISTENCE_Y_UPPER)
+            persistenceY = Constants.MIN_PERSISTENCE_Y_UPPER;
+
+        if (persistenceX > Constants.MAX_PERSISTENCE_X_LOWER)
+            x += Constants.MAX_PERSISTENCE_X_LOWER;
+        else if (persistenceX < Constants.MIN_PERSISTENCE_X_LOWER)
+            x += Constants.MIN_PERSISTENCE_X_LOWER;
+        else
+            x += (int) persistenceX;
+
+        if (persistenceY > Constants.MAX_PERSISTENCE_Y_LOWER)
+            y += Constants.MAX_PERSISTENCE_Y_LOWER;
+        else if (persistenceY < Constants.MIN_PERSISTENCE_Y_LOWER)
+            y += Constants.MIN_PERSISTENCE_Y_LOWER;
+        else
+            y += (int) persistenceY;
+
+        if (x >= Constants.SCREEN_WIDTH - size) {
+            x -= (random.nextInt(5) + size);
+            y += random.nextInt(3);
         }
-        if (y > Constants.SCREEN_HEIGHT - size) {
-            y = Constants.SCREEN_HEIGHT - size - random.nextInt(3);
-            x += random.nextInt(5);
+        if (y >= Constants.SCREEN_HEIGHT - size) {
+            y -= (random.nextInt(3) + size);
+            x -= random.nextInt(3);
         }
-        if (x < size) {
-            x += size + random.nextInt(15);
-            y += random.nextInt(5);
-        }
-        if (y < size) {
-            y += size + random.nextInt(15);
-            x += random.nextInt(5);
-        }
+        if (x <= 0)
+            x = random.nextInt(5);
+        if (y <= 0)
+            y = random.nextInt(5);
+
         changePosition(x, y);
     }
 

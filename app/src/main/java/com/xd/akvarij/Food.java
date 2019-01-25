@@ -9,28 +9,14 @@ import java.util.Random;
 public class Food {
     private int x;
     private int y;
-    private float xGain;
-    private float yGain;
+    private float persistenceX;
+    private float persistenceY;
     private int size;
     private Paint paint;
     private RectF shape;
-
     private Random random;
 
     public boolean shaking = false;
-
-
-    public Food(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.size = Constants.FOOD_SIZE;
-        this.paint = new Paint();
-        paint.setARGB(255, 0, 0, 0);
-        this.shape = new RectF(x, y, x+size, y+size);
-        this.xGain = 0;
-        this.yGain = 0;
-        this.random = new Random();
-    }
 
     public void draw(Canvas canvas) {
         canvas.drawOval(shape, paint);
@@ -44,12 +30,20 @@ public class Food {
         }
     }
 
-    public int getSize() {
-        return this.size;
+    public Food(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.persistenceX = 0;
+        this.persistenceY = 0;
+        this.size = Constants.FOOD_SIZE;
+        this.paint = new Paint();
+        this.paint.setARGB(255, 0, 0, 0);
+        this.shape = new RectF(x, y, x+size, y+size);
+        this.random = new Random();
     }
 
     public int getX() {
-        return this.x;
+        return x;
     }
 
     public int getY() {
@@ -69,37 +63,31 @@ public class Food {
     public void moveShaking(float gX, float gY) {
         float rnd = (random.nextFloat() * 0.3f) + 0.9f;
 
-        xGain += (gX * rnd);
-        if (xGain > Constants.MAX_GAIN_X_UPPER) {
-            xGain = Constants.MAX_GAIN_X_UPPER;
-        }
-        if (xGain < Constants.MIN_GAIN_X_UPPER) {
-            xGain = Constants.MIN_GAIN_X_UPPER;
-        }
+        persistenceX += (gX * rnd);
+        if (persistenceX > Constants.MAX_PERSISTENCE_X_UPPER)
+            persistenceX = Constants.MAX_PERSISTENCE_X_UPPER;
+        if (persistenceX < Constants.MIN_PERSISTENCE_X_UPPER)
+            persistenceX = Constants.MIN_PERSISTENCE_X_UPPER;
 
-        yGain += (gY * rnd);
-        if (yGain > Constants.MAX_GAIN_Y_UPPER) {
-            yGain = Constants.MAX_GAIN_Y_UPPER;
-        }
-        if (yGain < Constants.MIN_GAIN_Y_UPPER) {
-            yGain = Constants.MIN_GAIN_Y_UPPER;
-        }
+        persistenceY += (gY * rnd);
+        if (persistenceY > Constants.MAX_PERSISTENCE_Y_UPPER)
+            persistenceY = Constants.MAX_PERSISTENCE_Y_UPPER;
+        if (persistenceY < Constants.MIN_PERSISTENCE_Y_UPPER)
+            persistenceY = Constants.MIN_PERSISTENCE_Y_UPPER;
 
-        if (xGain > Constants.MAX_GAIN_X_LOWER) {
-            x += Constants.MAX_GAIN_X_LOWER;
-        } else if (xGain < Constants.MIN_GAIN_X_LOWER) {
-            x += Constants.MIN_GAIN_X_LOWER;
-        } else {
-            x += (int) xGain;
-        }
+        if (persistenceX > Constants.MAX_PERSISTENCE_X_LOWER)
+            x += Constants.MAX_PERSISTENCE_X_LOWER;
+        else if (persistenceX < Constants.MIN_PERSISTENCE_X_LOWER)
+            x += Constants.MIN_PERSISTENCE_X_LOWER;
+        else
+            x += (int) persistenceX;
 
-        if (yGain > Constants.MAX_GAIN_Y_LOWER) {
-            y += Constants.MAX_GAIN_Y_LOWER;
-        } else if (yGain < Constants.MIN_GAIN_Y_LOWER) {
-            y += Constants.MIN_GAIN_Y_LOWER;
-        } else {
-            y += (int) yGain;
-        }
+        if (persistenceY > Constants.MAX_PERSISTENCE_Y_LOWER)
+            y += Constants.MAX_PERSISTENCE_Y_LOWER;
+        else if (persistenceY < Constants.MIN_PERSISTENCE_Y_LOWER)
+            y += Constants.MIN_PERSISTENCE_Y_LOWER;
+        else
+            y += (int) persistenceY;
 
         if (x >= Constants.SCREEN_WIDTH - size) {
             x -= (random.nextInt(5) + size);
@@ -109,12 +97,10 @@ public class Food {
             y -= (random.nextInt(3) + size);
             x -= random.nextInt(3);
         }
-        if (x <= 0) {
+        if (x <= 0)
             x = random.nextInt(5);
-        }
-        if (y <= 0) {
+        if (y <= 0)
             y = random.nextInt(5);
-        }
 
         changePosition(x, y);
     }

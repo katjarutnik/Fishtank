@@ -1,7 +1,6 @@
 package com.xd.akvarij;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -23,14 +22,12 @@ public class Tank {
     public ArrayList<Poop> poop;
 
     private int popSize;
-    private Bitmap fishImage;
     private Random random;
     private Rect background;
     private Paint paint;
 
     public boolean dayTime;
     public int dayNightCycle;
-    public int dayNightCycleTemp;
     public int dayCounter;
 
     //public StringBuilder sb = new StringBuilder();
@@ -45,9 +42,8 @@ public class Tank {
     public int countFishDied;
 
 
-    public Tank(int popSize, Bitmap fishImage, MyCallback callback, Context context) {
+    public Tank(int popSize, MyCallback callback, Context context) {
         this.popSize = popSize;
-        this.fishImage = fishImage;
         this.graveyard = new ArrayList<>();
         this.fish = new ArrayList<>();
         this.food = new ArrayList<>();
@@ -93,7 +89,6 @@ public class Tank {
         if (this.dayTime != daytime) {
             myCallback.updateTxtInfoTop("It's night time.");
             dayNightCycle++;
-            dayNightCycleTemp++;
             this.dayTime = daytime;
         }
         if (dayNightCycle == 2) {
@@ -106,27 +101,24 @@ public class Tank {
             gatherer.clear();*/
             dayCounter++;
             Log.d("Tank", "IT'S A NEW DAY");
-            dayNightCycle = 0;
             myCallback.updateTxtDays("DAY " + dayCounter);
         }
-        for (int i = 0; i < fish.size(); i++) {
-            fish.get(i).update(food, fish, graveyard, poop, dayNightCycleTemp);
-        }
-        for (int i = 0; i < food.size(); i++) {
+        for (int i = 0; i < fish.size(); i++)
+            fish.get(i).update(food, fish, graveyard, poop, dayNightCycle);
+        for (int i = 0; i < food.size(); i++)
             food.get(i).update();
-        }
-        for (int i = 0; i < poop.size(); i++) {
+        for (int i = 0; i < poop.size(); i++)
             poop.get(i).update();
-        }
-        if (dayNightCycleTemp == 2) dayNightCycleTemp = 0;
+        if (dayNightCycle == 2)
+            dayNightCycle = 0;
     }
 
     public void generateFirstGeneration(int primaryColor, int secondaryColor) {
         for (int i = 0; i < this.popSize; i++) {
             fish.add(new Fish(
                     i,
-                    random.nextInt(Constants.SCREEN_WIDTH - fishImage.getWidth()),
-                    random.nextInt(Constants.SCREEN_HEIGHT - fishImage.getHeight()),
+                    random.nextInt(Constants.SCREEN_WIDTH - 64),
+                    random.nextInt(Constants.SCREEN_HEIGHT - 64),
                     random.nextBoolean(),
                     random.nextBoolean(),
                     random.nextInt(Constants.MAX_HORIZONTAL_SPEED) +
@@ -145,7 +137,7 @@ public class Tank {
 
     private boolean allFishAreDead() {
         for (int i=0; i < fish.size(); i++) {
-            if (fish.get(i).getAlive() == 1) {
+            if (fish.get(i).getAlive()) {
                 return false;
             }
         }
@@ -188,7 +180,7 @@ public class Tank {
     // if you tap on the glass and fish are nearby, they will quicky swim away
     public void scare(float x, float y) {
         for (int i = 0; i < fish.size(); i++) {
-            if (fish.get(i).getAlive() == 1) {
+            if (fish.get(i).getAlive()) {
                 if (Math.abs((int)x - fish.get(i).getX()) < 100 &&
                         (Math.abs((int)y - fish.get(i).getY())) < 100) {
                     fish.get(i).gotScared();

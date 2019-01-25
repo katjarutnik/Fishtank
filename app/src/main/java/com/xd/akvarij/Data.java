@@ -15,10 +15,10 @@ public class Data {
     public int vision; // 300 <= x <= 1000
 
     public Data(Fish fish) {
-        this.alive = fish.getAlive();
+        this.alive = fish.getAlive() ? 1 : 0;
         this.lifeStage = fish.getLifeStage();
         this.age = fish.getAge();
-        this.gender = fish.getGender();
+        this.gender = fish.getGender() ? 1 : 0; // 1 male 0 female
         this.hunger = fish.getHunger();
         this.vision = fish.getVision();
     }

@@ -56,9 +56,9 @@ public class ImageManager {
         source.setHasAlpha(true);
         for (int i = 0; i < source.getWidth(); i++) {
             for (int j = 0; j < source.getHeight(); j++) {
-                if (source.getPixel(i, j) == Color.rgb(255, 255, 255))
+                if (source.getPixel(i, j) == Color.argb(255,25, 25, 25))
                     source.setPixel(i, j, primary);
-                else if (source.getPixel(i, j) == Color.rgb(0, 0, 0))
+                else if (source.getPixel(i, j) == Color.argb(255, 50, 50, 50))
                     source.setPixel(i, j , secondary);
             }
         }
