@@ -22,13 +22,15 @@ import android.widget.VideoView;
 import com.google.gson.Gson;
 
 public class GameActivity extends Activity implements SensorEventListener {
-
+    // inputs from main menu -> new -> generate
     boolean fresh;
     int population;
     int pickedPrimaryColor;
     int pickedSecondaryColor;
-
-    // game
+    boolean randomNewGame;
+    // plays in background in menus
+    VideoView videoView;
+    // game view
     GameView gameView;
     FrameLayout gameFrame;
     ConstraintLayout gameOverlay;
@@ -38,70 +40,54 @@ public class GameActivity extends Activity implements SensorEventListener {
     public TextView txtDays;
     public TextView txtInfoTop;
     public TextView txtInfoBottom;
-
-    // game paused
+    // pause menu view
     ConstraintLayout gameLayoutPause;
     public Button btnGodMode;
     public Button btnSave;
     public Button btnExit;
     public Button btnBack;
-    public TextView txtPaused;
-
-    // god mode
+    // simulation tweaks view
     ConstraintLayout gameLayoutGodMode;
     public Button btnGodModeCancel;
-
-    VideoView videoView;
-
+    // sensor stuff
     private SensorManager sensorMan;
     private Sensor accelerometer;
     private float[] gravity;
     private float[] linear_acceleration;
-
+    int currentOrientation;
+    // saving and loading
     public static final String myPrefs = "myTankPrefs";
     public static final String myPrefsKey = "tank";
-
+    // other
     MyCallback myCallback;
     Context context;
-
-    int orientacija;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // gets input from main menu -> new -> generate
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             population = extras.getInt("POPULATION");
             fresh = extras.getBoolean("FRESH");
+            randomNewGame = extras.getBoolean("RANDOM");
             pickedPrimaryColor = extras.getInt("COLOR_PRIMARY");
             pickedSecondaryColor = extras.getInt("COLOR_SECONDARY");
         } else {
-            population = 10;
-            fresh = true;
+            // error
         }
         context = this;
 
+        // main game view
         View rootView = getLayoutInflater().inflate(R.layout.activity_game, null, true);
-
         gameView = new GameView(this);
         gameFrame = new FrameLayout(this);
         gameOverlay = new ConstraintLayout(this);
-
         gameFrame = rootView.findViewById(R.id.gameFrame);
         gameOverlay = rootView.findViewById(R.id.gameOverlay);
         gameOverlay.setVisibility(View.VISIBLE);
-        gameLayoutPause = rootView.findViewById(R.id.gameOverlayPaused);
-        gameLayoutPause.setVisibility(View.GONE);
-        gameLayoutGodMode = rootView.findViewById(R.id.gameOverlayGodMode);
-        gameLayoutGodMode.setVisibility(View.GONE);
-
-        videoView = rootView.findViewById(R.id.myvideoview2);
-        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
-        videoView.setVideoURI(video);
-        videoView.setVisibility(View.INVISIBLE);
-
-        // game
         btnFeed = new Button(this);
         btnFeed = gameOverlay.findViewById(R.id.btnFeed);
         btnClean = new Button(this);
@@ -114,7 +100,16 @@ public class GameActivity extends Activity implements SensorEventListener {
         txtInfoTop = gameOverlay.findViewById(R.id.txtInfo);
         txtInfoBottom = new TextView(this);
         txtInfoBottom = gameOverlay.findViewById(R.id.txtInfo2);
-        // in game menu
+
+        // video
+        videoView = rootView.findViewById(R.id.myvideoview2);
+        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
+        videoView.setVideoURI(video);
+        videoView.setVisibility(View.INVISIBLE);
+
+        // game menu view
+        gameLayoutPause = rootView.findViewById(R.id.gameOverlayPaused);
+        gameLayoutPause.setVisibility(View.GONE);
         btnBack = new Button(this);
         btnBack = gameLayoutPause.findViewById(R.id.btnBack);
         btnGodMode = new Button(this);
@@ -123,9 +118,12 @@ public class GameActivity extends Activity implements SensorEventListener {
         btnSave = gameLayoutPause.findViewById(R.id.btnSaveState);
         btnExit = new Button(this);
         btnExit = gameLayoutPause.findViewById(R.id.btnExit);
-        // god mode menu
+
+        // simulation tweaks view
+        gameLayoutGodMode = rootView.findViewById(R.id.gameOverlayGodMode);
+        gameLayoutGodMode.setVisibility(View.GONE);
         btnGodModeCancel = new Button(this);
-        btnGodModeCancel = gameLayoutGodMode.findViewById(R.id.btnGodModeCancel);
+        btnGodModeCancel = gameLayoutGodMode.findViewById(R.id.btnSimDetailsCancel);
 
         gameFrame.removeView(gameOverlay);
         gameFrame.removeView(gameLayoutPause);
@@ -179,7 +177,7 @@ public class GameActivity extends Activity implements SensorEventListener {
             }
         });
 
-        // in game menu
+        // open pause menu
         btnOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,6 +198,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 }
             }
         });
+        // pause menu go back to game view
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +224,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 gameLayoutGodMode.setVisibility(View.VISIBLE);
             }
         });
+        // simulation tweaks menu go back to pause menu
         btnGodModeCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,24 +251,23 @@ public class GameActivity extends Activity implements SensorEventListener {
             @Override
             public void onOrientationChanged(int orientation) {
                 if (orientation == 90)
-                    orientacija = orientation;
+                    currentOrientation = orientation;
                 if (orientation == 270)
-                    orientacija = orientation;
+                    currentOrientation = orientation;
             }
         };
 
         if (orientationEventListener.canDetectOrientation())
             orientationEventListener.enable();
 
-        loadData(population, fresh, this);
+        loadData(population, this);
         setContentView(gameFrame);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        sensorMan.registerListener(this, accelerometer,
-                SensorManager.SENSOR_DELAY_UI);
+        sensorMan.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -288,14 +287,13 @@ public class GameActivity extends Activity implements SensorEventListener {
             linear_acceleration[1] = event.values[1] - gravity[1];
             linear_acceleration[2] = event.values[2] - gravity[2];
             if (linear_acceleration[0] > 0.01 || linear_acceleration[0] < -0.01) {
-                if (orientacija == 90)
+                if (currentOrientation == 90)
                     gameView.tank.shakingStart(-event.values[1], -event.values[0]);
                 else
                     gameView.tank.shakingStart(event.values[1], event.values[0]);
 
-            } else {
+            } else
                 gameView.tank.shakingStop();
-            }
         }
     }
 
@@ -314,10 +312,13 @@ public class GameActivity extends Activity implements SensorEventListener {
         sharedPreferencesEditor.apply();
     }
 
-    private void loadData(int popSize, Boolean fresh, Context context) {
+    private void loadData(int popSize, Context context) {
         if (fresh) {
             gameView.tank = new Tank(popSize, myCallback, context);
-            gameView.tank.generateFirstGeneration(pickedPrimaryColor, pickedSecondaryColor);
+            if (randomNewGame)
+                gameView.tank.generateRandomNew();
+            else
+                gameView.tank.generateCustomNew(pickedPrimaryColor, pickedSecondaryColor);
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);
             if (sharedPreferences.contains(myPrefsKey)) {

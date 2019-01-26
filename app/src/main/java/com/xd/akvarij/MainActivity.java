@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
     int pickedPrimaryColor = 0;
     int pickedSecondaryColor = 0;
     boolean alreadyPlayed = false;
-    boolean randomNewGame = false;
+    boolean randomNewGame = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

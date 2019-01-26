@@ -2,6 +2,7 @@ package com.xd.akvarij;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
@@ -113,7 +114,29 @@ public class Tank {
             dayNightCycle = 0;
     }
 
-    public void generateFirstGeneration(int primaryColor, int secondaryColor) {
+    public void generateRandomNew() {
+        for (int i = 0; i < popSize; i++) {
+            fish.add(new Fish(
+                    i,
+                    random.nextInt(Constants.SCREEN_WIDTH - 64),
+                    random.nextInt(Constants.SCREEN_HEIGHT - 64),
+                    random.nextBoolean(),
+                    random.nextBoolean(),
+                    random.nextInt(Constants.MAX_HORIZONTAL_SPEED) +
+                            Constants.MIN_HORIZONTAL_SPEED,
+                    random.nextInt(Constants.MAX_VERTICAL_SPEED) +
+                            Constants.MIN_VERTICAL_SPEED,
+                    random.nextInt(Constants.MED_VISION) + Constants.MIN_VISION,
+                    random.nextInt(Constants.MAX_HUNGER),
+                    random.nextInt(Constants.AGE_MAX),
+                    (random.nextInt(100) >= 50) ? Gender.FEMALE : Gender.MALE,
+                    Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)),
+                    Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)),
+                    context));
+        }
+    }
+
+    public void generateCustomNew(int primaryColor, int secondaryColor) {
         for (int i = 0; i < this.popSize; i++) {
             fish.add(new Fish(
                     i,
