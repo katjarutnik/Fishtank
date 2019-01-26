@@ -5,73 +5,89 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
+import android.widget.RadioGroup;
 import android.widget.VideoView;
 
 import com.rtugeek.android.colorseekbar.ColorSeekBar;
 
 public class MainActivity extends Activity {
-
-    public int population;
-    public boolean fresh;
-
+    // main menu
     VideoView videoView;
-
-    Button btnGenerateNew;
+    LinearLayout layoutMainMenu;
+    Button btnNew;
     Button btnLoad;
     Button btnSettings;
-
-    PopupWindow popupWindow;
+    // new game generator
+    ConstraintLayout layoutNewGameMenu;
+    RadioGroup radioGroup;
+    LinearLayout linearLayoutColorPicker;
+    EditText txtPopSize;
+    ColorSeekBar colorSeekBar1;
+    ColorSeekBar colorSeekBar2;
+    Button btnGenerate;
+    // new game parameters
+    public int popSize = 10;
     int pickedPrimaryColor = 0;
     int pickedSecondaryColor = 0;
+    boolean alreadyPlayed = false;
+    boolean randomNewGame = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         Constants.SCREEN_WIDTH = dm.widthPixels;
         Constants.SCREEN_HEIGHT = dm.heightPixels;
-
-        btnGenerateNew = findViewById(R.id.btnGenerate);
-        btnLoad = findViewById(R.id.btnLoad);
-        btnSettings = findViewById(R.id.btnSettings);
+        // background
         videoView = findViewById(R.id.myvideoview);
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
         videoView.setVideoURI(video);
         videoView.start();
-
-        btnGenerateNew.setOnClickListener(new View.OnClickListener() {
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    videoView.start();
+                }
+        });
+        // main menu blocks
+        layoutMainMenu = findViewById(R.id.layoutMainMenu);
+        btnNew = findViewById(R.id.btnNew);
+        btnLoad = findViewById(R.id.btnLoad);
+        btnSettings = findViewById(R.id.btnSettings);
+        // new game generator blocks
+        layoutNewGameMenu = findViewById(R.id.layoutNewGameMenu);
+        radioGroup = findViewById(R.id.radioGroup);
+        linearLayoutColorPicker = findViewById(R.id.layoutCustomizeFishColor);
+        colorSeekBar1 = findViewById(R.id.colorSliderPrimary);
+        colorSeekBar2 = findViewById(R.id.colorSliderSecondary);
+        txtPopSize = findViewById(R.id.txtPopSize);
+        btnGenerate = findViewById(R.id.btnGenerate);
+        // main menu fun
+        btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onNewButtonClick(v);
+                layoutMainMenu.setVisibility(View.GONE);
+                layoutNewGameMenu.setVisibility(View.VISIBLE);
             }
         });
-
         btnLoad.setEnabled(false);
         btnLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fresh = false;
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra("FRESH", fresh);
+                intent.putExtra("FRESH", false);
                 startActivity(intent);
             }
         });
-
         btnSettings.setEnabled(false);
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,98 +96,66 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-
-        videoView.setOnCompletionListener(
-                new MediaPlayer.OnCompletionListener() {
-                    public void onCompletion(MediaPlayer mp) {
-                        videoView.start();
-                    }
-                });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videoView.start();
-        if (btnGenerateNew.getVisibility() == View.GONE && !popupWindow.isShowing()) {
-            btnGenerateNew.setVisibility(View.VISIBLE);
-            btnLoad.setVisibility(View.VISIBLE);
-            btnSettings.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void onNewButtonClick(View v) {
-        btnGenerateNew.setVisibility(View.GONE);
-        btnLoad.setVisibility(View.GONE);
-        btnSettings.setVisibility(View.GONE);
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        final View popupView = inflater.inflate(R.layout.dialog_new, null);
-
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        popupWindow = new PopupWindow(popupView, width, height, true);
-        popupWindow.setOutsideTouchable(true);
-
-        RelativeLayout relativeLayout = popupView.findViewById(R.id.relativeLayout);
-        final EditText txtPopSize = popupView.findViewById(R.id.txtPopSize);
-        final ColorSeekBar colorSeekBar1 = popupView.findViewById(R.id.colorSliderPrimary);
-        final ColorSeekBar colorSeekBar2 = popupView.findViewById(R.id.colorSliderSecondary);
-        final Button btnGenerate = popupView.findViewById(R.id.btnGenerate);
-
+        // new game generator fun
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radioBtnRandom) {
+                    linearLayoutColorPicker.setVisibility(View.GONE);
+                    randomNewGame = true;
+                }
+                if (checkedId == R.id.radioBtnCustom) {
+                    linearLayoutColorPicker.setVisibility(View.VISIBLE);
+                    randomNewGame = false;
+                }
+            }
+        });
         colorSeekBar1.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
                 pickedPrimaryColor = color;
             }
         });
-
         colorSeekBar2.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
             @Override
             public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
                 pickedSecondaryColor = color;
             }
         });
-
         btnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fresh = true;
-                btnGenerate.setSelected(true);
-                popupWindow.dismiss();
-                population = !txtPopSize.getText().toString().equals("") ?
-                        Integer.valueOf(txtPopSize.getText().toString()) : 10;
+                alreadyPlayed = true;
+                popSize = !txtPopSize.getText().toString().equals("") ?
+                        Integer.valueOf(txtPopSize.getText().toString()) : popSize;
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra("POPULATION", population);
-                intent.putExtra("FRESH", fresh);
+                intent.putExtra("POPULATION", popSize);
+                intent.putExtra("FRESH", true);
+                intent.putExtra("RANDOM", randomNewGame);
                 intent.putExtra("COLOR_PRIMARY", pickedPrimaryColor);
                 intent.putExtra("COLOR_SECONDARY", pickedSecondaryColor);
                 startActivity(intent);
             }
         });
-        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+    }
 
-        relativeLayout.setFocusableInTouchMode(true);
-        relativeLayout.requestFocus();
-        relativeLayout.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-                    popupWindow.dismiss();
-                }
-                return false;
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videoView.start();
+        if (alreadyPlayed && layoutNewGameMenu.getVisibility() == View.VISIBLE) {
+            layoutNewGameMenu.setVisibility(View.GONE);
+            layoutMainMenu.setVisibility(View.VISIBLE);
+        }
+    }
 
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                if(!btnGenerate.isSelected()) {
-                    btnGenerateNew.setVisibility(View.VISIBLE);
-                    btnLoad.setVisibility(View.VISIBLE);
-                    btnSettings.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        if (layoutNewGameMenu.getVisibility() == View.VISIBLE) {
+            layoutNewGameMenu.setVisibility(View.GONE);
+            layoutMainMenu.setVisibility(View.VISIBLE);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
