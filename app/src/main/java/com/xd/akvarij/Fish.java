@@ -166,6 +166,10 @@ public class Fish {
         this.eggs = 0;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public boolean getAlive() {
         return alive;
     }
