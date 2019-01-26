@@ -32,6 +32,10 @@ public class MainActivity extends Activity {
     ColorSeekBar colorSeekBar1;
     ColorSeekBar colorSeekBar2;
     Button btnGenerate;
+    Button btnSimDetails;
+    // simulation details
+    ConstraintLayout layoutSimDetails;
+    Button btnSimDetailsConfirm;
     // new game parameters
     public int popSize = 10;
     int pickedPrimaryColor = 0;
@@ -71,6 +75,10 @@ public class MainActivity extends Activity {
         colorSeekBar2 = findViewById(R.id.colorSliderSecondary);
         txtPopSize = findViewById(R.id.txtPopSize);
         btnGenerate = findViewById(R.id.btnGenerate);
+        btnSimDetails = findViewById(R.id.btnSimDetails);
+        // simulation details blocks
+        layoutSimDetails = findViewById(R.id.layoutSimDetails);
+        btnSimDetailsConfirm = findViewById(R.id.btnSimDetailsConfirm);
         // main menu fun
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +130,13 @@ public class MainActivity extends Activity {
                 pickedSecondaryColor = color;
             }
         });
+        btnSimDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutNewGameMenu.setVisibility(View.GONE);
+                layoutSimDetails.setVisibility(View.VISIBLE);
+            }
+        });
         btnGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,6 +152,15 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+        // sim details fun
+        btnSimDetailsConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutSimDetails.setVisibility(View.GONE);
+                layoutNewGameMenu.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     @Override
@@ -154,8 +178,10 @@ public class MainActivity extends Activity {
         if (layoutNewGameMenu.getVisibility() == View.VISIBLE) {
             layoutNewGameMenu.setVisibility(View.GONE);
             layoutMainMenu.setVisibility(View.VISIBLE);
-        } else {
+        } else if (layoutSimDetails.getVisibility() == View.VISIBLE) {
+            layoutSimDetails.setVisibility(View.GONE);
+            layoutNewGameMenu.setVisibility(View.VISIBLE);
+        } else
             super.onBackPressed();
-        }
     }
 }
