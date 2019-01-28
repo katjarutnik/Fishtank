@@ -11,14 +11,14 @@ import android.widget.TextView;
 import java.util.List;
 
 // TODO ON TOUCH EVENT KILL FISH YES NO
-public class FishAdapter extends RecyclerView.Adapter<FishAdapter.MyViewHolder> {
+public class FishAdapterTraits extends RecyclerView.Adapter<FishAdapterTraits.MyViewHolder> {
 
     private List<Fish> fishList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
         public TextView age, gender, stage, pregnant;
-        public ProgressBar hunger, bladder, environment;
+        public ProgressBar speed, vision, fertility;
 
         public MyViewHolder(View view) {
             super(view);
@@ -27,23 +27,24 @@ public class FishAdapter extends RecyclerView.Adapter<FishAdapter.MyViewHolder> 
             gender = view.findViewById(R.id.list_gender);
             stage = view.findViewById(R.id.list_stage);
             pregnant = view.findViewById(R.id.list_pregnant);
-            hunger = view.findViewById(R.id.list_hunger);
-            //bladder = view.findViewById(R.id.list_bladder);
-            //environment = view.findViewById(R.id.list_environment);
+            speed = view.findViewById(R.id.list_speed);
+            vision = view.findViewById(R.id.list_vision);
+            fertility = view.findViewById(R.id.list_fertility);
 
-            // TODO for bladder and environment
-            hunger.setMax(Constants.MAX_HUNGER);
+            // TODO fertility
+            speed.setMax(Constants.MAX_HORIZONTAL_SPEED);
+            vision.setMax(Constants.MAX_VISION);
         }
     }
 
-    public FishAdapter(List<Fish> fishList) {
+    public FishAdapterTraits(List<Fish> fishList) {
         this.fishList = fishList;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fish_list_row, parent, false);
+                .inflate(R.layout.fish_list_row_traits, parent, false);
         return new MyViewHolder(itemView);
     }
 
@@ -60,9 +61,9 @@ public class FishAdapter extends RecyclerView.Adapter<FishAdapter.MyViewHolder> 
                                 (fish.getLifeStage() == 2) ? "ADULT" :
                                         "ELDER");
         holder.pregnant.setText(fish.getPregnant() ? "pregnant" : "");
-        holder.hunger.setProgress(fish.getHunger());
-        //holder.bladder.setProgress(0);
-        //holder.environment.setProgress(0);
+        holder.speed.setProgress(fish.getSpeed());
+        holder.vision.setProgress(fish.getVision());
+        holder.fertility.setProgress(50);
     }
 
     @Override

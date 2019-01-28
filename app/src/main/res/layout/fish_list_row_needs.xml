@@ -85,6 +85,7 @@
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/layoutNeeds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
@@ -106,6 +107,7 @@
                     android:layout_height="10dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="6dp"
+                    android:progressTint="@color/colorGood"
                     app:layout_constraintStart_toEndOf="@+id/textView29"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -116,7 +118,7 @@
                     android:layout_marginStart="32dp"
                     android:fontFamily="monospace"
                     android:text="bladder"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintStart_toEndOf="@+id/list_hunger" />
 
                 <ProgressBar
@@ -126,7 +128,8 @@
                     android:layout_height="10dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="6dp"
-                    android:visibility="gone"
+                    android:progressTint="@color/colorGood"
+                    android:visibility="visible"
                     app:layout_constraintStart_toEndOf="@+id/textView30"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -137,7 +140,7 @@
                     android:layout_marginStart="32dp"
                     android:fontFamily="monospace"
                     android:text="environment"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintStart_toEndOf="@+id/list_bladder" />
 
                 <ProgressBar
@@ -147,7 +150,7 @@
                     android:layout_height="10dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="6dp"
-                    android:visibility="gone"
+                    android:progressTint="@color/colorGood"
                     app:layout_constraintStart_toEndOf="@+id/textView31"
                     app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>

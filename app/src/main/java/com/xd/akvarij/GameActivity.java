@@ -55,7 +55,8 @@ public class GameActivity extends Activity implements SensorEventListener {
     ConstraintLayout gameOverlayStats;
     LinearLayout gameOverlayStatsSummary;
     RecyclerView recyclerViewStats;
-    FishAdapter fishAdapter;
+    FishAdapterNeeds fishAdapterNeeds;
+    FishAdapterTraits fishAdapterTraits;
     boolean statsOpen = false;
     public List<Fish> fishData = new ArrayList<>();
     TextView txtCounterStartingPopulation;
@@ -65,7 +66,8 @@ public class GameActivity extends Activity implements SensorEventListener {
     TextView txtCounterFishFeeding;
     TextView txtCounterTankCleaning;
     Button btnStatsSummary;
-    Button btnStatsFish;
+    Button btnStatsFishNeeds;
+    Button btnStatsFishTraits;
     // pause menu view
     ConstraintLayout gameLayoutPause;
     Button btnSimSettings;
@@ -135,7 +137,8 @@ public class GameActivity extends Activity implements SensorEventListener {
         gameOverlayStatsSummary = gameOverlayStats.findViewById(R.id.layoutGameOverlayStatsSummary);
         recyclerViewStats = gameOverlayStats.findViewById(R.id.recyclerViewStats);
         btnStatsSummary = gameOverlayStats.findViewById(R.id.btnGameOverlayStatsOverall);
-        btnStatsFish = gameOverlayStats.findViewById(R.id.btnGameOverlayStatsFish);
+        btnStatsFishNeeds = gameOverlayStats.findViewById(R.id.btnGameOverlayStatsFish);
+        btnStatsFishTraits = gameOverlayStats.findViewById(R.id.btnGameOverlayStatsTraits);
         // game stats summary
         txtCounterStartingPopulation = gameOverlayStats.findViewById(R.id.textView14);
         txtCounterFishAlive = gameOverlayStats.findViewById(R.id.textView15);
@@ -201,7 +204,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                     public void run() {
                         fishData.clear();
                         fishData.addAll(gameView.tank.fish);
-                        fishAdapter.notifyDataSetChanged();
+                        fishAdapterNeeds.notifyDataSetChanged();
                     }
                 });
             }
@@ -316,13 +319,26 @@ public class GameActivity extends Activity implements SensorEventListener {
                 gameOverlayStatsSummary.animate().alpha(1.0f);
             }
         });
-        btnStatsFish.setOnClickListener(new View.OnClickListener() {
+        btnStatsFishNeeds.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (gameOverlayStatsSummary.getVisibility() == View.VISIBLE) {
                     gameOverlayStatsSummary.setVisibility(View.GONE);
                 }
                 recyclerViewStats.setAlpha(0.0f);
+                recyclerViewStats.setAdapter(fishAdapterNeeds);
+                recyclerViewStats.setVisibility(View.VISIBLE);
+                recyclerViewStats.animate().alpha(1.0f);
+            }
+        });
+        btnStatsFishTraits.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gameOverlayStatsSummary.getVisibility() == View.VISIBLE) {
+                    gameOverlayStatsSummary.setVisibility(View.GONE);
+                }
+                recyclerViewStats.setAlpha(0.0f);
+                recyclerViewStats.setAdapter(fishAdapterTraits);
                 recyclerViewStats.setVisibility(View.VISIBLE);
                 recyclerViewStats.animate().alpha(1.0f);
             }
@@ -384,13 +400,15 @@ public class GameActivity extends Activity implements SensorEventListener {
         };
         if (orientationEventListener.canDetectOrientation())
             orientationEventListener.enable();
-        // stats recycler view
-        fishAdapter = new FishAdapter(fishData);
+        // stats recycler view needs
+        fishAdapterNeeds = new FishAdapterNeeds(fishData);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerViewStats.setLayoutManager(mLayoutManager);
         recyclerViewStats.setItemAnimator(new DefaultItemAnimator());
         recyclerViewStats.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        recyclerViewStats.setAdapter(fishAdapter);
+        recyclerViewStats.setAdapter(fishAdapterNeeds);
+        // traits
+        fishAdapterTraits = new FishAdapterTraits(fishData);
         // prepare for trouble
         loadData(population, this);
         // and make it double

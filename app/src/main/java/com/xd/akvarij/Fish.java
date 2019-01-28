@@ -218,6 +218,10 @@ public class Fish {
         return vision;
     }
 
+    public int getSpeed() {
+        return speedHorizontal;
+    }
+
     public int getX () {
         return x;
     }

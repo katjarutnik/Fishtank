@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF0400</color>
     <color name="colorTransparent">#00FFFFFF</color>
     <color name="colorStats">#CC000000</color>
+    <color name="colorGood">#04FF00</color>
+    <color name="colorBad">#CC000000</color>
+    <color name="colorSkill">#007BFF</color>
 </resources>
