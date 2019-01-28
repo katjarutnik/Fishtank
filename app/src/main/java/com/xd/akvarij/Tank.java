@@ -5,47 +5,48 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Tank {
-    public ArrayList<Fish> graveyard = new ArrayList<>();
     public ArrayList<Fish> fish = new ArrayList<>();
     public ArrayList<Food> food = new ArrayList<>();
     public ArrayList<Poop> poop = new ArrayList<>();
-    private int popSize;
     private Random random = new Random();
+    private Paint paint = new Paint();
     private Rect background;
-    private Paint paint;
     public boolean dayTime;
     public int dayNightCycle;
     public int dayCounter;
-
-    //public StringBuilder sb = new StringBuilder();
-    //public ArrayList<Data> gatherer = new ArrayList<>();
-    //public DataReadWrite drw = new DataReadWrite();
-    public Context context;
-
     public boolean gameOver = false;
+    public Context context;
+    MyCallback myCallback;
 
-    public int countFish;
-    public int countFishNewborn;
-    public int countFishDied;
+    int startingPopulation;
+    int countFishAlive;
+    int countFishDeaths;
+    int countFishBabies;
+    int countFishFeeding;
+    int countTankCleaning;
+    int countGenerationReached;
 
-    MyCallback myCallback = null;
+    public Tank(int popSize, MyCallback callback, Context ctx) {
+        startingPopulation = popSize;
+        countFishAlive = popSize;
+        countFishDeaths = 0;
+        countFishBabies = 0;
+        countFishFeeding = 0;
+        countTankCleaning = 0;
+        countGenerationReached = 0;
+        dayTime = true;
+        dayNightCycle = 0;
+        dayCounter = 1;
+        background = new Rect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        myCallback = callback;
+        context = ctx;
 
-
-    public Tank(int popSize, MyCallback callback, Context context) {
-        this.popSize = popSize;
-        this.dayTime = true;
-        this.dayNightCycle = 0;
-        this.dayCounter = 1;
-        this.paint = new Paint();
-        this.background = new Rect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
-        this.myCallback = callback;
-        this.context = context;
+        myCallback.statsUpdateStartingPopulation(startingPopulation);
     }
 
     public void draw(Canvas canvas) {
@@ -68,14 +69,10 @@ public class Tank {
     }
 
     public void update(boolean daytime) {
-        /*if (dayNightCycle == 0 && dayCounter > 1) {
-            sb = drw.readFromFile(context);
-        }*/
         if (allFishAreDead()) {
             myCallback.updateTxtMiddle();
             gameOver = true;
         }
-
         if (this.dayTime != daytime) {
             myCallback.updateTxtInfoTop("(nighttime)");
             dayNightCycle++;
@@ -83,28 +80,24 @@ public class Tank {
         }
         if (dayNightCycle == 2) {
             myCallback.updateTxtInfoTop("(daytime)");
-            // COLLECT DATA
-            /*for (int i = 0; i < fish.size(); i++) {
-                gatherer.add(new Data(fish.get(i)));
-            }
-            drw.writeToFile(gatherer, context);
-            gatherer.clear();*/
             dayCounter++;
-            Log.d("Tank", "IT'S A NEW DAY");
             myCallback.updateTxtDays("DAY " + dayCounter);
         }
+
         for (int i = 0; i < fish.size(); i++)
-            fish.get(i).update(food, fish, graveyard, poop, dayNightCycle);
+            fish.get(i).update(food, fish, poop, dayNightCycle);
         for (int i = 0; i < food.size(); i++)
             food.get(i).update();
         for (int i = 0; i < poop.size(); i++)
             poop.get(i).update();
-        if (dayNightCycle == 2)
+
+        if (dayNightCycle == 2) {
             dayNightCycle = 0;
+        }
     }
 
     public void generateRandomNew() {
-        for (int i = 0; i < popSize; i++) {
+        for (int i = 0; i < startingPopulation; i++) {
             fish.add(new Fish(
                     i,
                     random.nextInt(Constants.SCREEN_WIDTH - 64),
@@ -121,13 +114,14 @@ public class Tank {
                     (random.nextInt(100) >= 50) ? Gender.FEMALE : Gender.MALE,
                     Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)),
                     Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)),
-                    context));
+                    context,
+                    myCallback));
         }
         myCallback.updateAdapter();
     }
 
     public void generateCustomNew(int primaryColor, int secondaryColor) {
-        for (int i = 0; i < this.popSize; i++) {
+        for (int i = 0; i < this.startingPopulation; i++) {
             fish.add(new Fish(
                     i,
                     random.nextInt(Constants.SCREEN_WIDTH - 64),
@@ -144,7 +138,8 @@ public class Tank {
                     (random.nextInt(100) >= 50) ? Gender.FEMALE : Gender.MALE,
                     primaryColor,
                     secondaryColor,
-                    context));
+                    context,
+                    myCallback));
         }
         myCallback.updateAdapter();
     }
@@ -156,6 +151,15 @@ public class Tank {
             }
         }
         return true;
+    }
+
+    public int countAlive() {
+        int alive = 0;
+        for (Fish f: fish) {
+            if (f.getAlive())
+                alive++;
+        }
+        return alive;
     }
 
     public void feedFish() {

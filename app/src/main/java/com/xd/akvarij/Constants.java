@@ -6,7 +6,7 @@ public class Constants {
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
 
-    public static int DAY_LENGTH_IN_SECONDS = 15;
+    public static int DAY_LENGTH_IN_SECONDS = 5;
 
     public static int AGE_MAX_INFANT = 2; //3
     public static int AGE_MAX_TEEN = 5; //7
@@ -14,7 +14,7 @@ public class Constants {
     public static int AGE_MAX = 10; //20
 
     public static int PREGNANCY_DAYS = 1;
-    public static int PREGNANCY_CHANCE = 100;
+    public static int PREGNANCY_CHANCE = 45;
     public static int PREGNANCY_TWINS_CHANCE = 15;
     public static int MUTATION_CHANCE = 100;
 
@@ -30,8 +30,8 @@ public class Constants {
     public static int MED_VISION = 700;
     public static int MIN_VISION = 300;
 
-    public static int MAX_HUNGER = 10;
-    public static int HUNGER_AFTER_POOP = 5;
+    public static int MAX_HUNGER = 5;
+    public static int HUNGER_AFTER_POOP = 2;
 
 
     public static int FOOD_SIZE = 10;

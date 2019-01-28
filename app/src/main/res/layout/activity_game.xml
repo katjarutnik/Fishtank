@@ -19,7 +19,7 @@
         android:id="@+id/gameOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <Button
             android:id="@+id/btnStats"
@@ -89,7 +89,9 @@
             android:id="@+id/txtDays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="288dp"
             android:fontFamily="casual"
             android:text="DAY 1"
             android:textAllCaps="true"
@@ -97,20 +99,21 @@
             android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnStats" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="casual"
             android:text="(daytime)"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/txtDays" />
+            app:layout_constraintEnd_toStartOf="@+id/txtDays"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtGameOverlayMiddle"
@@ -155,10 +158,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="casual"
-                android:text="SIMULATION PAUSED ||"
+                android:text="> SIMULATION PAUSED ||"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -185,7 +188,7 @@
                 android:text="TWEAKS"
                 android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -205,6 +208,7 @@
                 android:text="SAVE"
                 android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.502"
@@ -223,6 +227,7 @@
                 android:text="EXIT"
                 android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
@@ -268,7 +273,7 @@
                     android:textAlignment="textStart"
                     android:textAllCaps="true"
                     android:textColor="@color/colorAccent"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -286,7 +291,7 @@
                         android:text="day / night time length (sec)"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -316,7 +321,7 @@
                     android:text="> FISH"
                     android:textAlignment="textStart"
                     android:textColor="@color/colorAccent"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -327,6 +332,7 @@
                     android:text="// max age"
                     android:textAlignment="textStart"
                     android:textColor="@color/colorAccent"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -347,7 +353,7 @@
                         android:text="infant"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -387,7 +393,7 @@
                         android:text="teen"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -427,6 +433,7 @@
                         android:text="adult"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -466,7 +473,7 @@
                         android:text="elder"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="14sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -496,6 +503,7 @@
                     android:text="// max speed"
                     android:textAlignment="textStart"
                     android:textColor="@color/colorAccent"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -514,6 +522,7 @@
                         android:text="horizontal"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -551,6 +560,7 @@
                         android:text="vertical"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -577,11 +587,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="casual"
-                    android:lineSpacingExtra="14sp"
                     android:text="// breeding"
                     android:textAlignment="textStart"
                     android:textAllCaps="false"
                     android:textColor="@color/colorAccent"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -600,6 +610,7 @@
                         android:text="pregnancy days"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -637,6 +648,7 @@
                         android:text="pregnancy chance (0-100)"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -674,6 +686,7 @@
                         android:text="twins chance (0-100)"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -711,6 +724,7 @@
                         android:text="mutation chance (0-100)"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -746,7 +760,7 @@
             android:fontFamily="casual"
             android:text="CONFIRM"
             android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/scrollView2"
@@ -758,22 +772,176 @@
         android:id="@+id/gameOverlayStats"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewStats"
+        <LinearLayout
+            android:id="@+id/layoutGameOverlayStatsButtons"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="64dp"
-            android:background="@color/colorStats"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="start"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/btnGameOverlayStatsOverall"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorStats"
+                android:fontFamily="casual"
+                android:text="> SUMMARY"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnGameOverlayStatsFish"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorStats"
+                android:fontFamily="casual"
+                android:text="> NEEDS"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/btnGameOverlayStatsOverall"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnGameOverlayStatsTraits"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorStats"
+                android:fontFamily="casual"
+                android:text="> TRAITS"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/btnGameOverlayStatsOverall"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/layoutGameOverlayStatsInfo"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
+            android:background="@color/colorStats"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutGameOverlayStatsButtons">
+
+            <LinearLayout
+                android:id="@+id/layoutGameOverlayStatsSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="monospace"
+                    android:text="Your starting population was the size of 0."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="monospace"
+                    android:text="There are currently 0 fish swimming around in your tank."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="monospace"
+                    android:text="0 fish have given up on their life."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="0 fish babies have been spawned by your fish."
+                    android:textColor="@color/colorPrimary"
+                    android:typeface="monospace" />
+
+                <TextView
+                    android:id="@+id/textView19"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="monospace"
+                    android:text="You fed your fish 0 times."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="monospace"
+                    android:text="You cleaned the tank 0 times."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView18"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    android:fontFamily="monospace"
+                    android:text="Simulation has reached generation _."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView22"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="monospace"
+                    android:text="Fish still don't know they're living in a simulation."
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="Proceed? y/n"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewStats"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

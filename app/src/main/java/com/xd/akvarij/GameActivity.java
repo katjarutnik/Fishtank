@@ -1,5 +1,7 @@
 package com.xd.akvarij;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -48,15 +51,24 @@ public class GameActivity extends Activity implements SensorEventListener {
     TextView txtDays;
     TextView txtInfoTop;
     TextView txtInfoMiddle;
-    // stats recycler view
+    // stats
     ConstraintLayout gameOverlayStats;
+    LinearLayout gameOverlayStatsSummary;
     RecyclerView recyclerViewStats;
     FishAdapter fishAdapter;
     boolean statsOpen = false;
     public List<Fish> fishData = new ArrayList<>();
+    TextView txtCounterStartingPopulation;
+    TextView txtCounterFishAlive;
+    TextView txtCounterFishDied;
+    TextView txtCounterFishBabies;
+    TextView txtCounterFishFeeding;
+    TextView txtCounterTankCleaning;
+    Button btnStatsSummary;
+    Button btnStatsFish;
     // pause menu view
     ConstraintLayout gameLayoutPause;
-    Button btnGodMode;
+    Button btnSimSettings;
     Button btnSave;
     Button btnExit;
     // simulation tweaks view
@@ -92,10 +104,21 @@ public class GameActivity extends Activity implements SensorEventListener {
             // error
         }
         context = this;
-
-        // game view
         gameView = new GameView(this);
         View rootView = getLayoutInflater().inflate(R.layout.activity_game, null, true);
+        // background video
+        videoView = rootView.findViewById(R.id.myvideoview2);
+        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
+        videoView.setVideoURI(video);
+        videoView.setVisibility(View.INVISIBLE);
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (videoView.getVisibility() == View.VISIBLE)
+                    videoView.start();
+            }
+        });
+        // main game view
         gameFrame = rootView.findViewById(R.id.gameFrame);
         gameOverlay = rootView.findViewById(R.id.gameOverlay);
         gameOverlay.setVisibility(View.VISIBLE);
@@ -106,30 +129,31 @@ public class GameActivity extends Activity implements SensorEventListener {
         txtDays = gameOverlay.findViewById(R.id.txtDays);
         txtInfoTop = gameOverlay.findViewById(R.id.txtInfo);
         txtInfoMiddle = gameOverlay.findViewById(R.id.txtGameOverlayMiddle);
-
         // game stats
         gameOverlayStats = rootView.findViewById(R.id.gameOverlayStats);
         gameOverlayStats.setVisibility(View.GONE);
+        gameOverlayStatsSummary = gameOverlayStats.findViewById(R.id.layoutGameOverlayStatsSummary);
         recyclerViewStats = gameOverlayStats.findViewById(R.id.recyclerViewStats);
-
-        // background video
-        videoView = rootView.findViewById(R.id.myvideoview2);
-        Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.fishtank_menu_new);
-        videoView.setVideoURI(video);
-        videoView.setVisibility(View.INVISIBLE);
-
+        btnStatsSummary = gameOverlayStats.findViewById(R.id.btnGameOverlayStatsOverall);
+        btnStatsFish = gameOverlayStats.findViewById(R.id.btnGameOverlayStatsFish);
+        // game stats summary
+        txtCounterStartingPopulation = gameOverlayStats.findViewById(R.id.textView14);
+        txtCounterFishAlive = gameOverlayStats.findViewById(R.id.textView15);
+        txtCounterFishDied = gameOverlayStats.findViewById(R.id.textView16);
+        txtCounterFishBabies = gameOverlayStats.findViewById(R.id.textView17);
+        txtCounterFishFeeding = gameOverlayStats.findViewById(R.id.textView19);
+        txtCounterTankCleaning = gameOverlayStats.findViewById(R.id.textView20);
         // game menu view
         gameLayoutPause = rootView.findViewById(R.id.gameOverlayPaused);
         gameLayoutPause.setVisibility(View.GONE);
-        btnGodMode = gameLayoutPause.findViewById(R.id.btnGameOverlayPausedTweaks);
+        btnSimSettings = gameLayoutPause.findViewById(R.id.btnGameOverlayPausedTweaks);
         btnSave = gameLayoutPause.findViewById(R.id.btnGameOverlayPausedSave);
         btnExit = gameLayoutPause.findViewById(R.id.btnGameOverlayPausedExit);
-
         // simulation tweaks view
         gameLayoutSimSettings = rootView.findViewById(R.id.gameOverlaySimSettings);
         gameLayoutSimSettings.setVisibility(View.GONE);
         btnSimSettingsConfirm = gameLayoutSimSettings.findViewById(R.id.btnGameOverlaySimSettingsConfirm);
-
+        // set up the views
         gameFrame.removeView(gameOverlay);
         gameFrame.removeView(gameOverlayStats);
         gameFrame.removeView(gameLayoutPause);
@@ -139,9 +163,9 @@ public class GameActivity extends Activity implements SensorEventListener {
         gameFrame.addView(gameOverlayStats);
         gameFrame.addView(gameLayoutPause);
         gameFrame.addView(gameLayoutSimSettings);
-
         // enables interaction from other classes
         myCallback = new MyCallback() {
+            // main game overlay
             @Override
             public void updateTxtDays(final String myString) {
                 runOnUiThread(new Runnable() {
@@ -169,43 +193,140 @@ public class GameActivity extends Activity implements SensorEventListener {
                     }
                 });
             }
+            // stats game overlay
             @Override
             public void updateAdapter() {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        fishData.clear();
                         fishData.addAll(gameView.tank.fish);
                         fishAdapter.notifyDataSetChanged();
                     }
                 });
             }
+            @Override
+            public void statsUpdateStartingPopulation(final int counter) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtCounterStartingPopulation.setText("Your starting population was the size of " + counter + ".");
+                    }
+                });
+            }
+            @Override
+            public void statsUpdateCurrentlyAlive() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameView.tank.countFishAlive = gameView.tank.countAlive();
+                        txtCounterFishAlive.setText("There are currently " + gameView.tank.countFishAlive +" fish swimming around in your tank.");
+                    }
+                });
+            }
+            @Override
+            public void statsUpdateFishDeaths() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameView.tank.countFishDeaths++;
+                        txtCounterFishDied.setText(gameView.tank.countFishDeaths + " fish have given up on their life.");
+                    }
+                });
+            }
+            @Override
+            public void statsUpdateFishOffspring() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameView.tank.countFishBabies++;
+                        txtCounterFishBabies.setText(gameView.tank.countFishBabies + " fish babies have been spawned by your fish.");
+                    }
+                });
+            }
+            @Override
+            public void statsUpdateGenerationReached(int counter) {
+                // TODO
+            }
         };
-
+        // button feed fish
         btnFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameView.tank.feedFish();
+                if (gameView.thread.isAlive()) {
+                    gameView.tank.feedFish();
+                    gameView.tank.countFishFeeding++;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtCounterFishFeeding.setText("You fed your fish " + gameView.tank.countFishFeeding + " times.");
+                        }
+                    });
+                }
             }
         });
+        // button clean tank
         btnClean.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameView.tank.cleanPoop();
+                if (gameView.tank.poop.size() > 0) {
+                    gameView.tank.cleanPoop();
+                    gameView.tank.countTankCleaning++;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtCounterTankCleaning.setText("You cleaned the tank " + gameView.tank.countTankCleaning + " times.");
+                        }
+                    });
+                }
             }
         });
+        // toggle stats
         btnStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!statsOpen) {
+                    gameOverlayStats.setAlpha(0.0f);
                     gameOverlayStats.setVisibility(View.VISIBLE);
+                    gameOverlayStats.animate().alpha(1.0f);
                     statsOpen = true;
                 } else {
-                    gameOverlayStats.setVisibility(View.GONE);
                     statsOpen = false;
+                    gameOverlayStats.setAlpha(1.0f);
+                    gameOverlayStats.animate().alpha(0.0f).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            if (!statsOpen) {
+                                super.onAnimationEnd(animation);
+                                gameOverlayStats.setVisibility(View.GONE);
+                            }
+                        }
+                    });
                 }
             }
         });
-
+        btnStatsSummary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recyclerViewStats.getVisibility() == View.VISIBLE) {
+                    recyclerViewStats.setVisibility(View.GONE);
+                }
+                gameOverlayStatsSummary.setAlpha(0.0f);
+                gameOverlayStatsSummary.setVisibility(View.VISIBLE);
+                gameOverlayStatsSummary.animate().alpha(1.0f);
+            }
+        });
+        btnStatsFish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gameOverlayStatsSummary.getVisibility() == View.VISIBLE) {
+                    gameOverlayStatsSummary.setVisibility(View.GONE);
+                }
+                recyclerViewStats.setAlpha(0.0f);
+                recyclerViewStats.setVisibility(View.VISIBLE);
+                recyclerViewStats.animate().alpha(1.0f);
+            }
+        });
         // open pause menu
         btnOptions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,7 +339,10 @@ public class GameActivity extends Activity implements SensorEventListener {
                     gameLayoutSimSettings.setVisibility(View.GONE);
                     videoView.setVisibility(View.VISIBLE);
                     videoView.start();
+                    gameLayoutPause.setAlpha(0.0f);
                     gameLayoutPause.setVisibility(View.VISIBLE);
+                    Thread.sleep(200);
+                    gameLayoutPause.animate().alpha(1.0f);
                     //saveData(context, myPrefs, myPrefsKey, gameView.tank);
                     //Intent intent = new Intent(GameActivity.this, MainActivity.class);
                     //startActivity(intent);
@@ -227,9 +351,8 @@ public class GameActivity extends Activity implements SensorEventListener {
                 }
             }
         });
-
         // simulation tweaks menu
-        btnGodMode.setOnClickListener(new View.OnClickListener() {
+        btnSimSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gameLayoutPause.setVisibility(View.GONE);
@@ -244,20 +367,12 @@ public class GameActivity extends Activity implements SensorEventListener {
                 gameLayoutPause.setVisibility(View.VISIBLE);
             }
         });
-
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (videoView.getVisibility() == View.VISIBLE)
-                    videoView.start();
-            }
-        });
-
+        // sensor stuff
         sensorMan = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravity = new float[3];
         linear_acceleration = new float[3];
-
+        // landscape
         final OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
             @Override
             public void onOrientationChanged(int orientation) {
@@ -267,20 +382,20 @@ public class GameActivity extends Activity implements SensorEventListener {
                     currentOrientation = orientation;
             }
         };
-
         if (orientationEventListener.canDetectOrientation())
             orientationEventListener.enable();
-
+        // stats recycler view
         fishAdapter = new FishAdapter(fishData);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerViewStats.setLayoutManager(mLayoutManager);
         recyclerViewStats.setItemAnimator(new DefaultItemAnimator());
         recyclerViewStats.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerViewStats.setAdapter(fishAdapter);
-
+        // prepare for trouble
         loadData(population, this);
-
+        // and make it double
         setContentView(gameFrame);
+        // to protect the world from devastation
     }
 
     @Override
@@ -338,6 +453,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 gameView.tank.generateRandomNew();
             else
                 gameView.tank.generateCustomNew(pickedPrimaryColor, pickedSecondaryColor);
+            txtCounterFishAlive.setText("There are currently " + popSize +" fish swimming around in your tank.");
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);
             if (sharedPreferences.contains(myPrefsKey)) {

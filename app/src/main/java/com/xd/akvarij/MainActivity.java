@@ -46,8 +46,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         Constants.SCREEN_WIDTH = dm.widthPixels;
@@ -84,7 +84,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 layoutMainMenu.setVisibility(View.GONE);
+                layoutNewGameMenu.setAlpha(0.0f);
                 layoutNewGameMenu.setVisibility(View.VISIBLE);
+                layoutNewGameMenu.animate().alpha(1.0f);
             }
         });
         btnLoad.setEnabled(false);
@@ -134,7 +136,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 layoutNewGameMenu.setVisibility(View.GONE);
+                layoutSimDetails.setAlpha(0.0f);
                 layoutSimDetails.setVisibility(View.VISIBLE);
+                layoutSimDetails.animate().alpha(1.0f);
             }
         });
         btnGenerate.setOnClickListener(new View.OnClickListener() {
@@ -157,10 +161,11 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 layoutSimDetails.setVisibility(View.GONE);
+                layoutNewGameMenu.setAlpha(0.0f);
                 layoutNewGameMenu.setVisibility(View.VISIBLE);
+                layoutNewGameMenu.animate().alpha(1.0f);
             }
         });
-
     }
 
     @Override

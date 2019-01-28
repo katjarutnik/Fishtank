@@ -13,8 +13,9 @@ public class Fish {
     // id
     private int id;
     private boolean alive;
+    private int generation;
     // display
-    private Bitmap image;
+    public Bitmap image;
     private int width;
     private int height;
     //private Paint paint;
@@ -43,22 +44,29 @@ public class Fish {
     // other
     private Random random;
     private Context context;
+    private MyCallback myCallback;
     Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    // TODO FIX BLADDER NEED
+    // TODO ADD ENVIRONMENT NEED
+    // TODO ADD OVERALL HAPPINESS
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, x, y, p);
     }
 
-    public void update(ArrayList<Food> food, ArrayList<Fish> fish, ArrayList<Fish> graveyard,
+    public void update(ArrayList<Food> food, ArrayList<Fish> fish,
                        ArrayList<Poop> poop, int dayNightCycle) {
         if (alive) {
-            if (dayNightCycle == 2) {
-                increaseHunger();
-                growUp(graveyard);
+            if (dayNightCycle == 2) { // new day
+                becomeHungry();
+                growUp();
                 if (pregnant && pregnantDays == Constants.PREGNANCY_DAYS) {
                     pregnant = false;
                     while (this.eggs > 0) {
-                        fish.add(new Fish(this, this.coParent, context));
+                        fish.add(new Fish(this, this.coParent, context, myCallback));
+                        myCallback.statsUpdateFishOffspring();
+                        myCallback.updateAdapter();
                         this.eggs--;
                     }
                     this.coParent = null;
@@ -78,7 +86,9 @@ public class Fish {
     // first gen
     public Fish(int id, int x, int y, boolean goingRight, boolean goingDown,
                 int speedHorizontal, int speedVertical, int vision, int hunger, int age,
-                Gender gender, int primaryColor, int secondaryColor, Context context) {
+                Gender gender, int primaryColor, int secondaryColor, Context context,
+                MyCallback myCallback) {
+        this.myCallback = myCallback;
         this.context = context;
         this.id = id;
         this.x = x;
@@ -118,10 +128,12 @@ public class Fish {
         this.pregnant = false;
         this.pregnantDays = 0;
         this.eggs = 0;
+        this.generation = 0;
     }
 
     // offspring
-    public Fish(Fish mom, Fish dad, Context context) {
+    public Fish(Fish mom, Fish dad, Context context, MyCallback myCallback) {
+        this.myCallback = myCallback;
         this.random = new Random();
         this.context = context;
         this.id = 0; // placeholder, id has no use for now
@@ -164,6 +176,7 @@ public class Fish {
         this.pregnant = false;
         this.pregnantDays = 0;
         this.eggs = 0;
+        this.generation = Integer.valueOf(mom.generation + 1);
     }
 
     public int getId() {
@@ -191,6 +204,10 @@ public class Fish {
 
     public boolean getGender() {
         return gender == Gender.MALE;
+    }
+
+    public boolean getPregnant() {
+        return pregnant;
     }
 
     public int getHunger() {
@@ -290,10 +307,11 @@ public class Fish {
         // ce se je zaletela v hrano
         if (nearest.getX() >= x && nearest.getX() <= x+width &&
                 nearest.getY() >= y && nearest.getY() <= y+height) {
-            decreaseHunger(poop);
+            eatFood();
             food.remove(nearest);
             nearestFood = null;
             hasFoundNearestFood = false;
+            myCallback.updateAdapter();
         } else { // drugac se premikaj proti hrani
             if (x < nearest.getX()) {
                 if (!goingRight) {
@@ -309,8 +327,14 @@ public class Fish {
                 x -= speedHorizontal;
             }
             if (y < nearest.getY()) {
+                if (!goingDown) {
+                    goingDown = true;
+                }
                 y += speedVertical;
             } else {
+                if (goingDown) {
+                    goingDown = false;
+                }
                 y -= speedVertical;
             }
         }
@@ -346,24 +370,21 @@ public class Fish {
         }
     }
 
-    // call when fish eats food
-    public void decreaseHunger(ArrayList<Poop> poop) {
-        hunger++;
-        if (hunger >= Constants.MAX_HUNGER) {
-            poop.add(new Poop(this.x, this.y));
-            hunger = Constants.HUNGER_AFTER_POOP;
+    public void eatFood() {
+        if (hunger < Constants.MAX_HUNGER) {
+            hunger++;
         }
     }
 
     // call on each new day cycle
-    public void increaseHunger() {
+    public void becomeHungry() {
         hunger--;
         if (hunger <= 0)
             stage = LifeStage.DEAD;
     }
 
     // call on each new day cycle
-    public void growUp(ArrayList<Fish> graveyard) {
+    public void growUp() {
         age++;
         if (age == Constants.AGE_MAX_INFANT) {
             stage = LifeStage.TEEN;
@@ -378,9 +399,11 @@ public class Fish {
             stage = LifeStage.DEAD;
         }
         if (stage == LifeStage.DEAD && alive) {
+            myCallback.statsUpdateFishDeaths();
+            myCallback.statsUpdateCurrentlyAlive();
+            myCallback.updateAdapter();
             alive = false;
             image = ImageManager.flipVertically(image);
-            graveyard.add(this);
         }
     }
 
@@ -440,11 +463,7 @@ public class Fish {
     }
 
     public void changeVerticalSwimmingDirection() {
-        if (goingDown) {
-            goingDown = false;
-        } else {
-            goingDown = true;
-        }
+        goingDown = !goingDown;
     }
 
 
