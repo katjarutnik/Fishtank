@@ -38,7 +38,7 @@ public class GameActivity extends Activity implements SensorEventListener {
     int pickedPrimaryColor;
     int pickedSecondaryColor;
     boolean randomNewGame;
-    // plays in background in menus
+    // background
     VideoView videoView;
     // game view
     GameView gameView;
@@ -47,10 +47,12 @@ public class GameActivity extends Activity implements SensorEventListener {
     Button btnFeed;
     Button btnClean;
     Button btnStats;
+    Button btnPausePlay;
     Button btnOptions;
     TextView txtDays;
     TextView txtInfoTop;
     TextView txtInfoMiddle;
+    boolean paused = false;
     // stats
     ConstraintLayout gameOverlayStats;
     LinearLayout gameOverlayStatsSummary;
@@ -127,6 +129,7 @@ public class GameActivity extends Activity implements SensorEventListener {
         btnFeed = gameOverlay.findViewById(R.id.btnFeed);
         btnClean = gameOverlay.findViewById(R.id.btnClean);
         btnStats = gameOverlay.findViewById(R.id.btnStats);
+        btnPausePlay = gameOverlay.findViewById(R.id.btnPausePlay);
         btnOptions = gameOverlay.findViewById(R.id.btnOptions);
         txtDays = gameOverlay.findViewById(R.id.txtDays);
         txtInfoTop = gameOverlay.findViewById(R.id.txtInfo);
@@ -202,6 +205,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        recyclerViewStats.getRecycledViewPool().clear();
                         fishData.clear();
                         fishData.addAll(gameView.tank.fish);
                         fishAdapterNeeds.notifyDataSetChanged();
@@ -213,7 +217,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        txtCounterStartingPopulation.setText("Your starting population was the size of " + counter + ".");
+                        txtCounterStartingPopulation.setText("> STARTING POPULATION: " + counter);
                     }
                 });
             }
@@ -223,7 +227,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                     @Override
                     public void run() {
                         gameView.tank.countFishAlive = gameView.tank.countAlive();
-                        txtCounterFishAlive.setText("There are currently " + gameView.tank.countFishAlive +" fish swimming around in your tank.");
+                        txtCounterFishAlive.setText("> CURRENTLY ALIVE: " + gameView.tank.countFishAlive);
                     }
                 });
             }
@@ -233,7 +237,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                     @Override
                     public void run() {
                         gameView.tank.countFishDeaths++;
-                        txtCounterFishDied.setText(gameView.tank.countFishDeaths + " fish have given up on their life.");
+                        txtCounterFishDied.setText("> DEAD FISH TOTAL: " + gameView.tank.countFishDeaths);
                     }
                 });
             }
@@ -243,7 +247,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                     @Override
                     public void run() {
                         gameView.tank.countFishBabies++;
-                        txtCounterFishBabies.setText(gameView.tank.countFishBabies + " fish babies have been spawned by your fish.");
+                        txtCounterFishBabies.setText("> BABY FISH TOTAL: " + gameView.tank.countFishBabies);
                     }
                 });
             }
@@ -308,6 +312,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 }
             }
         });
+        // stats summary
         btnStatsSummary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,6 +324,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 gameOverlayStatsSummary.animate().alpha(1.0f);
             }
         });
+        // stats needs
         btnStatsFishNeeds.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,6 +337,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 recyclerViewStats.animate().alpha(1.0f);
             }
         });
+        // stats traits
         btnStatsFishTraits.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -341,6 +348,26 @@ public class GameActivity extends Activity implements SensorEventListener {
                 recyclerViewStats.setAdapter(fishAdapterTraits);
                 recyclerViewStats.setVisibility(View.VISIBLE);
                 recyclerViewStats.animate().alpha(1.0f);
+            }
+        });
+        // pause play thread
+        btnPausePlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (paused) {
+                    paused = false;
+                    gameView.thread = new MainThread(gameView.getHolder(), gameView);
+                    gameView.thread.setRunning(true);
+                    gameView.thread.start();
+                } else {
+                    try {
+                        paused = true;
+                        gameView.thread.setRunning(false);
+                        gameView.thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
         // open pause menu
@@ -409,11 +436,9 @@ public class GameActivity extends Activity implements SensorEventListener {
         recyclerViewStats.setAdapter(fishAdapterNeeds);
         // traits
         fishAdapterTraits = new FishAdapterTraits(fishData);
-        // prepare for trouble
+        // start the engines
         loadData(population, this);
-        // and make it double
         setContentView(gameFrame);
-        // to protect the world from devastation
     }
 
     @Override
@@ -471,7 +496,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                 gameView.tank.generateRandomNew();
             else
                 gameView.tank.generateCustomNew(pickedPrimaryColor, pickedSecondaryColor);
-            txtCounterFishAlive.setText("There are currently " + popSize +" fish swimming around in your tank.");
+            txtCounterFishAlive.setText("> CURRENTLY ALIVE: " + popSize);
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(myPrefs, 0);
             if (sharedPreferences.contains(myPrefsKey)) {

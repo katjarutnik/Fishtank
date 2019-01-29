@@ -17,7 +17,7 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
-        public TextView age, gender, stage, pregnant;
+        public TextView age, gender, stage, pregnant, alive;
         public ProgressBar hunger, bladder, environment;
 
         public MyViewHolder(View view) {
@@ -30,6 +30,7 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
             hunger = view.findViewById(R.id.list_hunger);
             bladder = view.findViewById(R.id.list_bladder);
             environment = view.findViewById(R.id.list_environment);
+            alive = view.findViewById(R.id.list_alive);
 
             // TODO bladder environment
             hunger.setMax(Constants.MAX_HUNGER);
@@ -53,13 +54,14 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
         holder.img.setImageBitmap(fish.image);
         holder.img.setAdjustViewBounds(true);
         holder.age.setText(String.valueOf(fish.getAge()) + " DAYS OLD");
-        holder.gender.setText(fish.getGender() ? "MALE" : "FEMALE");
+        holder.gender.setText(fish.getGender() ? "♂" : "♀");
         holder.stage.setText(
                 (fish.getLifeStage() == 0) ? "INFANT" :
                         (fish.getLifeStage() == 1) ? "TEEN" :
                                 (fish.getLifeStage() == 2) ? "ADULT" :
                                         "ELDER");
-        holder.pregnant.setText(fish.getPregnant() ? "pregnant" : "");
+        holder.pregnant.setText(fish.getPregnant() ? "\uD83D\uDC95" : "");
+        holder.alive.setText(fish.getAlive() ? "" : "\uD83D\uDC80");
         holder.hunger.setProgress(fish.getHunger());
         holder.bladder.setProgress(50);
         holder.environment.setProgress(50);

@@ -44,11 +44,11 @@
                     android:id="@+id/list_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="110dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="monospace"
                     android:text="0 days old"
-                    app:layout_constraintStart_toEndOf="@+id/list_stage"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="monospace"
-                    android:text="gender"
+                    android:text="♀"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,21 +65,30 @@
                     android:id="@+id/list_pregnant"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="230dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="monospace"
-                    app:layout_constraintStart_toEndOf="@+id/list_age"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/list_stage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="32dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="monospace"
                     android:text="stage"
-                    app:layout_constraintStart_toEndOf="@+id/list_gender"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/list_alive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
@@ -104,9 +113,9 @@
                     android:id="@+id/list_speed"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="80dp"
-                    android:layout_height="10dp"
+                    android:layout_height="7dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="7dp"
                     android:progressTint="@color/colorSkill"
                     app:layout_constraintStart_toEndOf="@+id/textView37"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -124,9 +133,9 @@
                     android:id="@+id/list_vision"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="80dp"
-                    android:layout_height="10dp"
+                    android:layout_height="7dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="7dp"
                     android:progressTint="@color/colorSkill"
                     app:layout_constraintStart_toEndOf="@+id/textView38"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -144,9 +153,9 @@
                     android:id="@+id/list_fertility"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="80dp"
-                    android:layout_height="10dp"
+                    android:layout_height="7dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="7dp"
                     android:progressTint="@color/colorSkill"
                     app:layout_constraintStart_toEndOf="@+id/textView39"
                     app:layout_constraintTop_toTopOf="parent" />

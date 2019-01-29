@@ -17,7 +17,7 @@ public class FishAdapterTraits extends RecyclerView.Adapter<FishAdapterTraits.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
-        public TextView age, gender, stage, pregnant;
+        public TextView age, gender, stage, pregnant, alive;
         public ProgressBar speed, vision, fertility;
 
         public MyViewHolder(View view) {
@@ -30,6 +30,7 @@ public class FishAdapterTraits extends RecyclerView.Adapter<FishAdapterTraits.My
             speed = view.findViewById(R.id.list_speed);
             vision = view.findViewById(R.id.list_vision);
             fertility = view.findViewById(R.id.list_fertility);
+            alive = view.findViewById(R.id.list_alive);
 
             // TODO fertility
             speed.setMax(Constants.MAX_HORIZONTAL_SPEED);
@@ -54,13 +55,14 @@ public class FishAdapterTraits extends RecyclerView.Adapter<FishAdapterTraits.My
         holder.img.setImageBitmap(fish.image);
         holder.img.setAdjustViewBounds(true);
         holder.age.setText(String.valueOf(fish.getAge()) + " DAYS OLD");
-        holder.gender.setText(fish.getGender() ? "MALE" : "FEMALE");
+        holder.gender.setText(fish.getGender() ? "♂" : "♀");
         holder.stage.setText(
                 (fish.getLifeStage() == 0) ? "INFANT" :
                         (fish.getLifeStage() == 1) ? "TEEN" :
                                 (fish.getLifeStage() == 2) ? "ADULT" :
                                         "ELDER");
-        holder.pregnant.setText(fish.getPregnant() ? "pregnant" : "");
+        holder.pregnant.setText(fish.getPregnant() ? "\uD83D\uDC95" : "");
+        holder.alive.setText(fish.getAlive() ? "" : "\uD83D\uDC80");
         holder.speed.setProgress(fish.getSpeed());
         holder.vision.setProgress(fish.getVision());
         holder.fertility.setProgress(50);

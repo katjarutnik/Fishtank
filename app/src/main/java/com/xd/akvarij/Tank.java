@@ -207,7 +207,5 @@ public class Tank {
         }
     }
 
-    public void spawnNewFish(Fish fish) {
 
-    }
 }
