@@ -31,7 +31,7 @@ public class Constants {
     public static int MIN_VISION = 300;
     public static int MAX_VISION = MED_VISION + MIN_VISION;
 
-    public static int MAX_HUNGER = 10;
+    public static int MAX_HUNGER = 15;
     public static int MAX_BLADDER = 5;
     public static int MAX_ENVIRONMENT = 10;
 

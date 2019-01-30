@@ -205,6 +205,10 @@ public class Fish {
             myCallback.statsUpdateGenerationReached(this.generation);
         this.bladder = 0;
         this.environment = Constants.MAX_ENVIRONMENT;
+        if (mom.fertility >= dad.fertility)
+            this.fertility = Integer.valueOf(mom.fertility);
+        else
+            this.fertility = Integer.valueOf(dad.fertility);
     }
 
     public int getId() {
