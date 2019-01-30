@@ -35,9 +35,9 @@ public class FishAdapterTraits extends RecyclerView.Adapter<FishAdapterTraits.My
             fertility = view.findViewById(R.id.list_fertility);
             alive = view.findViewById(R.id.list_alive);
 
-            // TODO fertility
             speed.setMax(Constants.MAX_HORIZONTAL_SPEED);
             vision.setMax(Constants.MAX_VISION);
+            fertility.setMax(100);
         }
     }
 
@@ -70,7 +70,7 @@ public class FishAdapterTraits extends RecyclerView.Adapter<FishAdapterTraits.My
         holder.alive.setText(fish.getAlive() ? "" : "\uD83D\uDC80");
         holder.speed.setProgress(fish.getSpeed());
         holder.vision.setProgress(fish.getVision());
-        holder.fertility.setProgress(50);
+        holder.fertility.setProgress(fish.getFertility());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

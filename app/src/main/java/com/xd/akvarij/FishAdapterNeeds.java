@@ -32,8 +32,9 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
             alive = view.findViewById(R.id.list_alive);
             feeling = view.findViewById(R.id.list_feeling);
 
-            // TODO bladder environment
             hunger.setMax(Constants.MAX_HUNGER);
+            bladder.setMax(Constants.MAX_BLADDER);
+            environment.setMax(Constants.MAX_ENVIRONMENT);
         }
     }
 
@@ -64,9 +65,9 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
                 (fish.getEggs() > 1 ? "\uD83D\uDC95\uD83D\uDC95" : "\uD83D\uDC95") : "");
         holder.alive.setText(fish.getAlive() ? "" : "\uD83D\uDC80");
         holder.hunger.setProgress(fish.getHunger());
-        holder.bladder.setProgress(50);
-        holder.environment.setProgress(50);
-        holder.feeling.setText("\uD83D\uDE03");
+        holder.bladder.setProgress(fish.getBladder());
+        holder.environment.setProgress(fish.getEnvironment());
+        holder.feeling.setText(fish.isHappy() ? "\uD83D\uDE03" : "\uD83D\uDE1E");
     }
 
     @Override

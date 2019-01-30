@@ -12,4 +12,5 @@ public interface MyCallback {
     void statsUpdateFishOffspring();
     void statsUpdateGenerationReached(int counter);
     int getCurrentGeneration();
+    void decreaseEnvironment();
 }

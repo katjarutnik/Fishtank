@@ -173,6 +173,19 @@ public class Tank {
 
     public void cleanPoop() {
         poop.clear();
+        food.clear();
+        for (Fish f: fish) {
+            f.environment = Constants.MAX_ENVIRONMENT;
+        }
+        myCallback.updateAdapter();
+    }
+
+    public void decreaseEnvironment() {
+        for (Fish f: fish) {
+            if (f.environment > 0)
+                f.environment--;
+        }
+        myCallback.updateAdapter();
     }
 
     public void shakingStart(float x, float y) {

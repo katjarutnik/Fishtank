@@ -41,6 +41,9 @@ public class Fish {
     private int hunger;
     public Food nearestFood;
     public boolean hasFoundNearestFood;
+    public int bladder;
+    public int environment;
+    private int fertility;
     // other
     private Random random;
     private Context context;
@@ -59,13 +62,14 @@ public class Fish {
                        ArrayList<Poop> poop, int dayNightCycle) {
         if (alive) {
             if (dayNightCycle == 2) { // new day
-                becomeHungry();
+                becomeHungry(3);
                 growUp();
                 if (pregnant && pregnantDays == Constants.PREGNANCY_DAYS) {
                     pregnant = false;
                     while (this.eggs > 0) {
                         fish.add(new Fish(this, this.coParent, context, myCallback));
                         myCallback.statsUpdateFishOffspring();
+                        myCallback.statsUpdateCurrentlyAlive();
                         myCallback.updateAdapter();
                         this.eggs--;
                     }
@@ -129,6 +133,9 @@ public class Fish {
         this.pregnantDays = 0;
         this.eggs = 0;
         this.generation = 0;
+        this.bladder = 0;
+        this.environment = Constants.MAX_ENVIRONMENT;
+        this.fertility = random.nextInt(100) + 1;
     }
 
     // offspring
@@ -141,14 +148,31 @@ public class Fish {
         this.y = Integer.valueOf(mom.y);
         this.goingRight = random.nextBoolean();
         this.goingDown = random.nextBoolean();
-        this.speedHorizontal = Integer.valueOf((mom.speedHorizontal + dad.speedHorizontal) / 2);
-        this.speedVertical = Integer.valueOf((mom.speedVertical + dad.speedVertical) / 2);
-        this.vision = Integer.valueOf((mom.vision + dad.vision) / 2);
-        this.hunger = Constants.HUNGER_AFTER_POOP;
+        if (mom.speedHorizontal >= dad.speedHorizontal)
+            this.speedHorizontal = Integer.valueOf(mom.speedHorizontal);
+        else
+            this.speedHorizontal = Integer.valueOf(dad.speedHorizontal);
+        if (mom.speedVertical >= dad.speedVertical)
+            this.speedVertical = Integer.valueOf(mom.speedVertical);
+        else
+            this.speedVertical = Integer.valueOf(dad.speedVertical);
+        if (mom.vision >= dad.vision)
+            this.vision = Integer.valueOf(mom.vision);
+        else
+            this.vision = Integer.valueOf(dad.vision);
+        if (random.nextInt(100) <= Constants.MUTATION_CHANCE) {
+            this.speedHorizontal = (Constants.MAX_HORIZONTAL_SPEED -
+                    random.nextInt(Constants.MAX_HORIZONTAL_SPEED));
+        }
+        if (random.nextInt(100) <= Constants.MUTATION_CHANCE) {
+            this.vision = (Constants.MED_VISION +
+                    random.nextInt(Constants.MIN_VISION));
+        }
+        this.hunger = Constants.MAX_HUNGER;
         this.age = 0;
         this.stage = LifeStage.INFANT;
         this.gender = random.nextBoolean() ? Gender.FEMALE : Gender.MALE;
-        if (random.nextInt(100) < Constants.MUTATION_CHANCE)
+        if (random.nextInt(100) <= Constants.MUTATION_CHANCE)
             this.primaryColor = 0xFF000000
                     | (random.nextInt(256) << 16)
                     | (random.nextInt(256) << 8)
@@ -156,7 +180,7 @@ public class Fish {
         else
             this.primaryColor = random.nextBoolean() ? Integer.valueOf(mom.primaryColor) :
                     Integer.valueOf(dad.secondaryColor);
-        if (random.nextInt(100) < Constants.MUTATION_CHANCE)
+        if (random.nextInt(100) <= Constants.MUTATION_CHANCE)
             this.secondaryColor = 0xFF000000
                     | (random.nextInt(256) << 16)
                     | (random.nextInt(256) << 8)
@@ -179,6 +203,8 @@ public class Fish {
         this.generation = Integer.valueOf(mom.generation + 1);
         if (this.generation > myCallback.getCurrentGeneration())
             myCallback.statsUpdateGenerationReached(this.generation);
+        this.bladder = 0;
+        this.environment = Constants.MAX_ENVIRONMENT;
     }
 
     public int getId() {
@@ -228,6 +254,18 @@ public class Fish {
         return eggs;
     }
 
+    public int getBladder() {
+        return bladder;
+    }
+
+    public int getEnvironment() {
+        return environment;
+    }
+
+    public int getFertility() {
+        return fertility;
+    }
+
     public int getX () {
         return x;
     }
@@ -237,8 +275,8 @@ public class Fish {
     }
 
     public void defaultMove(ArrayList<Food> food, ArrayList<Poop> poop) {
-        // 50% chance that it will want to eat if it's not starving
-        if (hunger > Constants.HUNGER_AFTER_POOP && random.nextInt(100) > 50) {
+        // if hunger max and still decides to eat, gets fat
+        /*if ((hunger >= Constants.MAX_HUNGER) && random.nextInt(100) < Constants.MUTATION_CHANCE) {
             // if it knows which food it's going after and other fish didn't eat it yet
             if (nearestFood != null && hasFoundNearestFood) {
                 huntFood(food, nearestFood, poop);
@@ -250,7 +288,8 @@ public class Fish {
             } else {
                 randomHorizontalMove();
             }
-        } else if (hunger <= Constants.HUNGER_AFTER_POOP) {
+        } else*/
+        if (hunger < Constants.MAX_HUNGER) {
             if (nearestFood != null && hasFoundNearestFood) {
                 huntFood(food, nearestFood, poop);
             } else if (!hasFoundNearestFood && findFood(food)) {
@@ -317,7 +356,7 @@ public class Fish {
         // ce se je zaletela v hrano
         if (nearest.getX() >= x && nearest.getX() <= x+width &&
                 nearest.getY() >= y && nearest.getY() <= y+height) {
-            eatFood();
+            eatFood(poop);
             food.remove(nearest);
             nearestFood = null;
             hasFoundNearestFood = false;
@@ -380,17 +419,22 @@ public class Fish {
         }
     }
 
-    public void eatFood() {
-        if (hunger < Constants.MAX_HUNGER) {
-            hunger++;
+    public void eatFood(ArrayList<Poop> poop) {
+        hunger++;
+        bladder++;
+        if (bladder >= Constants.MAX_BLADDER) {
+            poop.add(new Poop(this.x, this.y));
+            bladder = 0;
+            myCallback.decreaseEnvironment();
         }
     }
 
     // call on each new day cycle
-    public void becomeHungry() {
-        hunger--;
-        if (hunger <= 0)
+    public void becomeHungry(int x) {
+        hunger -= x;
+        if (hunger <= 0) {
             stage = LifeStage.DEAD;
+        }
     }
 
     // call on each new day cycle
@@ -410,9 +454,9 @@ public class Fish {
         }
         if (stage == LifeStage.DEAD && alive) {
             myCallback.statsUpdateFishDeaths();
+            alive = false;
             myCallback.statsUpdateCurrentlyAlive();
             myCallback.updateAdapter();
-            alive = false;
             image = ImageManager.flipVertically(image);
         }
     }
@@ -436,7 +480,7 @@ public class Fish {
         }
     }
 
-    // TODO FITNESS FUNCTION
+    // TODO FIX FITNESS FUNCTION
     public void getPregnant(ArrayList<Fish> fish) {
         for (int i = 0; i < fish.size(); i++) {
             if (fish.get(i) != this
@@ -475,5 +519,17 @@ public class Fish {
         goingDown = !goingDown;
     }
 
+    public boolean isHappy() {
+        if (this.hunger > (Constants.MAX_HUNGER/2)) {
+            if (this.environment > (Constants.MAX_ENVIRONMENT/2)) {
+                if (this.bladder < Constants.MAX_BLADDER - 1)
+                    return true;
+                else
+                    return false;
+            } else
+                return false;
+        } else
+            return false;
+    }
 
 }

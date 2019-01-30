@@ -318,6 +318,11 @@ public class GameActivity extends Activity implements SensorEventListener {
             public int getCurrentGeneration() {
                 return gameView.tank.countGenerationReached;
             }
+
+            @Override
+            public void decreaseEnvironment() {
+                gameView.tank.decreaseEnvironment();
+            }
         };
         // button feed fish
         btnFeed.setOnClickListener(new View.OnClickListener() {
@@ -339,7 +344,7 @@ public class GameActivity extends Activity implements SensorEventListener {
         btnClean.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gameView.tank.poop.size() > 0) {
+                if (gameView.tank.food.size() > 0 || gameView.tank.poop.size() > 0) {
                     gameView.tank.cleanPoop();
                     gameView.tank.countTankCleaning++;
                     runOnUiThread(new Runnable() {
