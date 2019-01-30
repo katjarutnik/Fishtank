@@ -10,14 +10,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-// TODO ON TOUCH EVENT KILL FISH YES NO
 public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyViewHolder> {
 
     private List<Fish> fishList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
-        public TextView age, gender, stage, pregnant, alive;
+        public TextView age, gender, stage, pregnant, alive, feeling;
         public ProgressBar hunger, bladder, environment;
 
         public MyViewHolder(View view) {
@@ -31,6 +30,7 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
             bladder = view.findViewById(R.id.list_bladder);
             environment = view.findViewById(R.id.list_environment);
             alive = view.findViewById(R.id.list_alive);
+            feeling = view.findViewById(R.id.list_feeling);
 
             // TODO bladder environment
             hunger.setMax(Constants.MAX_HUNGER);
@@ -60,11 +60,13 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
                         (fish.getLifeStage() == 1) ? "TEEN" :
                                 (fish.getLifeStage() == 2) ? "ADULT" :
                                         "ELDER");
-        holder.pregnant.setText(fish.getPregnant() ? "\uD83D\uDC95" : "");
+        holder.pregnant.setText(fish.getPregnant() ?
+                (fish.getEggs() > 1 ? "\uD83D\uDC95\uD83D\uDC95" : "\uD83D\uDC95") : "");
         holder.alive.setText(fish.getAlive() ? "" : "\uD83D\uDC80");
         holder.hunger.setProgress(fish.getHunger());
         holder.bladder.setProgress(50);
         holder.environment.setProgress(50);
+        holder.feeling.setText("\uD83D\uDE03");
     }
 
     @Override

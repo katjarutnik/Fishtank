@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.rtugeek.android.colorseekbar.ColorSeekBar;
@@ -21,21 +22,20 @@ public class MainActivity extends Activity {
     // main menu
     VideoView videoView;
     LinearLayout layoutMainMenu;
-    Button btnNew;
-    Button btnLoad;
-    Button btnSettings;
+    Button btnNew, btnLoad, btnSettings;
     // new game generator
     ConstraintLayout layoutNewGameMenu;
     RadioGroup radioGroup;
     LinearLayout linearLayoutColorPicker;
     EditText txtPopSize;
-    ColorSeekBar colorSeekBar1;
-    ColorSeekBar colorSeekBar2;
-    Button btnGenerate;
-    Button btnSimDetails;
+    ColorSeekBar colorSeekBar1, colorSeekBar2;
+    Button btnGenerate, btnSimDetails;
     // simulation details
     ConstraintLayout layoutSimDetails;
     Button btnSimDetailsConfirm;
+    TextView txtSettingDays, txtSettingAgeInfant, txtSettingAgeTeen, txtSettingAgeAdult,
+            txtSettingAgeElder, txtSettingSpeedH, txtSettingSpeedV, txtSettingPregnancyDays,
+            txtSettingPregnancyChance, txtSettingTwinsChance, txtSettingMutationChance;
     // new game parameters
     public int popSize = 10;
     int pickedPrimaryColor = 0;
@@ -79,6 +79,28 @@ public class MainActivity extends Activity {
         // simulation details blocks
         layoutSimDetails = findViewById(R.id.layoutSimDetails);
         btnSimDetailsConfirm = findViewById(R.id.btnSimDetailsConfirm);
+        txtSettingDays = findViewById(R.id.txtEditDayLength);
+        txtSettingAgeInfant = findViewById(R.id.txtEditMaxInfantAge);
+        txtSettingAgeTeen = findViewById(R.id.txtEditMaxTeenAge);
+        txtSettingAgeAdult = findViewById(R.id.txtEditMaxAdultAge);
+        txtSettingAgeElder = findViewById(R.id.txtEditMaxElderAge);
+        txtSettingSpeedH = findViewById(R.id.txtEditMaxHorizontalSpeed);
+        txtSettingSpeedV = findViewById(R.id.txtEditMaxVerticalSpeed);
+        txtSettingPregnancyDays = findViewById(R.id.txtEditBreeding);
+        txtSettingPregnancyChance = findViewById(R.id.txtEditBreeding1);
+        txtSettingTwinsChance = findViewById(R.id.txtEditBreeding2);
+        txtSettingMutationChance = findViewById(R.id.txtEditBreeding3);
+        txtSettingDays.setText(Integer.toString(Constants.DAY_LENGTH_IN_SECONDS));
+        txtSettingAgeInfant.setText(Integer.toString(Constants.AGE_MAX_INFANT));
+        txtSettingAgeTeen.setText(Integer.toString(Constants.AGE_MAX_TEEN));
+        txtSettingAgeAdult.setText(Integer.toString(Constants.AGE_MAX_ADULT));
+        txtSettingAgeElder.setText(Integer.toString(Constants.AGE_MAX));
+        txtSettingSpeedH.setText(Integer.toString(Constants.MAX_HORIZONTAL_SPEED));
+        txtSettingSpeedV.setText(Integer.toString(Constants.MAX_VERTICAL_SPEED));
+        txtSettingPregnancyDays.setText(Integer.toString(Constants.PREGNANCY_DAYS));
+        txtSettingPregnancyChance.setText(Integer.toString(Constants.PREGNANCY_CHANCE));
+        txtSettingTwinsChance.setText(Integer.toString(Constants.PREGNANCY_TWINS_CHANCE));
+        txtSettingMutationChance.setText(Integer.toString(Constants.MUTATION_CHANCE));
         // main menu fun
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,6 +182,16 @@ public class MainActivity extends Activity {
         btnSimDetailsConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Constants.DAY_LENGTH_IN_SECONDS = Integer.parseInt(txtSettingDays.getText().toString());
+                Constants.AGE_MAX_INFANT = Integer.parseInt(txtSettingAgeInfant.getText().toString());
+                Constants.AGE_MAX_TEEN = Integer.parseInt(txtSettingAgeTeen.getText().toString());
+                Constants.AGE_MAX_ADULT = Integer.parseInt(txtSettingAgeAdult.getText().toString());
+                Constants.AGE_MAX = Integer.parseInt(txtSettingAgeElder.getText().toString());
+                Constants.MAX_HORIZONTAL_SPEED = Integer.parseInt(txtSettingSpeedH.getText().toString());
+                Constants.MAX_VERTICAL_SPEED = Integer.parseInt(txtSettingSpeedV.getText().toString());
+                Constants.PREGNANCY_DAYS = Integer.parseInt(txtSettingPregnancyDays.getText().toString());
+                Constants.PREGNANCY_TWINS_CHANCE = Integer.parseInt(txtSettingTwinsChance.getText().toString());
+                Constants.MUTATION_CHANCE = Integer.parseInt(txtSettingMutationChance.getText().toString());
                 layoutSimDetails.setVisibility(View.GONE);
                 layoutNewGameMenu.setAlpha(0.0f);
                 layoutNewGameMenu.setVisibility(View.VISIBLE);

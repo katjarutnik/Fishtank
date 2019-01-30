@@ -13,10 +13,10 @@ public class Constants {
     public static int AGE_MAX_ADULT = 8; //15
     public static int AGE_MAX = 10; //20
 
-    public static int PREGNANCY_DAYS = 1;
+    public static int PREGNANCY_DAYS = 2;
     public static int PREGNANCY_CHANCE = 45;
     public static int PREGNANCY_TWINS_CHANCE = 15;
-    public static int MUTATION_CHANCE = 100;
+    public static int MUTATION_CHANCE = 5;
 
     public static int FISH_SIZE_INFANT = 16;
     public static int FISH_SIZE_TEEN = 32;
@@ -33,7 +33,6 @@ public class Constants {
 
     public static int MAX_HUNGER = 5;
     public static int HUNGER_AFTER_POOP = 2;
-
 
     public static int FOOD_SIZE = 10;
     public static int POOP_SIZE = 12;

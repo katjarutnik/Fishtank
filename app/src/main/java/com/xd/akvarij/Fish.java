@@ -73,7 +73,7 @@ public class Fish {
                 } else if (pregnant && pregnantDays < Constants.PREGNANCY_DAYS) {
                     pregnantDays++;
                 }
-                if (gender == Gender.FEMALE) {
+                if ((gender == Gender.FEMALE) && (eggs < 2) && (random.nextInt(100) < Constants.PREGNANCY_CHANCE)) {
                     getPregnant(fish);
                 }
             }
@@ -177,6 +177,8 @@ public class Fish {
         this.pregnantDays = 0;
         this.eggs = 0;
         this.generation = Integer.valueOf(mom.generation + 1);
+        if (this.generation > myCallback.getCurrentGeneration())
+            myCallback.statsUpdateGenerationReached(this.generation);
     }
 
     public int getId() {
@@ -220,6 +222,10 @@ public class Fish {
 
     public int getSpeed() {
         return speedHorizontal;
+    }
+
+    public int getEggs() {
+        return eggs;
     }
 
     public int getX () {
@@ -430,14 +436,13 @@ public class Fish {
         }
     }
 
-    // if fish is female teenager/adult then find a male DNA provider and get pregnant
+    // TODO FITNESS FUNCTION
     public void getPregnant(ArrayList<Fish> fish) {
         for (int i = 0; i < fish.size(); i++) {
             if (fish.get(i) != this
                     && (this.stage == LifeStage.TEEN || this.stage == LifeStage.ADULT)
                     && fish.get(i).gender == Gender.MALE
-                    && (fish.get(i).stage == LifeStage.TEEN || fish.get(i).stage == LifeStage.ADULT)
-                    && random.nextInt(100) < Constants.PREGNANCY_CHANCE) {
+                    && (fish.get(i).stage == LifeStage.TEEN || fish.get(i).stage == LifeStage.ADULT)) {
                 this.pregnant = true;
                 this.coParent = fish.get(i);
                 this.eggs++;

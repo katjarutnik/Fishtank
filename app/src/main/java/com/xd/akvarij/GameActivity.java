@@ -67,9 +67,12 @@ public class GameActivity extends Activity implements SensorEventListener {
     TextView txtCounterFishBabies;
     TextView txtCounterFishFeeding;
     TextView txtCounterTankCleaning;
+    TextView txtCounterGeneration;
     Button btnStatsSummary;
     Button btnStatsFishNeeds;
     Button btnStatsFishTraits;
+    TextView txtStatsDayLength, txtStatsLifeStages, txtStatsMaxSpeed, txtStatsPregnancyDays, txtStatsPregnancyChance,
+    txtStatsTwinsChance, txtStatsMutationChance;
     // pause menu view
     ConstraintLayout gameLayoutPause;
     Button btnSimSettings;
@@ -78,6 +81,9 @@ public class GameActivity extends Activity implements SensorEventListener {
     // simulation tweaks view
     ConstraintLayout gameLayoutSimSettings;
     Button btnSimSettingsConfirm;
+    TextView txtSettingDays, txtSettingAgeInfant, txtSettingAgeTeen, txtSettingAgeAdult,
+            txtSettingAgeElder, txtSettingSpeedH, txtSettingSpeedV, txtSettingPregnancyDays,
+            txtSettingPregnancyChance, txtSettingTwinsChance, txtSettingMutationChance;
     // sensor stuff
     private SensorManager sensorMan;
     private Sensor accelerometer;
@@ -147,8 +153,16 @@ public class GameActivity extends Activity implements SensorEventListener {
         txtCounterFishAlive = gameOverlayStats.findViewById(R.id.textView15);
         txtCounterFishDied = gameOverlayStats.findViewById(R.id.textView16);
         txtCounterFishBabies = gameOverlayStats.findViewById(R.id.textView17);
+        txtCounterGeneration = gameOverlayStats.findViewById(R.id.textView18);
         txtCounterFishFeeding = gameOverlayStats.findViewById(R.id.textView19);
         txtCounterTankCleaning = gameOverlayStats.findViewById(R.id.textView20);
+        txtStatsDayLength = gameOverlayStats.findViewById(R.id.textView25);
+        txtStatsLifeStages = gameOverlayStats.findViewById(R.id.textView26);
+        txtStatsMaxSpeed = gameOverlayStats.findViewById(R.id.textView27);
+        txtStatsPregnancyDays = gameOverlayStats.findViewById(R.id.textView28);
+        txtStatsPregnancyChance = gameOverlayStats.findViewById(R.id.textView34);
+        txtStatsTwinsChance = gameOverlayStats.findViewById(R.id.textView32);
+        txtStatsMutationChance = gameOverlayStats.findViewById(R.id.textView33);
         // game menu view
         gameLayoutPause = rootView.findViewById(R.id.gameOverlayPaused);
         gameLayoutPause.setVisibility(View.GONE);
@@ -159,6 +173,28 @@ public class GameActivity extends Activity implements SensorEventListener {
         gameLayoutSimSettings = rootView.findViewById(R.id.gameOverlaySimSettings);
         gameLayoutSimSettings.setVisibility(View.GONE);
         btnSimSettingsConfirm = gameLayoutSimSettings.findViewById(R.id.btnGameOverlaySimSettingsConfirm);
+        txtSettingDays = gameLayoutSimSettings.findViewById(R.id.txtEditDayLength);
+        txtSettingAgeInfant = gameLayoutSimSettings.findViewById(R.id.txtEditMaxInfantAge);
+        txtSettingAgeTeen = gameLayoutSimSettings.findViewById(R.id.txtEditMaxTeenAge);
+        txtSettingAgeAdult = gameLayoutSimSettings.findViewById(R.id.txtEditMaxAdultAge);
+        txtSettingAgeElder = gameLayoutSimSettings.findViewById(R.id.txtEditMaxElderAge);
+        txtSettingSpeedH = gameLayoutSimSettings.findViewById(R.id.txtEditMaxHorizontalSpeed);
+        txtSettingSpeedV = gameLayoutSimSettings.findViewById(R.id.txtEditMaxVerticalSpeed);
+        txtSettingPregnancyDays = gameLayoutSimSettings.findViewById(R.id.txtEditBreeding);
+        txtSettingPregnancyChance = gameLayoutSimSettings.findViewById(R.id.txtEditBreeding1);
+        txtSettingTwinsChance = gameLayoutSimSettings.findViewById(R.id.txtEditBreeding2);
+        txtSettingMutationChance = gameLayoutSimSettings.findViewById(R.id.txtEditBreeding3);
+        txtSettingDays.setText(Integer.toString(Constants.DAY_LENGTH_IN_SECONDS));
+        txtSettingAgeInfant.setText(Integer.toString(Constants.AGE_MAX_INFANT));
+        txtSettingAgeTeen.setText(Integer.toString(Constants.AGE_MAX_TEEN));
+        txtSettingAgeAdult.setText(Integer.toString(Constants.AGE_MAX_ADULT));
+        txtSettingAgeElder.setText(Integer.toString(Constants.AGE_MAX));
+        txtSettingSpeedH.setText(Integer.toString(Constants.MAX_HORIZONTAL_SPEED));
+        txtSettingSpeedV.setText(Integer.toString(Constants.MAX_VERTICAL_SPEED));
+        txtSettingPregnancyDays.setText(Integer.toString(Constants.PREGNANCY_DAYS));
+        txtSettingPregnancyChance.setText(Integer.toString(Constants.PREGNANCY_CHANCE));
+        txtSettingTwinsChance.setText(Integer.toString(Constants.PREGNANCY_TWINS_CHANCE));
+        txtSettingMutationChance.setText(Integer.toString(Constants.MUTATION_CHANCE));
         // set up the views
         gameFrame.removeView(gameOverlay);
         gameFrame.removeView(gameOverlayStats);
@@ -209,6 +245,7 @@ public class GameActivity extends Activity implements SensorEventListener {
                         fishData.clear();
                         fishData.addAll(gameView.tank.fish);
                         fishAdapterNeeds.notifyDataSetChanged();
+                        fishAdapterTraits.notifyDataSetChanged();
                     }
                 });
             }
@@ -223,37 +260,63 @@ public class GameActivity extends Activity implements SensorEventListener {
             }
             @Override
             public void statsUpdateCurrentlyAlive() {
+                gameView.tank.countFishAlive = gameView.tank.countAlive();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        gameView.tank.countFishAlive = gameView.tank.countAlive();
                         txtCounterFishAlive.setText("> CURRENTLY ALIVE: " + gameView.tank.countFishAlive);
                     }
                 });
             }
             @Override
             public void statsUpdateFishDeaths() {
+                gameView.tank.countFishDeaths++;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        gameView.tank.countFishDeaths++;
                         txtCounterFishDied.setText("> DEAD FISH TOTAL: " + gameView.tank.countFishDeaths);
                     }
                 });
             }
             @Override
             public void statsUpdateFishOffspring() {
+                gameView.tank.countFishBabies++;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        gameView.tank.countFishBabies++;
                         txtCounterFishBabies.setText("> BABY FISH TOTAL: " + gameView.tank.countFishBabies);
                     }
                 });
             }
             @Override
-            public void statsUpdateGenerationReached(int counter) {
-                // TODO
+            public void statsUpdateGenerationReached(final int counter) {
+                gameView.tank.countGenerationReached = counter;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtCounterGeneration.setText("> GENERATION REACHED: " +
+                                gameView.tank.countGenerationReached);
+                    }
+                });
+            }
+            @Override
+            public void removeFish(Fish f, int position) {
+                gameView.tank.fish.remove(f);
+                fishData.clear();
+                fishData.addAll(gameView.tank.fish);
+                fishAdapterTraits.notifyItemRemoved(position);
+                fishAdapterTraits.notifyDataSetChanged();
+                fishAdapterTraits.notifyItemRangeChanged(position, gameView.tank.fish.size());
+                fishAdapterNeeds.notifyItemRemoved(position);
+                fishAdapterNeeds.notifyDataSetChanged();
+                fishAdapterNeeds.notifyItemRangeChanged(position, gameView.tank.fish.size());
+                statsUpdateFishDeaths();
+                statsUpdateCurrentlyAlive();
+            }
+
+            @Override
+            public int getCurrentGeneration() {
+                return gameView.tank.countGenerationReached;
             }
         };
         // button feed fish
@@ -406,6 +469,32 @@ public class GameActivity extends Activity implements SensorEventListener {
         btnSimSettingsConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Constants.DAY_LENGTH_IN_SECONDS = Integer.parseInt(txtSettingDays.getText().toString());
+                Constants.AGE_MAX_INFANT = Integer.parseInt(txtSettingAgeInfant.getText().toString());
+                Constants.AGE_MAX_TEEN = Integer.parseInt(txtSettingAgeTeen.getText().toString());
+                Constants.AGE_MAX_ADULT = Integer.parseInt(txtSettingAgeAdult.getText().toString());
+                Constants.AGE_MAX = Integer.parseInt(txtSettingAgeElder.getText().toString());
+                Constants.MAX_HORIZONTAL_SPEED = Integer.parseInt(txtSettingSpeedH.getText().toString());
+                Constants.MAX_VERTICAL_SPEED = Integer.parseInt(txtSettingSpeedV.getText().toString());
+                Constants.PREGNANCY_DAYS = Integer.parseInt(txtSettingPregnancyDays.getText().toString());
+                Constants.PREGNANCY_TWINS_CHANCE = Integer.parseInt(txtSettingTwinsChance.getText().toString());
+                Constants.MUTATION_CHANCE = Integer.parseInt(txtSettingMutationChance.getText().toString());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtSettingDays.setText(Integer.toString(Constants.DAY_LENGTH_IN_SECONDS));
+                        txtSettingAgeInfant.setText(Integer.toString(Constants.AGE_MAX_INFANT));
+                        txtSettingAgeTeen.setText(Integer.toString(Constants.AGE_MAX_TEEN));
+                        txtSettingAgeAdult.setText(Integer.toString(Constants.AGE_MAX_ADULT));
+                        txtSettingAgeElder.setText(Integer.toString(Constants.AGE_MAX));
+                        txtSettingSpeedH.setText(Integer.toString(Constants.MAX_HORIZONTAL_SPEED));
+                        txtSettingSpeedV.setText(Integer.toString(Constants.MAX_VERTICAL_SPEED));
+                        txtSettingPregnancyDays.setText(Integer.toString(Constants.PREGNANCY_DAYS));
+                        txtSettingPregnancyChance.setText(Integer.toString(Constants.PREGNANCY_CHANCE));
+                        txtSettingTwinsChance.setText(Integer.toString(Constants.PREGNANCY_TWINS_CHANCE));
+                        txtSettingMutationChance.setText(Integer.toString(Constants.MUTATION_CHANCE));
+                    }
+                });
                 gameLayoutSimSettings.setVisibility(View.GONE);
                 gameLayoutPause.setVisibility(View.VISIBLE);
             }
@@ -434,8 +523,18 @@ public class GameActivity extends Activity implements SensorEventListener {
         recyclerViewStats.setItemAnimator(new DefaultItemAnimator());
         recyclerViewStats.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerViewStats.setAdapter(fishAdapterNeeds);
-        // traits
-        fishAdapterTraits = new FishAdapterTraits(fishData);
+        // stats recycler view needs
+        fishAdapterTraits = new FishAdapterTraits(fishData, myCallback);
+        // get stats from constants
+        txtStatsDayLength.setText("> DAY LENGTH: " + Constants.DAY_LENGTH_IN_SECONDS);
+        txtStatsLifeStages.setText("> LIFE STAGES: " + Constants.AGE_MAX_INFANT + " - " +
+                Constants.AGE_MAX_TEEN + " - " + Constants.AGE_MAX_ADULT + " - "+ Constants.AGE_MAX);
+        txtStatsMaxSpeed.setText("> H - V MAX SPEED: " + Constants.MAX_HORIZONTAL_SPEED + " - "
+                + Constants.MAX_VERTICAL_SPEED);
+        txtStatsPregnancyDays.setText("> PREGNANCY LENGTH: " + Constants.PREGNANCY_DAYS);
+        txtStatsPregnancyChance.setText("> PREGNANCY CHANCE: " + Constants.PREGNANCY_CHANCE);
+        txtStatsTwinsChance.setText("> TWINS CHANCE: " + Constants.PREGNANCY_TWINS_CHANCE);
+        txtStatsMutationChance.setText("> MUTATION CHANCE: " + Constants.MUTATION_CHANCE);
         // start the engines
         loadData(population, this);
         setContentView(gameFrame);
