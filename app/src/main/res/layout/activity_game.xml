@@ -19,7 +19,18 @@
         android:id="@+id/gameOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="232dp"
+            android:layout_height="242dp"
+            android:layout_marginStart="450dp"
+            android:layout_marginTop="150dp"
+            android:alpha="0.5"
+            android:background="@drawable/plant1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnStats"
@@ -788,7 +799,7 @@
         android:id="@+id/gameOverlayStats"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/layoutGameOverlayStatsButtons"
