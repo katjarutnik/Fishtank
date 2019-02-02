@@ -67,7 +67,7 @@ public class FishAdapterNeeds extends RecyclerView.Adapter<FishAdapterNeeds.MyVi
         holder.hunger.setProgress(fish.getHunger());
         holder.bladder.setProgress(fish.getBladder());
         holder.environment.setProgress(fish.getEnvironment());
-        holder.feeling.setText(fish.isHappy() ? "\uD83D\uDE03" : "\uD83D\uDE1E");
+        holder.feeling.setText(fish.isHappy() ? "\uD83D\uDE03" : "\uD83D\uDE2D");
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,11 +18,14 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -49,10 +53,12 @@ public class GameActivity extends Activity implements SensorEventListener {
     Button btnStats;
     Button btnPausePlay;
     Button btnOptions;
+    Button btnGarry;
     TextView txtDays;
     TextView txtInfoTop;
     TextView txtInfoMiddle;
     boolean paused = false;
+    AnimationDrawable garryAnimation;
     // stats
     ConstraintLayout gameOverlayStats;
     LinearLayout gameOverlayStatsSummary;
@@ -140,6 +146,10 @@ public class GameActivity extends Activity implements SensorEventListener {
         txtDays = gameOverlay.findViewById(R.id.txtDays);
         txtInfoTop = gameOverlay.findViewById(R.id.txtInfo);
         txtInfoMiddle = gameOverlay.findViewById(R.id.txtGameOverlayMiddle);
+        // garry
+        btnGarry = gameOverlay.findViewById(R.id.btnGarry);
+        btnGarry.setBackgroundResource(R.drawable.garry_animation);
+        garryAnimation = (AnimationDrawable) btnGarry.getBackground();
         // game stats
         gameOverlayStats = rootView.findViewById(R.id.gameOverlayStats);
         gameOverlayStats.setVisibility(View.GONE);
@@ -354,6 +364,14 @@ public class GameActivity extends Activity implements SensorEventListener {
                         }
                     });
                 }
+            }
+        });
+        // button garry
+        btnGarry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                garryAnimation.stop();
+                garryAnimation.start();
             }
         });
         // toggle stats

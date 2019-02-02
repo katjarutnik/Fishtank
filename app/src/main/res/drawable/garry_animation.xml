@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/selected" android:oneshot="true">
+    <item android:drawable="@drawable/garry1" android:duration="100" />
+    <item android:drawable="@drawable/garry2" android:duration="100" />
+    <item android:drawable="@drawable/garry3" android:duration="100" />
+    <item android:drawable="@drawable/garry4" android:duration="100" />
+    <item android:drawable="@drawable/garry5" android:duration="100" />
+    <item android:drawable="@drawable/garry6" android:duration="100" />
+    <item android:drawable="@drawable/garry7" android:duration="100" />
+    <item android:drawable="@drawable/garry8" android:duration="100" />
+    <item android:drawable="@drawable/garry9" android:duration="100" />
+    <item android:drawable="@drawable/garry10" android:duration="100" />
+    <item android:drawable="@drawable/garry11" android:duration="100" />
+    <item android:drawable="@drawable/garry12" android:duration="100" />
+    <item android:drawable="@drawable/garry13" android:duration="100" />
+    <item android:drawable="@drawable/garry14" android:duration="100" />
+    <item android:drawable="@drawable/garry15" android:duration="100" />
+    <item android:drawable="@drawable/garry16" android:duration="100" />
+    <item android:drawable="@drawable/garry17" android:duration="100" />
+    <item android:drawable="@drawable/garry18" android:duration="100" />
+    <item android:drawable="@drawable/garry19" android:duration="100" />
+    <item android:drawable="@drawable/garry20" android:duration="100" />
+    <item android:drawable="@drawable/garry21" android:duration="100" />
+    <item android:drawable="@drawable/garry22" android:duration="100" />
+    <item android:drawable="@drawable/garry23" android:duration="100" />
+    <item android:drawable="@drawable/garry24" android:duration="100" />
+    <item android:drawable="@drawable/garry25" android:duration="100" />
+    <item android:drawable="@drawable/garry26" android:duration="100" />
+    <item android:drawable="@drawable/garry27" android:duration="100" />
+    <item android:drawable="@drawable/garry28" android:duration="100" />
+    <item android:drawable="@drawable/garry29" android:duration="100" />
+    <item android:drawable="@drawable/garry30" android:duration="100" />
+    <item android:drawable="@drawable/garry31" android:duration="100" />
+    <item android:drawable="@drawable/garry32" android:duration="100" />
+    <item android:drawable="@drawable/garry33" android:duration="100" />
+    <item android:drawable="@drawable/garry34" android:duration="100" />
+</animation-list>

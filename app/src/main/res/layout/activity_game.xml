@@ -22,56 +22,41 @@
         android:visibility="visible">
 
         <Button
-            android:id="@+id/button"
-            android:layout_width="232dp"
-            android:layout_height="242dp"
-            android:layout_marginStart="450dp"
-            android:layout_marginTop="150dp"
-            android:alpha="0.5"
-            android:background="@drawable/plant1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
             android:id="@+id/btnStats"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/icon_stats"
             android:fontFamily="casual"
-            android:text="STATS"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnClean" />
+            app:layout_constraintEnd_toStartOf="@+id/btnPausePlay" />
 
         <Button
             android:id="@+id/btnFeed"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/icon_food"
             android:fontFamily="casual"
             android:soundEffectsEnabled="true"
-            android:text="Feed"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btnClean"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/icon_clean"
             android:fontFamily="casual"
             android:soundEffectsEnabled="true"
-            android:text="Clean"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
@@ -80,16 +65,15 @@
 
         <Button
             android:id="@+id/btnOptions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/icon_settings"
             android:fontFamily="casual"
             android:soundEffectsEnabled="true"
-            android:text="OPTIONS"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
@@ -149,18 +133,28 @@
         <Button
             android:id="@+id/btnPausePlay"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/icon_playpause"
             android:fontFamily="casual"
-            android:text="PLAY/PAUSE"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textSize="8sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnOptions" />
+
+        <Button
+            android:id="@+id/btnGarry"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/garry1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnStats"
+            app:layout_constraintStart_toEndOf="@+id/btnClean" />
 
     </android.support.constraint.ConstraintLayout>
 
